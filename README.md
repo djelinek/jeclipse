@@ -1,0 +1,2 @@
+# jeclipse-manager
+JEclipse Manager
