@@ -15,6 +15,7 @@ import java.util.Set;
 import org.apache.commons.io.FileUtils;
 
 /**
+ * This class represents an eclipse instance
  * 
  * @author apodhrad
  * 
@@ -24,13 +25,47 @@ public class Eclipse {
 	private File jarFile;
 	private Set<String> updateSites;
 
+	private static final String LAUNCHER_PREFIX = "org.eclipse.equinox.launcher_";
+
 	public Eclipse(String eclipseHome) {
 		this(findLauncher(eclipseHome));
 	}
 
-	public Eclipse(File jarFile) {
-		this.jarFile = jarFile;
-		updateSites = new HashSet<String>();
+	public Eclipse(File file) {
+		if (file.isDirectory()) {
+
+		}
+		if (!isEclipseStructure(file)) {
+			throw new EclipseException("Cannot find any eclipse structure in '" + file.getAbsolutePath() + "'");
+		}
+		if (file.isFile() && isEclipseStructure(file)) {
+			this.jarFile = file;
+			this.updateSites = new HashSet<String>();
+		} else {
+
+		}
+	}
+
+	public File getLauncher() {
+		return jarFile;
+	}
+
+	private static boolean isEclipseStructure(File launcher) {
+		if (launcher.isDirectory() || !launcher.exists()) {
+			return false;
+		}
+		if (!launcher.getName().startsWith(LAUNCHER_PREFIX)) {
+			return false;
+		}
+		File pluginsFolder = launcher.getParentFile();
+		if (pluginsFolder == null || !pluginsFolder.getName().equals("plugins")) {
+			return false;
+		}
+		File featuresFolder = new File(pluginsFolder.getParentFile(), "features");
+		if (featuresFolder == null || !featuresFolder.exists()) {
+			return false;
+		}
+		return true;
 	}
 
 	public void addUpdateSite(String updateSite) {
@@ -94,7 +129,7 @@ public class Eclipse {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		List<String> command = new ArrayList<String>();
 		command.add("-application");
 		command.add("org.eclipse.swtbot.eclipse.junit.headless.swtbottestapplication");
@@ -108,21 +143,22 @@ public class Eclipse {
 		command.add(className);
 		command.add("-data");
 		command.add(target + "/workspace");
-		command.add("formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter," + target + "/" + className + ".xml");
+		command.add("formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter," + target + "/"
+				+ className + ".xml");
 		command.add("formatter=org.apache.tools.ant.taskdefs.optional.junit.PlainJUnitResultFormatter");
 		command.add("-consoleLog");
 		command.add("-nosplash");
 		command.add("-noExit");
-		if(securityFile.exists()) {
+		if (securityFile.exists()) {
 			command.add("-eclipse.password");
 			command.add(securityFile.getAbsolutePath());
 		}
 		command.add("-vmargs");
 		command.add("-Dusage_reporting_enabled=false");
-		
+
 		execute(command);
 	}
-	
+
 	public void execute(List<String> command) {
 		execute(command.toArray(new String[command.size()]));
 	}
@@ -193,7 +229,7 @@ public class Eclipse {
 		}
 		return sb.substring(1);
 	}
-	
+
 	public void addProgramArgument(String... args) {
 		File iniFile = getIniFile();
 		List<String> originalLines = null;
@@ -202,25 +238,25 @@ public class Eclipse {
 		} catch (IOException e) {
 			throw new RuntimeException("Cannot read from '" + iniFile.getAbsolutePath() + "'", e);
 		}
-		
+
 		List<String> revisedLines = new ArrayList<String>();
-		for (String line: originalLines) {
+		for (String line : originalLines) {
 			if (line.startsWith("-vmargs") || line.startsWith("--launcher.appendVmargs")) {
-				for (String arg: args) {
+				for (String arg : args) {
 					revisedLines.add(arg);
 				}
 				args = new String[] {};
 			}
 			revisedLines.add(line);
 		}
-		
+
 		try {
 			FileUtils.writeLines(iniFile, revisedLines);
 		} catch (IOException e) {
 			throw new RuntimeException("Cannot write to '" + iniFile.getAbsolutePath() + "'", e);
 		}
 	}
-	
+
 	public void addVMArgument(String... args) {
 		File iniFile = getIniFile();
 		List<String> originalLines = null;
@@ -229,29 +265,29 @@ public class Eclipse {
 		} catch (IOException e) {
 			throw new RuntimeException("Cannot read from '" + iniFile.getAbsolutePath() + "'", e);
 		}
-		
+
 		List<String> revisedLines = new ArrayList<String>(originalLines);
-		for (String arg: args) {
+		for (String arg : args) {
 			revisedLines.add(arg);
 		}
-		
+
 		try {
 			FileUtils.writeLines(iniFile, revisedLines);
 		} catch (IOException e) {
 			throw new RuntimeException("Cannot write to '" + iniFile.getAbsolutePath() + "'", e);
 		}
 	}
-	
+
 	public File getIniFile() {
 		File eclipseDir = jarFile.getParentFile().getParentFile();
-		for (File file: eclipseDir.listFiles()) {
+		for (File file : eclipseDir.listFiles()) {
 			if (file.getName().endsWith(".ini")) {
 				return file;
 			}
 		}
-		for (File dir: eclipseDir.listFiles()) {
+		for (File dir : eclipseDir.listFiles()) {
 			if (dir.getName().endsWith(".app") && dir.isDirectory()) {
-				for (File file: new File(dir, "Contents/MacOS").listFiles()) {
+				for (File file : new File(dir, "Contents/MacOS").listFiles()) {
 					if (file.getName().endsWith(".ini")) {
 						return file;
 					}
