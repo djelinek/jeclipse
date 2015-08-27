@@ -1,5 +1,6 @@
 package org.apodhrad.jeclipse.manager;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -66,5 +67,20 @@ public class EclipseIntegrationTest {
 	@Test(expected = EclipseException.class)
 	public void eclipseInstanceWithWrongDirTest() throws Exception {
 		new Eclipse(new File(targetPath, "classes"));
+	}
+
+	@Test
+	public void managingUpdateSitesTest() {
+		Eclipse eclipse = new Eclipse(eclipsePath);
+		eclipse.addUpdateSite("update-site-1");
+		eclipse.addUpdateSite("update-site-2");
+		assertEquals(2, eclipse.getUpdateSites().size());
+		assertTrue(eclipse.getUpdateSites().contains("update-site-1"));
+		assertTrue(eclipse.getUpdateSites().contains("update-site-2"));
+		try {
+			eclipse.getUpdateSites().add("update-site-3");
+		} catch (UnsupportedOperationException e) {
+			// ok
+		}
 	}
 }

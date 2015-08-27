@@ -8,6 +8,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -76,6 +77,10 @@ public class Eclipse {
 
 	public void addUpdateSite(String updateSite) {
 		updateSites.add(updateSite);
+	}
+
+	public Set<String> getUpdateSites() {
+		return Collections.unmodifiableSet(updateSites);
 	}
 
 	public void listFeatures() {
