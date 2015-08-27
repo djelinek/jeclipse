@@ -8,6 +8,11 @@ import java.io.File;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+/**
+ * 
+ * @author apodhrad
+ *
+ */
 public class EclipseIntegrationTest {
 
 	private static String targetPath;
@@ -56,5 +61,10 @@ public class EclipseIntegrationTest {
 		File launcher = eclipse.getLauncher();
 		assertTrue("'" + launcher.getAbsolutePath() + "' is not a launcher",
 				launcher.getName().startsWith("org.eclipse.equinox.launcher_"));
+	}
+
+	@Test(expected = EclipseException.class)
+	public void eclipseInstanceWithWrongDirTest() throws Exception {
+		new Eclipse(new File(targetPath, "classes"));
 	}
 }

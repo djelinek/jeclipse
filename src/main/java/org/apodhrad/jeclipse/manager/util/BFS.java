@@ -23,7 +23,7 @@ public abstract class BFS<T> {
 		// Depth first search
 		while (!queue.isEmpty()) {
 			// Pop figure
-			T child = queue.get(0);
+			T child = queue.remove(0);
 			// If null then continue
 			if (child == null) {
 				continue;

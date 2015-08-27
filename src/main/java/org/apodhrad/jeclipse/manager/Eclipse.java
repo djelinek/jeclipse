@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
+import org.apodhrad.jeclipse.manager.matcher.FileNameStartsWith;
+import org.apodhrad.jeclipse.manager.util.FileSearch;
 
 /**
  * This class represents an eclipse instance
@@ -27,23 +29,27 @@ public class Eclipse {
 
 	private static final String LAUNCHER_PREFIX = "org.eclipse.equinox.launcher_";
 
-	public Eclipse(String eclipseHome) {
-		this(findLauncher(eclipseHome));
+	public Eclipse(String path) {
+		this(new File(path));
 	}
 
 	public Eclipse(File file) {
+		List<File> launchers = null;
 		if (file.isDirectory()) {
-
+			launchers = new FileSearch().find(file, new FileNameStartsWith(LAUNCHER_PREFIX));
+			if (launchers.isEmpty()) {
+				throw new EclipseException("Cannot find any eclipse structure in '" + file.getAbsolutePath() + "'");
+			}
+			if (launchers.size() > 1) {
+				throw new EclipseException("There are more eclipse structures in '" + file.getAbsolutePath() + "'");
+			}
+			file = launchers.get(0);
 		}
 		if (!isEclipseStructure(file)) {
 			throw new EclipseException("Cannot find any eclipse structure in '" + file.getAbsolutePath() + "'");
 		}
-		if (file.isFile() && isEclipseStructure(file)) {
-			this.jarFile = file;
-			this.updateSites = new HashSet<String>();
-		} else {
-
-		}
+		this.jarFile = file;
+		this.updateSites = new HashSet<String>();
 	}
 
 	public File getLauncher() {
