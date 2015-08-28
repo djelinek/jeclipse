@@ -2,9 +2,6 @@ package org.apodhrad.jeclipse.manager;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -116,7 +113,6 @@ public class Eclipse {
 		command.add("-consoleLog");
 		command.add("-followReferences");
 		command.add("-nosplash");
-		command.add("-noExit");
 		command.add("-repository");
 		command.add(updateSite);
 		command.add("-list");
@@ -131,7 +127,6 @@ public class Eclipse {
 		command.add("-consoleLog");
 		command.add("-followReferences");
 		command.add("-nosplash");
-		command.add("-noExit");
 		command.add("-repository");
 		command.add(collectionToString(updateSites));
 		command.add("-installIUs");
@@ -153,20 +148,7 @@ public class Eclipse {
 	}
 
 	public void execute(String[] command) {
-		int result = 1;
-		try {
-			@SuppressWarnings("resource")
-			ClassLoader cl = new URLClassLoader(new URL[] { jarFile.toURI().toURL() }, null);
-			Class<?> clazz = cl.loadClass("org.eclipse.equinox.launcher.Main");
-			Method main = clazz.getMethod("run", String[].class);
-			Object obj = main.invoke(clazz.newInstance(), new Object[] { command });
-			result = (Integer) obj;
-		} catch (Exception e) {
-			throw new EclipseException("Exception occured during command execution", e);
-		}
-		if (result != 0) {
-			throw new EclipseException("Execution failed [result=" + result + "]");
-		}
+		new JarRunner(jarFile.getAbsolutePath(), command).run();
 	}
 
 	public static File findLauncher(String path) {
