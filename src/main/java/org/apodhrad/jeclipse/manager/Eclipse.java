@@ -1,7 +1,6 @@
 package org.apodhrad.jeclipse.manager;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -75,6 +74,26 @@ public class Eclipse {
 		return true;
 	}
 
+	public Bundle[] getFeatures() {
+		File featuresDir = new File(jarFile.getParentFile().getParentFile(), "features");
+		File[] featureFiles = featuresDir.listFiles();
+		Bundle[] featureBundles = new Bundle[featureFiles.length];
+		for (int i = 0; i < featureFiles.length; i++) {
+			featureBundles[i] = new Bundle(featureFiles[i]);
+		}
+		return featureBundles;
+	}
+
+	public Bundle[] getPlugins() {
+		File pluginsDir = new File(jarFile.getParentFile().getParentFile(), "plugins");
+		File[] pluginFiles = pluginsDir.listFiles();
+		Bundle[] pluginBundles = new Bundle[pluginFiles.length];
+		for (int i = 0; i < pluginFiles.length; i++) {
+			pluginBundles[i] = new Bundle(pluginFiles[i]);
+		}
+		return pluginBundles;
+	}
+
 	public void addUpdateSite(String updateSite) {
 		updateSites.add(updateSite);
 	}
@@ -129,47 +148,6 @@ public class Eclipse {
 		installFeature(collectionToString(features));
 	}
 
-	public void runBot(String product, String pluginName, String className, String target) {
-		File securityFile = new File(jarFile.getParentFile().getAbsolutePath() + "/password");
-		FileWriter out = null;
-		try {
-			out = new FileWriter(securityFile.getAbsoluteFile());
-			out.write("master");
-			out.flush();
-			out.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		List<String> command = new ArrayList<String>();
-		command.add("-application");
-		command.add("org.eclipse.swtbot.eclipse.junit.headless.swtbottestapplication");
-		command.add("-product");
-		command.add(product);
-		command.add("-testApplication");
-		command.add(pluginName);
-		command.add("-testPluginName");
-		command.add(pluginName);
-		command.add("-className");
-		command.add(className);
-		command.add("-data");
-		command.add(target + "/workspace");
-		command.add("formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter," + target + "/"
-				+ className + ".xml");
-		command.add("formatter=org.apache.tools.ant.taskdefs.optional.junit.PlainJUnitResultFormatter");
-		command.add("-consoleLog");
-		command.add("-nosplash");
-		command.add("-noExit");
-		if (securityFile.exists()) {
-			command.add("-eclipse.password");
-			command.add(securityFile.getAbsolutePath());
-		}
-		command.add("-vmargs");
-		command.add("-Dusage_reporting_enabled=false");
-
-		execute(command);
-	}
-
 	public void execute(List<String> command) {
 		execute(command.toArray(new String[command.size()]));
 	}
@@ -184,18 +162,17 @@ public class Eclipse {
 			Object obj = main.invoke(clazz.newInstance(), new Object[] { command });
 			result = (Integer) obj;
 		} catch (Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException("Exception occured during command execution");
+			throw new EclipseException("Exception occured during command execution", e);
 		}
 		if (result != 0) {
-			throw new RuntimeException("Execution failed [result=" + result + "]");
+			throw new EclipseException("Execution failed [result=" + result + "]");
 		}
 	}
 
 	public static File findLauncher(String path) {
 		File dir = new File(path);
 		if (!dir.exists()) {
-			throw new RuntimeException(path + " doesn't exist");
+			throw new EclipseException(path + " doesn't exist");
 		}
 		File pluginDir = null;
 		File[] homeDir = dir.listFiles();
@@ -206,7 +183,7 @@ public class Eclipse {
 			}
 		}
 		if (pluginDir == null) {
-			throw new RuntimeException("Plugins dir not found");
+			throw new EclipseException("Plugins dir not found");
 		}
 		File jarFile = null;
 		File[] pluginsDir = pluginDir.listFiles();

@@ -71,11 +71,12 @@
 	      <executions>
 		<execution>
 		  <id>get-eclipse</id>
-		  <phase>pre-integration-test</phase>
+		  <phase>generate-test-resources</phase>
 		  <goals>
 		    <goal>wget</goal>
 		  </goals>
 		  <configuration>
+		    <skipTests>${skipTests}</skipTests>
 		    <url>http://ftp-stud.fht-esslingen.de/pub/Mirrors/eclipse/technology/epp/downloads/release/luna/SR2/eclipse-jee-luna-SR2-linux-gtk-x86_64.tar.gz</url>
 		    <unpack>true</unpack>
 		    <outputDirectory>${project.build.directory}</outputDirectory>
@@ -88,30 +89,30 @@
               <artifactId>maven-surefire-plugin</artifactId>
               <version>2.18.1</version>
 	      <configuration>
-		<includes>
-		  <include>**/*JUnitTest.java</include>
-		</includes>
-	      </configuration>
-            </plugin>
-	    <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-failsafe-plugin</artifactId>
-              <version>2.18.1</version>
-	      <configuration>
-		<includes>
-		  <include>**/*IntegrationTest.java</include>
-		</includes>
 		<systemPropertyVariables>
 		  <project.build.directory>${project.build.directory}</project.build.directory>
 		</systemPropertyVariables>
 	      </configuration>
-              <executions>
+            </plugin>
+	    <plugin>
+	      <groupId>org.jacoco</groupId>
+	      <artifactId>jacoco-maven-plugin</artifactId>
+	      <version>0.7.6-SNAPSHOT</version>
+	      <executions>
 		<execution>
+		  <id>jacoco-initialize</id>
 		  <goals>
-		    <goal>integration-test</goal>
+		    <goal>prepare-agent</goal>
 		  </goals>
 		</execution>
-              </executions>
+		<execution>
+		  <id>jacoco-site</id>
+		  <phase>package</phase>
+		  <goals>
+		    <goal>report</goal>
+		  </goals>
+		</execution>
+	      </executions>
 	    </plugin>
 	  </plugins>
 	</build>
