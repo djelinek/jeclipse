@@ -11,10 +11,11 @@ public class FileSearch extends BFS<File> {
 
 	@Override
 	public File[] getChildren(File file) {
-		if (file.isFile()) {
-			return new File[] {};
+		File[] children = file.listFiles();
+		if (children == null) {
+			children = new File[] {};
 		}
-		return file.listFiles();
+		return children;
 	}
 
 }
