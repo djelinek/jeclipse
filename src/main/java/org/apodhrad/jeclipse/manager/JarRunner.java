@@ -86,6 +86,7 @@ public class JarRunner implements Runnable {
 				String line;
 				while ((line = br.readLine()) != null) {
 					log.info(line);
+					System.out.println(line);
 					if (line.contains("ERROR") && !line.contains("level=ERROR")) {
 						status = "Following line was found during auto.xml installation: " + line;
 						break;

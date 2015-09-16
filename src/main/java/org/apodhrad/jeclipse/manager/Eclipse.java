@@ -10,8 +10,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
+import org.apodhrad.jdownload.manager.JDownloadManager;
 import org.apodhrad.jeclipse.manager.matcher.FileNameStartsWith;
 import org.apodhrad.jeclipse.manager.util.FileSearch;
+import org.apodhrad.jeclipse.manager.util.OS;
 
 /**
  * This class represents an eclipse instance
@@ -20,6 +22,9 @@ import org.apodhrad.jeclipse.manager.util.FileSearch;
  * 
  */
 public class Eclipse {
+
+	public static final String ECLIPSE_DEFAULT_VERSION = "jee-luna-SR2";
+	public static final String ECLIPSE_DEFAULT_MIRROR = "http://www.eclipse.org/downloads/download.php?r=1&file=/technology/epp/downloads/release";
 
 	private File jarFile;
 	private Set<String> updateSites;
@@ -265,6 +270,54 @@ public class Eclipse {
 			}
 		}
 		throw new RuntimeException("Cannot find .ini file at '" + eclipseDir.getAbsolutePath() + "'");
+	}
+
+	public static Eclipse installEclipse(File target) throws IOException {
+		return installEclipse(target, ECLIPSE_DEFAULT_VERSION);
+	}
+
+	public static Eclipse installEclipse(File target, String eclipseVersion) throws IOException {
+		return installEclipse(target, eclipseVersion, null);
+	}
+
+	public static Eclipse installEclipse(File target, String eclipseVersion, String md5) throws IOException {
+		JDownloadManager manager = new JDownloadManager();
+		manager.download(getEclipseUrl(eclipseVersion), target, getEclipseInstaller(eclipseVersion), true, md5);
+		return null;
+	}
+
+	private static String getEclipseUrl(String eclipseVersion) {
+		String[] version = eclipseVersion.split("-");
+		return ECLIPSE_DEFAULT_MIRROR + "/" + version[1] + "/" + version[2] + "/" + getEclipseInstaller(eclipseVersion);
+	}
+
+	private static String getEclipseInstaller(String eclipseVersion) {
+		String os_property = OS.getName();
+		String arch_property = OS.getArch();
+
+		String platform = null;
+		String archive = "zip";
+
+		if (os_property.contains("linux")) {
+			platform = "linux-gtk";
+			archive = "tar.gz";
+		} else if (os_property.contains("win")) {
+			platform = "win32";
+			archive = "zip";
+		} else if (os_property.contains("mac")) {
+			platform = "macosx-cocoa";
+			archive = "tar.gz";
+		}
+
+		if (platform == null) {
+			throw new RuntimeException("Unknown platform '" + os_property + "'");
+		}
+
+		if (arch_property.contains("64")) {
+			platform += "-x86_64";
+		}
+
+		return "eclipse-" + eclipseVersion + "-" + platform + "." + archive;
 	}
 
 }

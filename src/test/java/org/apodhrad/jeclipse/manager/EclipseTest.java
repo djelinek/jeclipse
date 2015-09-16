@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -15,7 +16,7 @@ import org.junit.Test;
  * @author apodhrad
  *
  */
-public class EclipseIntegrationTest {
+public class EclipseTest {
 
 	private static String targetPath;
 	private static File targetFile;
@@ -23,11 +24,14 @@ public class EclipseIntegrationTest {
 	private static File eclipseFile;
 
 	@BeforeClass
-	public static void beforeClass() {
+	public static void beforeClass() throws IOException {
 		targetPath = System.getProperty("project.build.directory");
 		assertNotNull("Set system property project.build.directory", targetPath);
 		targetFile = new File(targetPath);
 		assertTrue("'" + targetFile.getAbsolutePath() + "' must exists", targetFile.exists());
+
+		Eclipse.installEclipse(targetFile, "jee-luna-SR2", "be9391112776755e898801d3f3f51b74");
+
 		eclipseFile = new File(targetFile, "eclipse");
 		assertTrue("'" + targetFile.getAbsolutePath() + "' must exists", eclipseFile.exists());
 		eclipsePath = eclipseFile.getAbsolutePath();

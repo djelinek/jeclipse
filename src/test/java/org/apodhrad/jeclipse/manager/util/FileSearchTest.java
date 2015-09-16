@@ -5,7 +5,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-public class FileSearchJUnitTest {
+public class FileSearchTest {
 
 	@Rule
 	public TemporaryFolder folder = new TemporaryFolder();
