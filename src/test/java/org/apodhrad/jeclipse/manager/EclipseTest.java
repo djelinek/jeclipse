@@ -6,7 +6,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -134,5 +136,63 @@ public class EclipseTest {
 		if (!found) {
 			Assert.fail("Cannot find 'org.jboss.reddeer.swt_0.7.0'");
 		}
+	}
+
+	@Test
+	public void eclipseAddProgramArgumentsTest() throws Exception {
+		Eclipse eclipse = new Eclipse(eclipsePath);
+		eclipse.addProgramArgument("-data", "tmp");
+		File iniFile = eclipse.getIniFile();
+		List<String> lines = FileUtils.readLines(iniFile);
+		boolean isVMArgs = false;
+		boolean foundData = false;
+		int i = 0;
+		for (String line : lines) {
+			i++;
+			if (line.equals("-vmargs")) {
+				isVMArgs = true;
+			}
+			if (line.equals("-data")) {
+				if (!isVMArgs) {
+					foundData = true;
+				} else {
+					Assert.fail("-data must be before -vmargs!");
+				}
+				break;
+			}
+		}
+		assertTrue("Cannot find -data", foundData);
+		assertEquals("-data must be be followed by 'tmp'!", "tmp", lines.get(i));
+	}
+
+	@Test
+	public void eclipseAddVMArgumentsTest() throws Exception {
+		Eclipse eclipse = new Eclipse(eclipsePath);
+		eclipse.addVMArgument("-Dfoo1=foo1", "-Dfoo2=foo2");
+		File iniFile = eclipse.getIniFile();
+		List<String> lines = FileUtils.readLines(iniFile);
+		boolean isVMArgs = false;
+		boolean foundFoo1 = false;
+		boolean foundFoo2 = false;
+		for (String line : lines) {
+			if (line.equals("-vmargs")) {
+				isVMArgs = true;
+			}
+			if (line.equals("-Dfoo1=foo1")) {
+				if (isVMArgs) {
+					foundFoo1 = true;
+				} else {
+					Assert.fail("-Dfoo1=foo1 must be after -vmargs!");
+				}
+			}
+			if (line.equals("-Dfoo2=foo2")) {
+				if (isVMArgs) {
+					foundFoo2 = true;
+				} else {
+					Assert.fail("-Dfoo2=foo2 must be after -vmargs!");
+				}
+			}
+		}
+		assertTrue("Not all VM arguments were added!", foundFoo1 && foundFoo2);
 	}
 }
