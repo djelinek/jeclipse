@@ -21,7 +21,7 @@ public class JarRunner implements Runnable {
 
 	public static final int RUNNER_TIMEOUT = 10 * 60;
 
-	protected Logger log = LoggerFactory.getLogger(getClass());
+	private Logger log = LoggerFactory.getLogger(getClass());
 
 	private String jarFile;
 	private String[] args;
@@ -86,7 +86,6 @@ public class JarRunner implements Runnable {
 				String line;
 				while ((line = br.readLine()) != null) {
 					log.info(line);
-					System.out.println(line);
 					if (line.contains("ERROR") && !line.contains("level=ERROR")) {
 						status = "Following line was found during auto.xml installation: " + line;
 						break;

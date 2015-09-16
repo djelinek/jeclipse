@@ -14,6 +14,8 @@ import org.apodhrad.jdownload.manager.JDownloadManager;
 import org.apodhrad.jeclipse.manager.matcher.FileNameStartsWith;
 import org.apodhrad.jeclipse.manager.util.FileSearch;
 import org.apodhrad.jeclipse.manager.util.OS;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents an eclipse instance
@@ -26,11 +28,13 @@ public class Eclipse {
 	public static final String ECLIPSE_DEFAULT_VERSION = "jee-luna-SR2";
 	public static final String ECLIPSE_DEFAULT_MIRROR = "http://www.eclipse.org/downloads/download.php?r=1&file=/technology/epp/downloads/release";
 
+	private static final String LAUNCHER_PREFIX = "org.eclipse.equinox.launcher_";
+
+	private Logger log = LoggerFactory.getLogger(getClass());
 	private File jarFile;
 	private Set<String> updateSites;
 
-	private static final String LAUNCHER_PREFIX = "org.eclipse.equinox.launcher_";
-
+	
 	public Eclipse(String path) {
 		this(new File(path));
 	}
@@ -106,7 +110,7 @@ public class Eclipse {
 
 	public void listFeatures() {
 		for (String updateSite : updateSites) {
-			System.out.println("Update Site: " + updateSite);
+			log.info("Update Site: " + updateSite);
 			listFeatures(updateSite);
 		}
 	}
