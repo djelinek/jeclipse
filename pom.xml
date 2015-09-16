@@ -8,6 +8,10 @@
 	<name>.: JEclipse Manager :.</name>
 	<url>https://github.com/apodhrad/jeclipse-manager</url>
 
+	<properties>
+	  <jbds.url></jbds.url>
+	</properties>
+	
 	<distributionManagement>
 		<repository>
 			<id>bintray-apodhrad</id>
@@ -71,6 +75,7 @@
 	      <configuration>
 		<systemPropertyVariables>
 		  <project.build.directory>${project.build.directory}</project.build.directory>
+		  <jbds.url>${jbds.url}</jbds.url>
 		</systemPropertyVariables>
 	      </configuration>
             </plugin>

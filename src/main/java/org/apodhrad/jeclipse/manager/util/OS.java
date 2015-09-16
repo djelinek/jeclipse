@@ -1,5 +1,10 @@
 package org.apodhrad.jeclipse.manager.util;
 
+/**
+ * 
+ * @author apodhrad
+ *
+ */
 public class OS {
 
 	public static String getName() {
@@ -10,7 +15,7 @@ public class OS {
 		return System.getProperty("os.arch").toLowerCase();
 	}
 
-	public static boolean isWindowsPlatform() {
+	public static boolean isWindows() {
 		return getName().contains("win");
 	}
 }

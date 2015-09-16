@@ -34,7 +34,6 @@ public class Eclipse {
 	private File jarFile;
 	private Set<String> updateSites;
 
-	
 	public Eclipse(String path) {
 		this(new File(path));
 	}
@@ -45,9 +44,6 @@ public class Eclipse {
 			launchers = new FileSearch().find(file, new FileNameStartsWith(LAUNCHER_PREFIX));
 			if (launchers.isEmpty()) {
 				throw new EclipseException("Cannot find any eclipse structure in '" + file.getAbsolutePath() + "'");
-			}
-			if (launchers.size() > 1) {
-				throw new EclipseException("There are more eclipse structures in '" + file.getAbsolutePath() + "'");
 			}
 			file = launchers.get(0);
 		}
