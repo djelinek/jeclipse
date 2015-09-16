@@ -283,7 +283,7 @@ public class Eclipse {
 	public static Eclipse installEclipse(File target, String eclipseVersion, String md5) throws IOException {
 		JDownloadManager manager = new JDownloadManager();
 		manager.download(getEclipseUrl(eclipseVersion), target, getEclipseInstaller(eclipseVersion), true, md5);
-		return null;
+		return new Eclipse(new File(target, "eclipse"));
 	}
 
 	private static String getEclipseUrl(String eclipseVersion) {

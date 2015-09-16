@@ -18,6 +18,10 @@ import org.junit.Test;
  */
 public class EclipseTest {
 
+	public static final String ECLIPSE_VERSION = "jee-luna-SR2";
+	public static final String ECLIPSE_MD5 = "be9391112776755e898801d3f3f51b74";
+	public static final String ECLIPSE_LAUNCHER = "org.eclipse.equinox.launcher_1.3.0.v20140415-2008.jar";
+
 	private static String targetPath;
 	private static File targetFile;
 	private static String eclipsePath;
@@ -30,7 +34,9 @@ public class EclipseTest {
 		targetFile = new File(targetPath);
 		assertTrue("'" + targetFile.getAbsolutePath() + "' must exists", targetFile.exists());
 
-		Eclipse.installEclipse(targetFile, "jee-luna-SR2", "be9391112776755e898801d3f3f51b74");
+		Eclipse eclipse = Eclipse.installEclipse(targetFile, ECLIPSE_VERSION, ECLIPSE_MD5);
+		assertNotNull(eclipse);
+		assertEquals(ECLIPSE_LAUNCHER, eclipse.getLauncher().getName());
 
 		eclipseFile = new File(targetFile, "eclipse");
 		assertTrue("'" + targetFile.getAbsolutePath() + "' must exists", eclipseFile.exists());
@@ -71,7 +77,7 @@ public class EclipseTest {
 
 	@Test
 	public void eclipseInstanceWithLauncherFileTest() throws Exception {
-		File launcherFile = new File(eclipseFile, "plugins/org.eclipse.equinox.launcher_1.3.0.v20140415-2008.jar");
+		File launcherFile = new File(eclipseFile, "plugins/" + ECLIPSE_LAUNCHER);
 		Eclipse eclipse = new Eclipse(launcherFile);
 		File launcher = eclipse.getLauncher();
 		assertTrue("'" + launcher.getAbsolutePath() + "' is not a launcher",
