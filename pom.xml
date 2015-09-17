@@ -20,8 +20,8 @@
 		</repository>
 	</distributionManagement>
 
-	<pluginRepositories>
-		<pluginRepository>
+	<repositories>
+		<repository>
 			<id>bintray-apodhrad</id>
 			<url>https://dl.bintray.com/apodhrad/maven/</url>
 			<snapshots>
@@ -30,8 +30,8 @@
 			<releases>
 				<enabled>true</enabled>
 			</releases>
-		</pluginRepository>
-	</pluginRepositories>
+		</repository>
+	</repositories>
 
 	<dependencies>
 		<dependency>
@@ -62,7 +62,7 @@
 		<dependency>
 			<groupId>org.apodhrad</groupId>
 			<artifactId>jdownload-manager</artifactId>
-			<version>0.0.1-gama</version>
+			<version>0.1.0</version>
 		</dependency>
 	</dependencies>
 

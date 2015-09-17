@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apodhrad.jdownload.manager.JDownloadManager;
+import org.apodhrad.jdownload.manager.hash.Hash;
 import org.apodhrad.jeclipse.manager.matcher.FileNameStartsWith;
 import org.apodhrad.jeclipse.manager.util.FileSearch;
 import org.apodhrad.jeclipse.manager.util.OS;
@@ -280,9 +281,9 @@ public class Eclipse {
 		return installEclipse(target, eclipseVersion, null);
 	}
 
-	public static Eclipse installEclipse(File target, String eclipseVersion, String md5) throws IOException {
+	public static Eclipse installEclipse(File target, String eclipseVersion, Hash hash) throws IOException {
 		JDownloadManager manager = new JDownloadManager();
-		manager.download(getEclipseUrl(eclipseVersion), target, getEclipseInstaller(eclipseVersion), true, md5);
+		manager.download(getEclipseUrl(eclipseVersion), target, true, hash);
 		return new Eclipse(new File(target, "eclipse"));
 	}
 

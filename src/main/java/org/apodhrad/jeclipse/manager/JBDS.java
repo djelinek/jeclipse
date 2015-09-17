@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apodhrad.jdownload.manager.JDownloadManager;
+import org.apodhrad.jdownload.manager.hash.Hash;
 import org.apodhrad.jeclipse.manager.matcher.IsJavaExecutable;
 import org.apodhrad.jeclipse.manager.util.FileSearch;
 import org.apodhrad.jeclipse.manager.util.OS;
@@ -36,10 +37,10 @@ public class JBDS extends Eclipse {
 		super(file);
 	}
 
-	public static JBDS installJBDS(File target, String url, String md5) throws IOException {
+	public static JBDS installJBDS(File target, String url, Hash hash) throws IOException {
 		String installer = getName(url);
 		JDownloadManager manager = new JDownloadManager();
-		manager.download(url, target, installer, false, md5);
+		manager.download(url, target, installer, false, hash);
 
 		// Install JBDS
 		File jarFile = new File(target, installer);

@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apodhrad.jdownload.manager.hash.Hash;
+import org.apodhrad.jdownload.manager.hash.MD5Hash;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -21,7 +23,7 @@ import org.junit.Test;
 public class EclipseTest {
 
 	public static final String ECLIPSE_VERSION = "jee-luna-SR2";
-	public static final String ECLIPSE_MD5 = "be9391112776755e898801d3f3f51b74";
+	public static final Hash ECLIPSE_MD5 = new MD5Hash("be9391112776755e898801d3f3f51b74");
 	public static final String ECLIPSE_LAUNCHER = "org.eclipse.equinox.launcher_1.3.0.v20140415-2008.jar";
 
 	private static String targetPath;

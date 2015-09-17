@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 
+import org.apodhrad.jdownload.manager.hash.NullHash;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -20,8 +21,8 @@ public class JBDSTest {
 	}
 
 	@Test
-	public void jbdsInstalltest() throws IOException {
-		JBDS.installJBDS(new File(TARGET), JBDS_URL, null);
+	public void jbdsInstallTest() throws IOException {
+		JBDS.installJBDS(new File(TARGET), JBDS_URL, new NullHash());
 	}
 
 	static public String systemProperty(String key) {
