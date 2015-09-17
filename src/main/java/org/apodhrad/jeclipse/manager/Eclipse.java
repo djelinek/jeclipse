@@ -296,23 +296,32 @@ public class Eclipse {
 	}
 
 	public static Eclipse installEclipse(File target, String eclipseVersion) throws IOException {
-		return installEclipse(target, eclipseVersion, null);
+		return installEclipse(target, eclipseVersion, ECLIPSE_DEFAULT_MIRROR);
+	}
+
+	public static Eclipse installEclipse(File target, String eclipseVersion, String eclipseMirror) throws IOException {
+		return installEclipse(target, eclipseVersion, eclipseMirror, null);
 	}
 
 	public static Eclipse installEclipse(File target, String eclipseVersion, Hash hash) throws IOException {
+		return installEclipse(target, eclipseVersion, ECLIPSE_DEFAULT_MIRROR, hash);
+	}
+
+	public static Eclipse installEclipse(File target, String eclipseVersion, String eclipseMirror, Hash hash)
+			throws IOException {
 		if (hash == null) {
 			String md5sum = ECLIPSE_MD5.get(getEclipseInstaller(eclipseVersion));
 			hash = md5sum == null ? new NullHash() : new MD5Hash(md5sum);
 		}
 
 		JDownloadManager manager = new JDownloadManager();
-		manager.download(getEclipseUrl(eclipseVersion), target, true, hash);
+		manager.download(getEclipseUrl(eclipseVersion, eclipseMirror), target, true, hash);
 		return new Eclipse(new File(target, "eclipse"));
 	}
 
-	private static String getEclipseUrl(String eclipseVersion) {
+	private static String getEclipseUrl(String eclipseVersion, String eclipseMirror) {
 		String[] version = eclipseVersion.split("-");
-		return ECLIPSE_DEFAULT_MIRROR + "/" + version[1] + "/" + version[2] + "/" + getEclipseInstaller(eclipseVersion);
+		return eclipseMirror + "/" + version[1] + "/" + version[2] + "/" + getEclipseInstaller(eclipseVersion);
 	}
 
 	private static String getEclipseInstaller(String eclipseVersion) {

@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.apodhrad.jdownload.manager.hash.Hash;
-import org.apodhrad.jdownload.manager.hash.MD5Hash;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
