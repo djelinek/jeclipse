@@ -23,7 +23,6 @@ import org.junit.Test;
 public class EclipseTest {
 
 	public static final String ECLIPSE_VERSION = "jee-luna-SR2";
-	public static final Hash ECLIPSE_MD5 = new MD5Hash("be9391112776755e898801d3f3f51b74");
 	public static final String ECLIPSE_LAUNCHER = "org.eclipse.equinox.launcher_1.3.0.v20140415-2008.jar";
 
 	private static String targetPath;
@@ -38,7 +37,7 @@ public class EclipseTest {
 		targetFile = new File(targetPath);
 		assertTrue("'" + targetFile.getAbsolutePath() + "' must exists", targetFile.exists());
 
-		Eclipse eclipse = Eclipse.installEclipse(targetFile, ECLIPSE_VERSION, ECLIPSE_MD5);
+		Eclipse eclipse = Eclipse.installEclipse(targetFile, ECLIPSE_VERSION);
 		assertNotNull(eclipse);
 		assertEquals(ECLIPSE_LAUNCHER, eclipse.getLauncher().getName());
 

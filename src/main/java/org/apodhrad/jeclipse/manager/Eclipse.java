@@ -5,13 +5,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apodhrad.jdownload.manager.JDownloadManager;
 import org.apodhrad.jdownload.manager.hash.Hash;
+import org.apodhrad.jdownload.manager.hash.MD5Hash;
+import org.apodhrad.jdownload.manager.hash.NullHash;
 import org.apodhrad.jeclipse.manager.matcher.FileNameStartsWith;
 import org.apodhrad.jeclipse.manager.util.FileSearch;
 import org.apodhrad.jeclipse.manager.util.OS;
@@ -26,7 +30,21 @@ import org.slf4j.LoggerFactory;
  */
 public class Eclipse {
 
-	public static final String ECLIPSE_DEFAULT_VERSION = "jee-luna-SR2";
+	public static final String ECLIPSE_MARS_JEE_VERSION = "jee-mars-R";
+	public static final String ECLIPSE_LUNA_JEE_VERSION = "jee-luna-SR2";
+	@SuppressWarnings("serial")
+	public static final Map<String, String> ECLIPSE_MD5 = new HashMap<String, String>() {
+		{
+			put("eclipse-jee-luna-SR2-linux-gtk.tar.gz", "d8e1b995e95dbec95d69d62ddf6f94f6");
+			put("eclipse-jee-luna-SR2-linux-gtk-x86_64.tar.gz", "be9391112776755e898801d3f3f51b74");
+			put("eclipse-jee-luna-SR2-macosx-cocoa.tar.gz", "46f741dab6e94f5509dd2ecfe0e1d295");
+			put("eclipse-jee-luna-SR2-macosx-cocoa-x86_64.tar.gz", "8e8b8ae2c66838d0cc3bf0b316576212");
+			put("eclipse-jee-luna-SR2-win32.zip", "3e36cea1287c8e4b602eb0510c8a1dc1");
+			put("eclipse-jee-luna-SR2-win32-x86_64.zip", "f3820cea9fae6a37275999e6a01ddc01");
+		}
+	};
+
+	public static final String ECLIPSE_DEFAULT_VERSION = ECLIPSE_LUNA_JEE_VERSION;
 	public static final String ECLIPSE_DEFAULT_MIRROR = "http://www.eclipse.org/downloads/download.php?r=1&file=/technology/epp/downloads/release";
 
 	private static final String LAUNCHER_PREFIX = "org.eclipse.equinox.launcher_";
@@ -282,6 +300,11 @@ public class Eclipse {
 	}
 
 	public static Eclipse installEclipse(File target, String eclipseVersion, Hash hash) throws IOException {
+		if (hash == null) {
+			String md5sum = ECLIPSE_MD5.get(getEclipseInstaller(eclipseVersion));
+			hash = md5sum == null ? new NullHash() : new MD5Hash(md5sum);
+		}
+
 		JDownloadManager manager = new JDownloadManager();
 		manager.download(getEclipseUrl(eclipseVersion), target, true, hash);
 		return new Eclipse(new File(target, "eclipse"));
