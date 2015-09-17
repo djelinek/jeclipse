@@ -175,33 +175,6 @@ public class Eclipse {
 		new JarRunner(jarFile.getAbsolutePath(), command).run();
 	}
 
-	public static File findLauncher(String path) {
-		File dir = new File(path);
-		if (!dir.exists()) {
-			throw new EclipseException(path + " doesn't exist");
-		}
-		File pluginDir = null;
-		File[] homeDir = dir.listFiles();
-		for (int i = 0; i < homeDir.length; i++) {
-			if (homeDir[i].getName().equals("plugins") && homeDir[i].isDirectory()) {
-				pluginDir = homeDir[i];
-				break;
-			}
-		}
-		if (pluginDir == null) {
-			throw new EclipseException("Plugins dir not found");
-		}
-		File jarFile = null;
-		File[] pluginsDir = pluginDir.listFiles();
-		for (int i = 0; i < pluginsDir.length; i++) {
-			if (pluginsDir[i].getName().startsWith("org.eclipse.equinox.launcher_")) {
-				jarFile = pluginsDir[i];
-				break;
-			}
-		}
-		return jarFile;
-	}
-
 	private static String collectionToString(Collection<String> collection) {
 		if (collection.size() == 0) {
 			return "";
