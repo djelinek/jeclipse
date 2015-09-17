@@ -1,7 +1,5 @@
 package org.apodhrad.jeclipse.manager;
 
-import static org.apodhrad.jdownload.manager.JDownloadManager.getName;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -38,15 +36,13 @@ public class JBDS extends Eclipse {
 	}
 
 	public static JBDS installJBDS(File target, String url, Hash hash) throws IOException {
-		String installer = getName(url);
 		JDownloadManager manager = new JDownloadManager();
-		manager.download(url, target, installer, false, hash);
+		File installerJarFile = manager.download(url, target, hash);
 
 		// Install JBDS
-		File jarFile = new File(target, installer);
 		String installationFile = null;
 		try {
-			installationFile = createInstallationFile(target, getJBDSVersion(installer));
+			installationFile = createInstallationFile(target, getJBDSVersion(installerJarFile));
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
 			throw new RuntimeException("Exception occured during creating installation file");
@@ -57,7 +53,7 @@ public class JBDS extends Eclipse {
 			System.setProperty("izpack.mode", "privileged");
 		}
 
-		new JarRunner(jarFile.getAbsolutePath(), installationFile).run();
+		new JarRunner(installerJarFile.getAbsolutePath(), installationFile).run();
 
 		return new JBDS(new File(target, "jbdevstudio"));
 	}
@@ -111,6 +107,10 @@ public class JBDS extends Eclipse {
 		}
 
 		return jreLoc;
+	}
+
+	public static String getJBDSVersion(File installer) {
+		return getJBDSVersion(installer.getName());
 	}
 
 	public static String getJBDSVersion(String installer) {
