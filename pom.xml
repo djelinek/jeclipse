@@ -4,7 +4,7 @@
 	<groupId>org.apodhrad</groupId>
 	<artifactId>jeclipse-manager</artifactId>
 	<packaging>jar</packaging>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>.: JEclipse Manager :.</name>
 	<url>https://github.com/apodhrad/jeclipse-manager</url>
 
