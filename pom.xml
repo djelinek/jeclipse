@@ -1,94 +1,41 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.apodhrad.jeclipse</groupId>
-	<artifactId>jeclipse-parent</artifactId>
-	<packaging>pom</packaging>
-	<version>0.2.0-SNAPSHOT</version>
-	<name>.: JEclipse Parent :.</name>
-	<url>https://github.com/apodhrad/jeclipse</url>
-
-	<repositories>
-	  <repository>
-	    <id>bintray-apodhrad</id>
-	    <url>https://dl.bintray.com/apodhrad/maven/</url>
-	    <snapshots>
-	      <enabled>true</enabled>
-	    </snapshots>
-	    <releases>
-	      <enabled>true</enabled>
-	    </releases>
-	  </repository>
-	</repositories>
-
-	<modules>
-	  <module>jeclipse-manager</module>
-	</modules>
-	
-	<build>
-	  <plugins>
-	    <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-compiler-plugin</artifactId>
-              <configuration>
-		<source>1.7</source>
-		<target>1.7</target>
-              </configuration>
-	    </plugin>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-surefire-plugin</artifactId>
-              <version>2.18.1</version>
-	      <configuration>
-		<systemPropertyVariables>
-		  <project.build.directory>${project.build.directory}</project.build.directory>
-		  <jbds.url>${jbds.url}</jbds.url>
-		</systemPropertyVariables>
-	      </configuration>
-            </plugin>
-	    <plugin>
-	      <groupId>org.jacoco</groupId>
-	      <artifactId>jacoco-maven-plugin</artifactId>
-	      <version>0.7.5.201505241946</version>
-	      <executions>
-		<execution>
-		  <id>jacoco-initialize</id>
-		  <goals>
-		    <goal>prepare-agent</goal>
-		  </goals>
-		</execution>
-		<execution>
-		  <id>jacoco-site</id>
-		  <phase>package</phase>
-		  <goals>
-		    <goal>report</goal>
-		  </goals>
-		</execution>
-	      </executions>
-	    </plugin>
-            <plugin>
-              <artifactId>maven-source-plugin</artifactId>
-              <executions>
-		<execution>
-		  <id>attach-sources</id>
-		  <goals>
-                    <goal>jar</goal>
-		  </goals>
-		</execution>
-              </executions>
-            </plugin>
-            <plugin>
-              <artifactId>maven-javadoc-plugin</artifactId>
-              <executions>
-		<execution>
-		  <id>attach-javadocs</id>
-		  <goals>
-                    <goal>jar</goal>
-		  </goals>
-		</execution>
-              </executions>
-            </plugin>
-	  </plugins>
-	</build>
-
+	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.apodhrad.jeclipse</groupId>
+  <artifactId>jeclipse-parent</artifactId>
+  <packaging>pom</packaging>
+  <version>0.2.0-SNAPSHOT</version>
+  <name>.: JEclipse Parent :.</name>
+  <url>https://github.com/apodhrad/jeclipse</url>
+  
+  <repositories>
+    <repository>
+      <id>bintray-apodhrad</id>
+      <url>https://dl.bintray.com/apodhrad/maven/</url>
+      <snapshots>
+	<enabled>true</enabled>
+      </snapshots>
+      <releases>
+	<enabled>true</enabled>
+      </releases>
+    </repository>
+  </repositories>
+  
+  <modules>
+    <module>jeclipse-manager</module>
+    <module>jeclipse-maven-plugin</module>
+  </modules>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+	  <source>1.7</source>
+	  <target>1.7</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  
 </project>
