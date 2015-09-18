@@ -18,4 +18,8 @@ public class OS {
 	public static boolean isWindows() {
 		return getName().contains("win");
 	}
+	
+	public static boolean isMac() {
+		return getName().contains("mac");
+	}
 }

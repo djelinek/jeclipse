@@ -289,7 +289,11 @@ public class Eclipse {
 
 		JDownloadManager manager = new JDownloadManager();
 		manager.download(getEclipseUrl(eclipseVersion, eclipseMirror), target, true, hash);
-		return new Eclipse(new File(target, "eclipse"));
+		String eclipseFolder = "eclipse";
+		if (OS.isMac() && new File(target, "Eclipse.app").exists()) {
+			eclipseFolder = "Eclipse.app";
+		}
+		return new Eclipse(new File(target, eclipseFolder));
 	}
 
 	private static String getEclipseUrl(String eclipseVersion, String eclipseMirror) {
