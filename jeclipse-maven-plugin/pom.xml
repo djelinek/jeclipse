@@ -4,19 +4,11 @@
   <parent>
     <groupId>org.apodhrad.jeclipse</groupId>
     <artifactId>jeclipse-parent</artifactId>
-    <version>${build.version}</version>
+    <version>0.2.1</version>
   </parent>
   <artifactId>jeclipse-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>.: JEclipse Maven Plugin :.</name>
-  
-  <distributionManagement>
-    <repository>
-      <id>bintray-apodhrad</id>
-      <name>jeclipse-manager</name>
-      <url>https://api.bintray.com/maven/apodhrad/maven/jeclipse-maven-plugin</url>
-    </repository>
-  </distributionManagement>
   
   <dependencies>
     <dependency>
@@ -45,8 +37,7 @@
       <version>${project.version}</version>
     </dependency>
   </dependencies>
-  
-  
+    
   <build>
     <plugins>
       <plugin>

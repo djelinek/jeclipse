@@ -4,14 +4,10 @@
   <groupId>org.apodhrad.jeclipse</groupId>
   <artifactId>jeclipse-parent</artifactId>
   <packaging>pom</packaging>
-  <version>${build.version}</version>
+  <version>0.2.1</version>
   <name>.: JEclipse Parent :.</name>
   <url>https://github.com/apodhrad/jeclipse</url>
 
-  <properties>
-    <build.version>0.2.0</build.version>
-  </properties>
-  
   <repositories>
     <repository>
       <id>bintray-apodhrad</id>
@@ -24,6 +20,14 @@
       </releases>
     </repository>
   </repositories>
+  
+  <distributionManagement>
+    <repository>
+      <id>bintray-apodhrad</id>
+      <name>jeclipse-manager</name>
+      <url>https://api.bintray.com/maven/apodhrad/maven/jeclipse</url>
+    </repository>
+  </distributionManagement>
   
   <modules>
     <module>jeclipse-manager</module>
