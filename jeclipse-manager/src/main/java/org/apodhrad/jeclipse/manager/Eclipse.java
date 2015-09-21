@@ -77,6 +77,10 @@ public class Eclipse {
 		return jarFile;
 	}
 
+	public File getHomeDirectory() {
+		return getLauncher().getParentFile().getParentFile();
+	}
+
 	private static boolean isEclipseStructure(File launcher) {
 		if (launcher.isDirectory() || !launcher.exists()) {
 			return false;
