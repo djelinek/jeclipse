@@ -375,4 +375,31 @@ public class Eclipse {
 		return "eclipse-" + eclipseVersion + "-" + platform + "." + archive;
 	}
 
+	public void mirrorRepository(String source, File destination) throws IOException {
+		if (destination.exists()) {
+			FileUtils.forceDelete(destination);
+		}
+		destination.mkdirs();
+
+		List<String> commandMetadata = new ArrayList<String>();
+		commandMetadata.add("-application");
+		commandMetadata.add("org.eclipse.equinox.p2.metadata.repository.mirrorApplication");
+		commandMetadata.add("-source");
+		commandMetadata.add(source);
+		commandMetadata.add("-destination");
+		commandMetadata.add(destination.getAbsolutePath());
+		commandMetadata.add("-nosplash");
+		execute(commandMetadata);
+
+		List<String> commandArtifact = new ArrayList<String>();
+		commandArtifact.add("-application");
+		commandArtifact.add("org.eclipse.equinox.p2.artifact.repository.mirrorApplication");
+		commandArtifact.add("-source");
+		commandArtifact.add(source);
+		commandArtifact.add("-destination");
+		commandArtifact.add(destination.getAbsolutePath());
+		commandArtifact.add("-nosplash");
+		execute(commandArtifact);
+	}
+
 }

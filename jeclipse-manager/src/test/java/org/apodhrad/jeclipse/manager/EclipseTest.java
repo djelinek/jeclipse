@@ -164,6 +164,20 @@ public class EclipseTest {
 	}
 
 	@Test
+	public void mirrorRepositoryTest() throws Exception {
+		File mirror = new File(targetFile, "reddeer-070-mirror");
+
+		Eclipse eclipse = new Eclipse(eclipsePath);
+		eclipse.mirrorRepository(REDDEER_070, mirror);
+
+		assertTrue(new File(mirror, "artifacts.jar").exists());
+		assertTrue(new File(mirror, "content.jar").exists());
+		assertTrue(new File(mirror, "plugins").exists());
+		assertTrue(new File(mirror, "features").exists());
+		assertTrue(new File(new File(mirror, "features"), "org.jboss.reddeer.rcp.feature_0.7.0.jar").exists());
+	}
+
+	@Test
 	public void eclipseAddProgramArgumentsTest() throws Exception {
 		Eclipse eclipse = new Eclipse(eclipsePath);
 		eclipse.addProgramArgument("-data", "tmp");
