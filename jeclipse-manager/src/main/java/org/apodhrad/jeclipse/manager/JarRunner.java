@@ -26,10 +26,19 @@ public class JarRunner implements Runnable {
 	private String jarFile;
 	private String[] args;
 	private StreamGobbler input;
+	private Appendable output;
 
 	public JarRunner(String installer, String... args) {
 		this.jarFile = installer;
 		this.args = args;
+	}
+
+	public void setOutput(Appendable output) {
+		this.output = output;
+	}
+
+	public Appendable getOutput() {
+		return output;
 	}
 
 	public void run() {
@@ -49,7 +58,7 @@ public class JarRunner implements Runnable {
 			log.warn(e.getLocalizedMessage(), e);
 			Assert.fail("Failed to start the auto.xml installation process.\n" + e.toString());
 		}
-		input = new StreamGobbler(process.getInputStream());
+		input = new StreamGobbler(process.getInputStream(), output);
 		input.start();
 		try {
 			input.join(RUNNER_TIMEOUT * 1000);
@@ -68,20 +77,16 @@ public class JarRunner implements Runnable {
 			Assert.fail(input.getStatus());
 		}
 	}
-	
-	public List<String> getOutputLines() {
-		return input.getOutpuLines();
-	}
 
 	protected class StreamGobbler extends Thread {
 		private final InputStream is;
 		private boolean successful = false;
 		private String status = null;
-		private List<String> outputLines;
+		private Appendable output;
 
-		private StreamGobbler(InputStream is) {
+		private StreamGobbler(InputStream is, Appendable output) {
 			this.is = is;
-			outputLines = new ArrayList<String>();
+			this.output = output;
 		}
 
 		@Override
@@ -91,8 +96,9 @@ public class JarRunner implements Runnable {
 				BufferedReader br = new BufferedReader(isr);
 				String line;
 				while ((line = br.readLine()) != null) {
-					log.info(line);
-					outputLines.add(line);
+					if (output != null) {
+						output.append(line);
+					}
 					if (line.contains("ERROR") && !line.contains("level=ERROR")) {
 						status = "Following line was found during auto.xml installation: " + line;
 						break;
@@ -108,10 +114,6 @@ public class JarRunner implements Runnable {
 			} catch (IOException ioe) {
 				log.warn(ioe.getLocalizedMessage(), ioe);
 			}
-		}
-		
-		public List<String> getOutpuLines() {
-			return outputLines;
 		}
 
 		public boolean isSuccessful() {

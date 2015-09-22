@@ -147,35 +147,14 @@ public class Eclipse {
 		command.add("-list");
 
 		List<Bundle> features = new ArrayList<Bundle>();
-		List<String> outputLines = execute(command);
-		for (String line : outputLines) {
+		EclipseExecutionOutput eclipseExecutionOutput = execute(command);
+		for (String line : eclipseExecutionOutput.getLines()) {
 			if (line.contains(".feature.group=")) {
 				String[] parser = line.split(".feature.group=");
 				features.add(new Bundle(parser[0], parser[1]));
 			}
 		}
 		return features;
-	}
-
-	public void installFeature(String feature) {
-		installFeature(true, feature);
-	}
-
-	public void installFeature(boolean followReferences, String feature) {
-		List<String> command = new ArrayList<String>();
-		command.add("-application");
-		command.add("org.eclipse.equinox.p2.director");
-		command.add("-consoleLog");
-		if (followReferences) {
-			command.add("-followReferences");
-		}
-		command.add("-nosplash");
-		command.add("-repository");
-		command.add(collectionToString(updateSites));
-		command.add("-installIUs");
-		command.add(feature);
-
-		execute(command);
 	}
 
 	public void installFeatures(String... features) {
@@ -208,14 +187,37 @@ public class Eclipse {
 		installFeatures(followReferences, listOfUIs);
 	}
 
-	public List<String> execute(List<String> command) {
+	public void installFeature(String feature) {
+		installFeature(true, feature);
+	}
+
+	public void installFeature(boolean followReferences, String feature) {
+		List<String> command = new ArrayList<String>();
+		command.add("-application");
+		command.add("org.eclipse.equinox.p2.director");
+		command.add("-consoleLog");
+		if (followReferences) {
+			command.add("-followReferences");
+		}
+		command.add("-nosplash");
+		command.add("-repository");
+		command.add(collectionToString(updateSites));
+		command.add("-installIUs");
+		command.add(feature);
+
+		execute(command);
+	}
+
+	public EclipseExecutionOutput execute(List<String> command) {
 		return execute(command.toArray(new String[command.size()]));
 	}
 
-	public List<String> execute(String[] command) {
+	public EclipseExecutionOutput execute(String[] command) {
+		EclipseExecutionOutput eclipseExecutionOutput = new EclipseExecutionOutput();
 		JarRunner jarRunner = new JarRunner(jarFile.getAbsolutePath(), command);
+		jarRunner.setOutput(eclipseExecutionOutput);
 		jarRunner.run();
-		return jarRunner.getOutputLines();
+		return eclipseExecutionOutput;
 	}
 
 	private static String collectionToString(Collection<String> collection) {

@@ -37,6 +37,7 @@ public class EclipseTest {
 		targetFile = new File(targetPath);
 		assertTrue("'" + targetFile.getAbsolutePath() + "' must exists", targetFile.exists());
 
+		FileUtils.deleteQuietly(new File(targetFile, "eclipse"));
 		Eclipse eclipse = Eclipse.installEclipse(targetFile, ECLIPSE_VERSION);
 		assertNotNull(eclipse);
 		assertEquals(ECLIPSE_LAUNCHER, eclipse.getLauncher().getName());
