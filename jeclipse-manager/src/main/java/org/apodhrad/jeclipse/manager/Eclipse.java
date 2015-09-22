@@ -180,7 +180,7 @@ public class Eclipse {
 		installFeature(collectionToString(features));
 	}
 	
-	public void installAllFeaturesFromUpdateSIte(String updateSite) {
+	public void installAllFeaturesFromUpdateSite(String updateSite) {
 		List<Bundle> features = listFeatures(updateSite);
 		List<String> listOfUIs = new ArrayList<String>();
 		for (Bundle feature:features) {
