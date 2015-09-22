@@ -1,6 +1,8 @@
 package org.apodhrad.jeclipse.manager;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -400,6 +402,47 @@ public class Eclipse {
 		commandArtifact.add(destination.getAbsolutePath());
 		commandArtifact.add("-nosplash");
 		execute(commandArtifact);
+	}
+
+	public List<EclipseLogMessage> getLogMessages(int severity) throws IOException {
+		List<EclipseLogMessage> allMessages = getLogMessages();
+		List<EclipseLogMessage> messages = new ArrayList<EclipseLogMessage>();
+		for (EclipseLogMessage message : allMessages) {
+			if (message.getSeverity() >= severity) {
+				messages.add(message);
+			}
+		}
+		return messages;
+	}
+
+	public List<EclipseLogMessage> getLogMessages() throws IOException {
+		List<EclipseLogMessage> messages = new ArrayList<EclipseLogMessage>();
+		File logFile = new File(getHomeDirectory(), "workspace/.metadata/.log");
+		if (logFile.exists()) {
+			BufferedReader in = new BufferedReader(new FileReader(logFile));
+			String line = null;
+			while ((line = in.readLine()) != null) {
+				int index = 1;
+				int severity = 0;
+				String source = null;
+				String message = null;
+				if (line.startsWith("!ENTRY") || line.startsWith("!SUBENTRY")) {
+					if (line.startsWith("!SUBENTRY")) {
+						index = 2;
+					}
+					String[] parts = line.split(" ");
+					source = parts[index];
+					severity = Integer.valueOf(parts[index + 1]);
+					line = in.readLine();
+					if (line.startsWith("!MESSAGE")) {
+						message = line.substring("!MESSAGE".length() + 1);
+					}
+					messages.add(new EclipseLogMessage(severity, source, message));
+				}
+			}
+			in.close();
+		}
+		return messages;
 	}
 
 }
