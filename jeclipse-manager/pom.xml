@@ -54,6 +54,7 @@
 	<configuration>
 	  <systemPropertyVariables>
 	    <project.build.directory>${project.build.directory}</project.build.directory>
+	    <org.slf4j.simpleLogger.defaultLogLevel>debug</org.slf4j.simpleLogger.defaultLogLevel>
 	    <jbds.url>${jbds.url}</jbds.url>
 	  </systemPropertyVariables>
 	</configuration>
