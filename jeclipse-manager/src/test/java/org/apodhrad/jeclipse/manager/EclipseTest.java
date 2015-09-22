@@ -6,6 +6,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -22,6 +24,7 @@ public class EclipseTest {
 
 	public static final String ECLIPSE_VERSION = "jee-luna-SR2";
 	public static final String ECLIPSE_LAUNCHER = "org.eclipse.equinox.launcher_1.3.0.v20140415-2008.jar";
+	public static final String REDDEER_070 = "http://download.jboss.org/jbosstools/updates/stable/luna/core/reddeer/0.7.0/";
 
 	private static String targetPath;
 	private static File targetFile;
@@ -108,7 +111,7 @@ public class EclipseTest {
 	@Test
 	public void listFeaturesTest() {
 		Eclipse eclipse = new Eclipse(eclipsePath);
-		eclipse.addUpdateSite("http://download.jboss.org/jbosstools/updates/stable/luna/core/reddeer/0.7.0/");
+		eclipse.addUpdateSite(REDDEER_070);
 		List<Bundle> features = eclipse.listFeatures();
 		assertCointainsBundle(features, "org.jboss.reddeer.rcp.feature", "0.7.0");
 		assertCointainsBundle(features, "org.jboss.reddeer.rcp.feature.source", "0.7.0");
@@ -118,7 +121,7 @@ public class EclipseTest {
 	public void installFeaturesTest() {
 		boolean found = false;
 		Eclipse eclipse = new Eclipse(eclipsePath);
-		eclipse.addUpdateSite("http://download.jboss.org/jbosstools/updates/stable/luna/core/reddeer/0.7.0/");
+		eclipse.addUpdateSite(REDDEER_070);
 		eclipse.installFeatures("org.jboss.reddeer.rcp.feature.feature.group");
 		Bundle[] features = eclipse.getFeatures();
 		for (Bundle feature : features) {
@@ -144,6 +147,21 @@ public class EclipseTest {
 		if (!found) {
 			Assert.fail("Cannot find 'org.jboss.reddeer.swt_0.7.0'");
 		}
+	}
+
+	@Test
+	public void installAllFeaturesTest() {
+		boolean found = false;
+		Eclipse eclipse = new Eclipse(eclipsePath);
+		eclipse.addUpdateSite("http://download.eclipse.org/releases/luna/");
+		eclipse.installAllFeaturesFromUpdateSIte(REDDEER_070);
+		Bundle[] features = eclipse.getFeatures();
+		assertCointainsBundle(features, "org.jboss.reddeer.rcp.feature", "0.7.0");
+		assertCointainsBundle(features, "org.jboss.reddeer.rcp.feature.source", "0.7.0");
+		assertCointainsBundle(features, "org.jboss.reddeer.swt.feature", "0.7.0");
+		assertCointainsBundle(features, "org.jboss.reddeer.swt.feature.source", "0.7.0");
+		assertCointainsBundle(features, "org.jboss.reddeer.graphiti.feature", "0.7.0");
+		assertCointainsBundle(features, "org.jboss.reddeer.graphiti.feature.source", "0.7.0");
 	}
 
 	@Test
@@ -204,9 +222,12 @@ public class EclipseTest {
 		assertTrue("Not all VM arguments were added!", foundFoo1 && foundFoo2);
 	}
 
-	private static void assertCointainsBundle(List<Bundle> bundles, String expectedBundleName,
-			String expectedBundleVersion) {
-		Bundle bundle = new Bundle(expectedBundleName, expectedBundleVersion);
+	private static void assertCointainsBundle(List<Bundle> bundles, String expectedName, String expectedVersion) {
+		Bundle bundle = new Bundle(expectedName, expectedVersion);
 		assertTrue("The list " + bundles + " doesn't contain bundle" + bundle, bundles.contains(bundle));
+	}
+
+	private static void assertCointainsBundle(Bundle[] bundles, String expectedName, String expectedVersion) {
+		assertCointainsBundle(Arrays.asList(bundles), expectedName, expectedVersion);
 	}
 }

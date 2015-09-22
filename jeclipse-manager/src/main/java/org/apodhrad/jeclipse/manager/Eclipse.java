@@ -179,6 +179,16 @@ public class Eclipse {
 	public void installFeatures(Collection<String> features) {
 		installFeature(collectionToString(features));
 	}
+	
+	public void installAllFeaturesFromUpdateSIte(String updateSite) {
+		List<Bundle> features = listFeatures(updateSite);
+		List<String> listOfUIs = new ArrayList<String>();
+		for (Bundle feature:features) {
+			listOfUIs.add(feature.getName() + ".feature.group");
+		}
+		addUpdateSite(updateSite);
+		installFeatures(listOfUIs);
+	}
 
 	public List<String> execute(List<String> command) {
 		return execute(command.toArray(new String[command.size()]));
