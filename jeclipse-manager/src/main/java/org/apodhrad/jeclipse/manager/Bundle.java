@@ -1,6 +1,9 @@
 package org.apodhrad.jeclipse.manager;
 
 import java.io.File;
+import java.io.IOException;
+
+import org.apodhrad.jdownload.manager.util.UnpackUtils;
 
 public class Bundle implements Comparable<Bundle> {
 
@@ -16,7 +19,7 @@ public class Bundle implements Comparable<Bundle> {
 		this.name = fullName.substring(0, index);
 		this.version = fullName.substring(index + 1).replaceAll(".jar", "");
 	}
-	
+
 	public Bundle(String name, String version) {
 		this.name = name;
 		this.version = version;
@@ -62,6 +65,18 @@ public class Bundle implements Comparable<Bundle> {
 
 	public int compareTo(Bundle bundle) {
 		return name.compareTo(bundle.getName());
+	}
+
+	public File unpack() throws IOException {
+		if (file == null) {
+			throw new IllegalStateException("Bundle '" + this + "' doesn't exist!");
+		}
+		if (file.isDirectory()) {
+			return file;
+		}
+		File target = new File(file.getParentFile(), getFullName());
+		UnpackUtils.unpack(file, target);
+		return target;
 	}
 
 }
