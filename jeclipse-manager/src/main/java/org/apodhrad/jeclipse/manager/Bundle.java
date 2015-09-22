@@ -16,6 +16,11 @@ public class Bundle implements Comparable<Bundle> {
 		this.name = fullName.substring(0, index);
 		this.version = fullName.substring(index + 1).replaceAll(".jar", "");
 	}
+	
+	public Bundle(String name, String version) {
+		this.name = name;
+		this.version = version;
+	}
 
 	public String getFullName() {
 		return name + "_" + version;

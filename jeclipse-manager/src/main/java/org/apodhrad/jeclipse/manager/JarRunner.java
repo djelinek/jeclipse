@@ -25,6 +25,7 @@ public class JarRunner implements Runnable {
 
 	private String jarFile;
 	private String[] args;
+	private StreamGobbler input;
 
 	public JarRunner(String installer, String... args) {
 		this.jarFile = installer;
@@ -33,7 +34,6 @@ public class JarRunner implements Runnable {
 
 	public void run() {
 		Process process = null;
-		StreamGobbler input;
 
 		JarCommand jarCommand = new JarCommand(jarFile);
 		for (int i = 0; i < args.length; i++) {
@@ -68,14 +68,20 @@ public class JarRunner implements Runnable {
 			Assert.fail(input.getStatus());
 		}
 	}
+	
+	public List<String> getOutputLines() {
+		return input.getOutpuLines();
+	}
 
 	protected class StreamGobbler extends Thread {
 		private final InputStream is;
 		private boolean successful = false;
 		private String status = null;
+		private List<String> outputLines;
 
 		private StreamGobbler(InputStream is) {
 			this.is = is;
+			outputLines = new ArrayList<String>();
 		}
 
 		@Override
@@ -86,6 +92,7 @@ public class JarRunner implements Runnable {
 				String line;
 				while ((line = br.readLine()) != null) {
 					log.info(line);
+					outputLines.add(line);
 					if (line.contains("ERROR") && !line.contains("level=ERROR")) {
 						status = "Following line was found during auto.xml installation: " + line;
 						break;
@@ -101,6 +108,10 @@ public class JarRunner implements Runnable {
 			} catch (IOException ioe) {
 				log.warn(ioe.getLocalizedMessage(), ioe);
 			}
+		}
+		
+		public List<String> getOutpuLines() {
+			return outputLines;
 		}
 
 		public boolean isSuccessful() {

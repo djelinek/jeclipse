@@ -127,14 +127,15 @@ public class Eclipse {
 		return Collections.unmodifiableSet(updateSites);
 	}
 
-	public void listFeatures() {
-		for (String updateSite : updateSites) {
-			log.info("Update Site: " + updateSite);
-			listFeatures(updateSite);
-		}
+	public List<Bundle> listFeatures() {
+		return listFeatures(getUpdateSites());
 	}
 
-	public void listFeatures(String updateSite) {
+	public List<Bundle> listFeatures(Collection<String> updateSites) {
+		return listFeatures(collectionToString(updateSites));
+	}
+
+	public List<Bundle> listFeatures(String updateSite) {
 		List<String> command = new ArrayList<String>();
 		command.add("-application");
 		command.add("org.eclipse.equinox.p2.director");
@@ -145,7 +146,15 @@ public class Eclipse {
 		command.add(updateSite);
 		command.add("-list");
 
-		execute(command);
+		List<Bundle> features = new ArrayList<Bundle>();
+		List<String> outputLines = execute(command);
+		for (String line : outputLines) {
+			if (line.contains(".feature.group=")) {
+				String[] parser = line.split(".feature.group=");
+				features.add(new Bundle(parser[0], parser[1]));
+			}
+		}
+		return features;
 	}
 
 	public void installFeature(String feature) {
@@ -171,12 +180,14 @@ public class Eclipse {
 		installFeature(collectionToString(features));
 	}
 
-	public void execute(List<String> command) {
-		execute(command.toArray(new String[command.size()]));
+	public List<String> execute(List<String> command) {
+		return execute(command.toArray(new String[command.size()]));
 	}
 
-	public void execute(String[] command) {
-		new JarRunner(jarFile.getAbsolutePath(), command).run();
+	public List<String> execute(String[] command) {
+		JarRunner jarRunner = new JarRunner(jarFile.getAbsolutePath(), command);
+		jarRunner.run();
+		return jarRunner.getOutputLines();
 	}
 
 	private static String collectionToString(Collection<String> collection) {

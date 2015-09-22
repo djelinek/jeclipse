@@ -106,6 +106,15 @@ public class EclipseTest {
 	}
 
 	@Test
+	public void listFeaturesTest() {
+		Eclipse eclipse = new Eclipse(eclipsePath);
+		eclipse.addUpdateSite("http://download.jboss.org/jbosstools/updates/stable/luna/core/reddeer/0.7.0/");
+		List<Bundle> features = eclipse.listFeatures();
+		assertCointainsBundle(features, "org.jboss.reddeer.rcp.feature", "0.7.0");
+		assertCointainsBundle(features, "org.jboss.reddeer.rcp.feature.source", "0.7.0");
+	}
+
+	@Test
 	public void installFeaturesTest() {
 		boolean found = false;
 		Eclipse eclipse = new Eclipse(eclipsePath);
@@ -193,5 +202,11 @@ public class EclipseTest {
 			}
 		}
 		assertTrue("Not all VM arguments were added!", foundFoo1 && foundFoo2);
+	}
+
+	private static void assertCointainsBundle(List<Bundle> bundles, String expectedBundleName,
+			String expectedBundleVersion) {
+		Bundle bundle = new Bundle(expectedBundleName, expectedBundleVersion);
+		assertTrue("The list " + bundles + " doesn't contain bundle" + bundle, bundles.contains(bundle));
 	}
 }
