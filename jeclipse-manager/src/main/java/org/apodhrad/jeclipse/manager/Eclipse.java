@@ -158,11 +158,17 @@ public class Eclipse {
 	}
 
 	public void installFeature(String feature) {
+		installFeature(true, feature);
+	}
+
+	public void installFeature(boolean followReferences, String feature) {
 		List<String> command = new ArrayList<String>();
 		command.add("-application");
 		command.add("org.eclipse.equinox.p2.director");
 		command.add("-consoleLog");
-		command.add("-followReferences");
+		if (followReferences) {
+			command.add("-followReferences");
+		}
 		command.add("-nosplash");
 		command.add("-repository");
 		command.add(collectionToString(updateSites));
@@ -173,21 +179,33 @@ public class Eclipse {
 	}
 
 	public void installFeatures(String... features) {
-		installFeature(arrayToString(features));
+		installFeatures(true, features);
+	}
+
+	public void installFeatures(boolean followReferences, String... features) {
+		installFeature(followReferences, arrayToString(features));
 	}
 
 	public void installFeatures(Collection<String> features) {
-		installFeature(collectionToString(features));
+		installFeatures(true, features);
 	}
-	
+
+	public void installFeatures(boolean followReferences, Collection<String> features) {
+		installFeature(followReferences, collectionToString(features));
+	}
+
 	public void installAllFeaturesFromUpdateSite(String updateSite) {
+		installAllFeaturesFromUpdateSite(true, updateSite);
+	}
+
+	public void installAllFeaturesFromUpdateSite(boolean followReferences, String updateSite) {
 		List<Bundle> features = listFeatures(updateSite);
 		List<String> listOfUIs = new ArrayList<String>();
-		for (Bundle feature:features) {
+		for (Bundle feature : features) {
 			listOfUIs.add(feature.getName() + ".feature.group");
 		}
 		addUpdateSite(updateSite);
-		installFeatures(listOfUIs);
+		installFeatures(followReferences, listOfUIs);
 	}
 
 	public List<String> execute(List<String> command) {
