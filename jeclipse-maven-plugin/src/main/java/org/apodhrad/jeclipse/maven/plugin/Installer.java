@@ -18,6 +18,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.apodhrad.jdownload.manager.JDownloadManager;
 import org.apodhrad.jeclipse.manager.Eclipse;
 import org.apodhrad.jeclipse.manager.JBDS;
 
@@ -68,7 +69,27 @@ public class Installer extends AbstractMojo {
 	@Parameter
 	private String[] vmArgs;
 
+	@Parameter
+	private String cache;
+
+	@Parameter(defaultValue = "false")
+	private boolean nocache;
+
 	public void execute() throws MojoExecutionException {
+		if (nocache) {
+			System.setProperty(JDownloadManager.NOCACHE_PROPERTY, "true");
+		}
+		if (cache != null && cache.length() > 0) {
+			System.setProperty(JDownloadManager.CACHE_PROPERTY, cache);
+		}
+		File jdownloadCache = new JDownloadManager().getCache();
+		if (jdownloadCache != null) {
+			getLog().info("The folder '" + new JDownloadManager().getCache().getAbsolutePath()
+					+ "' will be used for caching.");
+		} else {
+			getLog().info("Download manager won't use any cache folder.");
+		}
+
 		Eclipse eclipse = null;
 		if (jbdsInstaller != null && jbdsInstaller.toString().length() > 0) {
 			try {
