@@ -22,7 +22,7 @@ public class EclipseExecutionOutput implements Appendable {
 
 	@Override
 	public Appendable append(CharSequence line) throws IOException {
-		log.debug(line.toString());
+		log.info(line.toString());
 		lines.add(line.toString());
 		return null;
 	}
