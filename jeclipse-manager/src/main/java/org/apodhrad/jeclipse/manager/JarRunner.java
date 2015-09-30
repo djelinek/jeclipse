@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
  */
 public class JarRunner implements Runnable {
 
-	public static final int RUNNER_TIMEOUT = 10 * 60;
+	public static final int DEFAULT_TIMEOUT = 10 * 60;
 
 	private Logger log = LoggerFactory.getLogger(getClass());
 
@@ -27,10 +27,20 @@ public class JarRunner implements Runnable {
 	private String[] args;
 	private StreamGobbler input;
 	private Appendable output;
+	private int timeout;
 
 	public JarRunner(String installer, String... args) {
 		this.jarFile = installer;
 		this.args = args;
+		this.timeout = DEFAULT_TIMEOUT;
+	}
+
+	public int getTimeout() {
+		return timeout;
+	}
+
+	public void setTimeout(int timeout) {
+		this.timeout = timeout;
 	}
 
 	public void setOutput(Appendable output) {
@@ -61,7 +71,7 @@ public class JarRunner implements Runnable {
 		input = new StreamGobbler(process.getInputStream(), output);
 		input.start();
 		try {
-			input.join(RUNNER_TIMEOUT * 1000);
+			input.join(timeout * 1000);
 		} catch (InterruptedException e) {
 			log.warn(e.getLocalizedMessage(), e);
 			log.warn(e.toString());
@@ -69,7 +79,7 @@ public class JarRunner implements Runnable {
 		}
 		if (input.isAlive()) {
 			// installation is still running
-			log.warn("Failed to finish the auto.xml installation within " + RUNNER_TIMEOUT + "s.");
+			log.warn("Failed to finish the auto.xml installation within " + timeout + "s.");
 			input.interrupt();
 			process.destroy();
 		}
