@@ -53,7 +53,7 @@ public class Eclipse {
 
 	private static final String LAUNCHER_PREFIX = "org.eclipse.equinox.launcher_";
 
-	private Logger log = LoggerFactory.getLogger(getClass());
+	private static Logger log = LoggerFactory.getLogger(Eclipse.class);
 	private File jarFile;
 	private Set<String> updateSites;
 
@@ -225,7 +225,7 @@ public class Eclipse {
 		return eclipseExecutionOutput;
 	}
 
-	protected int getJEclipseTimeout() {
+	protected static int getJEclipseTimeout() {
 		String jEclipseTimeout = System.getProperty(TIMEOUT_PROPERTY);
 		if (jEclipseTimeout != null) {
 			if (jEclipseTimeout.matches("\\d+")) {

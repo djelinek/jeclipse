@@ -68,7 +68,7 @@ public class JBDS extends Eclipse {
 
 		JarRunner jarRunner = new JarRunner(installerJarFile.getAbsolutePath(), installationFile);
 		jarRunner.setOutput(new EclipseExecutionOutput());
-		jarRunner.setTimeout(20 * 60); // 20 minutes
+		jarRunner.setTimeout(getJEclipseTimeout());
 		jarRunner.run();
 
 		return new JBDS(new File(target, "jbdevstudio"));
