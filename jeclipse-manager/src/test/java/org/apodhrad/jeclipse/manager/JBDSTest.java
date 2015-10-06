@@ -17,7 +17,7 @@ public class JBDSTest {
 	@BeforeClass
 	public static void beforeClass() throws IOException {
 		TARGET = systemProperty("project.build.directory");
-		JBDS_URL = systemProperty("jbds.url");
+		JBDS_URL = systemProperty("jeclipse.test.jbds.url");
 	}
 
 	@Test

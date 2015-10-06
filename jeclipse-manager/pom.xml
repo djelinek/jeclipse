@@ -11,7 +11,7 @@
   <name>.: JEclipse Manager :.</name>
   
   <properties>
-    <jbds.url></jbds.url>
+    <jeclipse.test.jbds.url></jeclipse.test.jbds.url>
   </properties>
   
   <dependencies>
@@ -55,7 +55,7 @@
 	  <systemPropertyVariables>
 	    <project.build.directory>${project.build.directory}</project.build.directory>
 	    <org.slf4j.simpleLogger.defaultLogLevel>debug</org.slf4j.simpleLogger.defaultLogLevel>
-	    <jbds.url>${jbds.url}</jbds.url>
+	    <jeclipse.test.jbds.url>${jeclipse.test.jbds.url}</jeclipse.test.jbds.url>
 	  </systemPropertyVariables>
 	</configuration>
       </plugin>
