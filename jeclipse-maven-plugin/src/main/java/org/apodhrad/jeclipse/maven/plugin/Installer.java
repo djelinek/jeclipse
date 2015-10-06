@@ -74,6 +74,9 @@ public class Installer extends AbstractMojo {
 
 	@Parameter(defaultValue = "false")
 	private boolean nocache;
+	
+	@Parameter
+	private String timeout;
 
 	public void execute() throws MojoExecutionException {
 		if (nocache) {
@@ -81,6 +84,9 @@ public class Installer extends AbstractMojo {
 		}
 		if (cache != null && cache.length() > 0) {
 			System.setProperty(JDownloadManager.CACHE_PROPERTY, cache);
+		}
+		if (timeout != null && timeout.length() > 0) {
+			System.setProperty(Eclipse.TIMEOUT_PROPERTY, timeout);
 		}
 		File jdownloadCache = new JDownloadManager().getCache();
 		if (jdownloadCache != null) {

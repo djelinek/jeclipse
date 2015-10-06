@@ -49,6 +49,8 @@ public class Eclipse {
 	public static final String ECLIPSE_DEFAULT_VERSION = ECLIPSE_LUNA_JEE_VERSION;
 	public static final String ECLIPSE_DEFAULT_MIRROR = "http://www.eclipse.org/downloads/download.php?r=1&file=/technology/epp/downloads/release";
 
+	public static final String TIMEOUT_PROPERTY = "jeclipse.timeout";
+
 	private static final String LAUNCHER_PREFIX = "org.eclipse.equinox.launcher_";
 
 	private Logger log = LoggerFactory.getLogger(getClass());
@@ -218,8 +220,23 @@ public class Eclipse {
 		EclipseExecutionOutput eclipseExecutionOutput = new EclipseExecutionOutput();
 		JarRunner jarRunner = new JarRunner(jarFile.getAbsolutePath(), command);
 		jarRunner.setOutput(eclipseExecutionOutput);
+		jarRunner.setTimeout(getJEclipseTimeout());
 		jarRunner.run();
 		return eclipseExecutionOutput;
+	}
+
+	protected int getJEclipseTimeout() {
+		String jEclipseTimeout = System.getProperty(TIMEOUT_PROPERTY);
+		if (jEclipseTimeout != null) {
+			if (jEclipseTimeout.matches("\\d+")) {
+				log.info("Eclipse execution timeout set to " + jEclipseTimeout + " s.");
+				return Integer.valueOf(jEclipseTimeout);
+			} else {
+				log.warn("The variable '" + TIMEOUT_PROPERTY + "' must be numeric but was '" + jEclipseTimeout + "'");
+			}
+		}
+		log.info("Eclipse execution timeout set to default value which is " + JarRunner.DEFAULT_TIMEOUT + " s.");
+		return JarRunner.DEFAULT_TIMEOUT;
 	}
 
 	private static String collectionToString(Collection<String> collection) {
