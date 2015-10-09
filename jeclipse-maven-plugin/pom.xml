@@ -36,6 +36,12 @@
       <artifactId>jeclipse-manager</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.maven.shared</groupId>
+      <artifactId>maven-invoker</artifactId>
+      <version>2.2</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
     
   <build>
@@ -62,7 +68,35 @@
 	  </execution>
 	</executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <systemPropertyVariables>
+            <maven.home>${maven.home}</maven.home>
+	    <project.build.directory>${project.build.directory}</project.build.directory>
+	    <org.slf4j.simpleLogger.defaultLogLevel>debug</org.slf4j.simpleLogger.defaultLogLevel>
+	    <jeclipse.version>${project.version}</jeclipse.version>
+	    <jeclipse.test.jbds.url>${jeclipse.test.jbds.url}</jeclipse.test.jbds.url>
+	    <jeclipse.test.jbds.sha256>${jeclipse.test.jbds.sha256}</jeclipse.test.jbds.sha256>
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>debug</id>
+      <activation>
+	<property>
+          <name>debugPort</name>
+	</property>
+      </activation>
+      <properties>
+	<maven.surefire.debug>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=${debugPort} -Xnoagent -Djava.compiler=NONE</maven.surefire.debug>
+      </properties>
+    </profile>
+  </profiles>
   
 </project>

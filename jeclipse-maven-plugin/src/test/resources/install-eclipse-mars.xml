@@ -1,0 +1,30 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.apodhrad.jeclipse.maven.plugin.test</groupId>
+	<artifactId>install-eclipse-mars-test</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	
+	<build>
+	  <plugins>
+	    <plugin>
+	      <groupId>org.apodhrad.jeclipse</groupId>
+	      <artifactId>jeclipse-maven-plugin</artifactId>
+	      <version>${jeclipse.version}</version>
+	      <executions>
+		<execution>
+		  <id>install-eclipse-mars</id>
+		  <goals>
+		    <goal>install</goal>
+		  </goals>
+		  <configuration>
+		    <eclipse.version>jee-mars-1</eclipse.version>
+		  </configuration>
+		</execution>
+	      </executions>
+	    </plugin>
+	  </plugins>
+	</build>
+
+</project>
