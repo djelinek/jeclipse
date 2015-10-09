@@ -43,6 +43,11 @@ public class Eclipse {
 			put("eclipse-jee-luna-SR2-macosx-cocoa-x86_64.tar.gz", "8e8b8ae2c66838d0cc3bf0b316576212");
 			put("eclipse-jee-luna-SR2-win32.zip", "3e36cea1287c8e4b602eb0510c8a1dc1");
 			put("eclipse-jee-luna-SR2-win32-x86_64.zip", "f3820cea9fae6a37275999e6a01ddc01");
+			put("eclipse-jee-mars-1-linux-gtk.tar.gz", "dce33eba239a4f1e745976e7cb576569");
+			put("eclipse-jee-mars-1-linux-gtk-x86_64.tar.gz", "72a722a59a43e8ed6c47ae279fb3d355");
+			put("eclipse-jee-mars-1-macosx-cocoa-x86_64.tar.gz", "8d053622066166886d4a7116fd18dc93");
+			put("eclipse-jee-mars-1-win32.zip", "fd0e5ceebc2a5b40274cb6146e78a4c3");
+			put("eclipse-jee-mars-1-win32-x86_64.zip", "2917778fd8604cd2ba58453c6cb7a6bc");
 		}
 	};
 
