@@ -19,6 +19,11 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apodhrad.jdownload.manager.JDownloadManager;
+import org.apodhrad.jdownload.manager.hash.Hash;
+import org.apodhrad.jdownload.manager.hash.MD5Hash;
+import org.apodhrad.jdownload.manager.hash.NullHash;
+import org.apodhrad.jdownload.manager.hash.SHA1Hash;
+import org.apodhrad.jdownload.manager.hash.SHA256Hash;
 import org.apodhrad.jeclipse.manager.Eclipse;
 import org.apodhrad.jeclipse.manager.JBDS;
 
@@ -46,7 +51,16 @@ public class Installer extends AbstractMojo {
 
 	@Parameter(alias = "jbds.installer")
 	private URL jbdsInstaller;
+	
+	@Parameter(alias = "jbds.installer.md5")
+	private String jbdsInstallerMD5;
+	
+	@Parameter(alias = "jbds.installer.sha1")
+	private String jbdsInstallerSHA1;
 
+	@Parameter(alias = "jbds.installer.sha256")
+	private String jbdsInstallerSHA256;
+	
 	@Parameter(alias = "eclipse.version")
 	private String eclipseVersion;
 
@@ -97,9 +111,19 @@ public class Installer extends AbstractMojo {
 		}
 
 		Eclipse eclipse = null;
-		if (jbdsInstaller != null && jbdsInstaller.toString().length() > 0) {
+		if (isDefined(jbdsInstaller)) {
+			Hash hash = new NullHash();
+			if (isDefined(jbdsInstallerMD5)) {
+				hash = new MD5Hash(jbdsInstallerMD5);
+			}
+			if (isDefined(jbdsInstallerSHA1)) {
+				hash = new SHA1Hash(jbdsInstallerSHA1);
+			}
+			if (isDefined(jbdsInstallerSHA256)) {
+				hash = new SHA256Hash(jbdsInstallerSHA256);
+			}
 			try {
-				eclipse = JBDS.installJBDS(new File(target), jbdsInstaller.toString(), jreLocation);
+				eclipse = JBDS.installJBDS(new File(target), jbdsInstaller.toString(), jreLocation, hash);
 			} catch (IOException ioe) {
 				throw new MojoExecutionException("I/O exception occured during installing Eclipse IDE", ioe);
 			}
@@ -142,6 +166,10 @@ public class Installer extends AbstractMojo {
 		}
 
 		getLog().info("Finished");
+	}
+	
+	private static boolean isDefined(Object parameter) {
+		return parameter != null && parameter.toString().length() > 0;
 	}
 
 }
