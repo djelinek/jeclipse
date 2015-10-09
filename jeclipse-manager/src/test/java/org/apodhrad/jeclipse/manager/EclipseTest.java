@@ -234,6 +234,13 @@ public class EclipseTest {
 		}
 		assertTrue("Not all VM arguments were added!", foundFoo1 && foundFoo2);
 	}
+	
+	@Test
+	public void md5HashTableTest() {
+		for (String value: Eclipse.ECLIPSE_MD5.values()) {
+			assertEquals(32, value.length());
+		}
+	}
 
 	private static void assertContainsBundle(List<Bundle> bundles, String expectedName, String expectedVersion) {
 		Bundle bundle = new Bundle(expectedName, expectedVersion);
