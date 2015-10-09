@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Eclipse {
 
-	public static final String ECLIPSE_MARS_JEE_VERSION = "jee-mars-R";
+	public static final String ECLIPSE_MARS_JEE_VERSION = "jee-mars-1";
 	public static final String ECLIPSE_LUNA_JEE_VERSION = "jee-luna-SR2";
 	@SuppressWarnings("serial")
 	public static final Map<String, String> ECLIPSE_MD5 = new HashMap<String, String>() {
