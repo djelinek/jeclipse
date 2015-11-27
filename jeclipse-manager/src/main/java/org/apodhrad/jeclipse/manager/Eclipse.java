@@ -166,41 +166,41 @@ public class Eclipse {
 		return features;
 	}
 
-	public void installFeatures(String... features) {
-		installFeatures(true, features);
+	public EclipseExecutionOutput installFeatures(String... features) {
+		return installFeatures(true, features);
 	}
 
-	public void installFeatures(boolean followReferences, String... features) {
-		installFeature(followReferences, arrayToString(features));
+	public EclipseExecutionOutput installFeatures(boolean followReferences, String... features) {
+		return installFeature(followReferences, arrayToString(features));
 	}
 
-	public void installFeatures(Collection<String> features) {
-		installFeatures(true, features);
+	public EclipseExecutionOutput installFeatures(Collection<String> features) {
+		return installFeatures(true, features);
 	}
 
-	public void installFeatures(boolean followReferences, Collection<String> features) {
-		installFeature(followReferences, collectionToString(features));
+	public EclipseExecutionOutput installFeatures(boolean followReferences, Collection<String> features) {
+		return installFeature(followReferences, collectionToString(features));
 	}
 
-	public void installAllFeaturesFromUpdateSite(String updateSite) {
-		installAllFeaturesFromUpdateSite(true, updateSite);
+	public EclipseExecutionOutput installAllFeaturesFromUpdateSite(String updateSite) {
+		return installAllFeaturesFromUpdateSite(true, updateSite);
 	}
 
-	public void installAllFeaturesFromUpdateSite(boolean followReferences, String updateSite) {
+	public EclipseExecutionOutput installAllFeaturesFromUpdateSite(boolean followReferences, String updateSite) {
 		List<Bundle> features = listFeatures(updateSite);
 		List<String> listOfUIs = new ArrayList<String>();
 		for (Bundle feature : features) {
 			listOfUIs.add(feature.getName() + ".feature.group");
 		}
 		addUpdateSite(updateSite);
-		installFeatures(followReferences, listOfUIs);
+		return installFeatures(followReferences, listOfUIs);
 	}
 
-	public void installFeature(String feature) {
-		installFeature(true, feature);
+	public EclipseExecutionOutput installFeature(String feature) {
+		return installFeature(true, feature);
 	}
 
-	public void installFeature(boolean followReferences, String feature) {
+	public EclipseExecutionOutput installFeature(boolean followReferences, String feature) {
 		List<String> command = new ArrayList<String>();
 		command.add("-application");
 		command.add("org.eclipse.equinox.p2.director");
@@ -214,7 +214,13 @@ public class Eclipse {
 		command.add("-installIUs");
 		command.add(feature);
 
-		execute(command);
+		EclipseExecutionOutput output = execute(command);
+		for (String line: output.getLines()) {
+			if (line.contains("Operation completed in")) {
+				return output;
+			}
+		}
+		throw new EclipseException("Installation failed.");
 	}
 
 	public EclipseExecutionOutput execute(List<String> command) {

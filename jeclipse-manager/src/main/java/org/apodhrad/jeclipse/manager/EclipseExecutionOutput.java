@@ -37,4 +37,13 @@ public class EclipseExecutionOutput implements Appendable {
 		return append(String.valueOf(c));
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder result = new StringBuilder();
+		for (String line: getLines()) {
+			result.append(line).append("\n");
+		}
+		return result.toString();
+	}
+
 }

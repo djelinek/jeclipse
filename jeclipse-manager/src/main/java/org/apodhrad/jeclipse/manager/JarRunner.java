@@ -79,9 +79,9 @@ public class JarRunner implements Runnable {
 		}
 		if (input.isAlive()) {
 			// installation is still running
-			log.warn("Failed to finish the auto.xml installation within " + timeout + "s.");
 			input.interrupt();
 			process.destroy();
+			throw new JarRunnerException("Failed to finish the execution within " + timeout + " s.");
 		}
 		if (input.getStatus() != null) {
 			Assert.fail(input.getStatus());
