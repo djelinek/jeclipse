@@ -10,12 +10,23 @@
   <packaging>maven-plugin</packaging>
   <name>.: JEclipse Maven Plugin :.</name>
   
+  <properties>
+  <maven.version>3.3.9</maven.version>
+  <maven.test.version>3.3.0</maven.test.version>
+  </properties>
+  
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-      <version>3.0.5</version>
+      <version>${maven.version}</version>
     </dependency>
+    <dependency>
+    <groupId>org.apache.maven</groupId>
+    <artifactId>maven-compat</artifactId>
+      <version>${maven.version}</version>
+    <scope>test</scope>
+</dependency>
     <!-- dependencies to annotations -->
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
@@ -42,6 +53,18 @@
       <version>2.2</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.11</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.plugin-testing</groupId>
+      <artifactId>maven-plugin-testing-harness</artifactId>
+      <version>${maven.test.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
     
   <build>
@@ -59,13 +82,13 @@
 	      <goal>descriptor</goal>
 	    </goals>
 	  </execution>
-	  <!-- if you want to generate help goal -->
+	  <!-- if you want to generate help goal >
 	  <execution>
 	    <id>help-goal</id>
 	    <goals>
 	      <goal>helpmojo</goal>
 	    </goals>
-	  </execution>
+	  </execution -->
 	</executions>
       </plugin>
       <plugin>

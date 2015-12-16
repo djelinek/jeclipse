@@ -1,8 +1,5 @@
 package org.apodhrad.jeclipse.maven.plugin;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -18,20 +15,20 @@ import org.apache.maven.shared.invoker.Invoker;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class InstallerTest {
+public class InstallerTest extends BetterAbstractMojoTestCase {
 
 	private static String TARGET;
 	private static String JBDS_URL;
 	private static String JBDS_SHA256;
 
-	@BeforeClass
+//	@BeforeClass
 	public static void beforeClass() throws IOException {
 		TARGET = systemProperty("project.build.directory");
 		JBDS_URL = systemProperty("jeclipse.test.jbds.url");
 		JBDS_SHA256 = systemProperty("jeclipse.test.jbds.sha256");
 	}
 
-	@Test
+//	@Test
 	public void installEclipseLunaTest() throws Exception {
 		File pomFile = prepareMavenProject("install-eclipse-luna");
 
@@ -49,8 +46,43 @@ public class InstallerTest {
 		int exitCode = result.getExitCode();
 		assertEquals("Build failed (exit code " + exitCode + ")", 0, exitCode);
 	}
+	
+	@Test
+	public void testinstallEclipseLuna2Test() throws Exception {
+		File pom = getTestFile("src/test/resources/install-eclipse-luna-test/pom.xml");
+		assertNotNull(pom);
+		assertTrue(pom.exists());
+
+		Installer installer = (Installer) lookupConfiguredMojo("install", pom);
+		assertNotNull(installer);
+		installer.execute();
+	}
+	
 
 	@Test
+	public void testinstallEclipseMars2Test() throws Exception {
+		File pom = getTestFile("src/test/resources/install-eclipse-mars-test/pom.xml");
+		assertNotNull(pom);
+		assertTrue(pom.exists());
+
+		Installer installer = (Installer) lookupConfiguredMojo("install", pom);
+		assertNotNull(installer);
+		installer.execute();
+	}
+	
+
+	@Test
+	public void testinstallJBDS2Test() throws Exception {
+		File pom = getTestFile("src/test/resources/install-jbds-test/pom.xml");
+		assertNotNull(pom);
+		assertTrue(pom.exists());
+
+		Installer installer = (Installer) lookupConfiguredMojo("install", pom);
+		assertNotNull(installer);
+		installer.execute();
+	}
+
+//	@Test
 	public void installEclipseMarsTest() throws Exception {
 		File pomFile = prepareMavenProject("install-eclipse-mars");
 
@@ -69,7 +101,7 @@ public class InstallerTest {
 		assertEquals("Build failed (exit code " + exitCode + ")", 0, exitCode);
 	}
 
-	@Test
+//	@Test
 	public void installJBDSTest() throws Exception {
 		File pomFile = prepareMavenProject("install-jbds");
 

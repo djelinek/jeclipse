@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.apodhrad.jeclipse.maven.plugin.test</groupId>
-	<artifactId>install-jbds-test</artifactId>
+	<artifactId>install-eclipse-mars-test</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	
@@ -12,16 +12,15 @@
 	      <groupId>org.apodhrad.jeclipse</groupId>
 	      <artifactId>jeclipse-maven-plugin</artifactId>
 	      <version>${jeclipse.version}</version>
+		  <configuration>
+		    <eclipse.version>jee-mars-1</eclipse.version>
+		  </configuration>
 	      <executions>
 		<execution>
-		  <id>install-jbds</id>
+		  <id>install-eclipse-mars</id>
 		  <goals>
 		    <goal>install</goal>
 		  </goals>
-		  <configuration>
-		    <jbds.installer>${jeclipse.test.jbds.url}</jbds.installer>
-		    <jbds.installer.sha256>${jeclipse.test.jbds.sha256}</jbds.installer.sha256>
-		  </configuration>
 		</execution>
 	      </executions>
 	    </plugin>
