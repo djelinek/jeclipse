@@ -41,9 +41,9 @@
       <version>1.7.12</version>
     </dependency>
     <dependency>
-      <groupId>org.apodhrad</groupId>
+      <groupId>org.apodhrad.jdownload</groupId>
       <artifactId>jdownload-manager</artifactId>
-      <version>0.2.3</version>
+      <version>1.0.0</version>
     </dependency>
   </dependencies>
    
