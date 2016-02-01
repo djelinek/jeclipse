@@ -24,6 +24,7 @@ import org.apodhrad.jdownload.manager.hash.MD5Hash;
 import org.apodhrad.jdownload.manager.hash.NullHash;
 import org.apodhrad.jdownload.manager.hash.SHA1Hash;
 import org.apodhrad.jdownload.manager.hash.SHA256Hash;
+import org.apodhrad.jdownload.manager.hash.URLHash;
 import org.apodhrad.jeclipse.manager.Eclipse;
 import org.apodhrad.jeclipse.manager.JBDS;
 
@@ -115,12 +116,21 @@ public class Installer extends AbstractMojo {
 			Hash hash = new NullHash();
 			if (isDefined(jbdsInstallerMD5)) {
 				hash = new MD5Hash(jbdsInstallerMD5);
+				if (jbdsInstallerMD5.startsWith("http")) {
+					hash = new URLHash(jbdsInstallerMD5);
+				}
 			}
 			if (isDefined(jbdsInstallerSHA1)) {
 				hash = new SHA1Hash(jbdsInstallerSHA1);
+				if (jbdsInstallerSHA1.startsWith("http")) {
+					hash = new URLHash(jbdsInstallerSHA1);
+				}
 			}
 			if (isDefined(jbdsInstallerSHA256)) {
 				hash = new SHA256Hash(jbdsInstallerSHA256);
+				if (jbdsInstallerSHA256.startsWith("http")) {
+					hash = new URLHash(jbdsInstallerSHA256);
+				}
 			}
 			try {
 				eclipse = JBDS.installJBDS(new File(target), jbdsInstaller.toString(), jreLocation, hash);
