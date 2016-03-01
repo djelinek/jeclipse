@@ -51,7 +51,10 @@ public class JBDS extends Eclipse {
 	public static JBDS installJBDS(File target, String url, String jreLocation, Hash hash) throws IOException {
 		JDownloadManager manager = new JDownloadManager();
 		File installerJarFile = manager.download(url, target, hash);
-
+		return installJBDS(target, installerJarFile, jreLocation);
+	}
+	
+	public static JBDS installJBDS(File target, File installerJarFile, String jreLocation) throws IOException {
 		// Install JBDS
 		String installationFile = null;
 		try {
