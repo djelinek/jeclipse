@@ -7,14 +7,11 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apodhrad.jdownload.manager.JDownloadManager;
 import org.apodhrad.jdownload.manager.hash.Hash;
 import org.apodhrad.jdownload.manager.hash.NullHash;
-import org.apodhrad.jeclipse.manager.matcher.IsJavaExecutable;
-import org.apodhrad.jeclipse.manager.util.FileSearch;
 import org.apodhrad.jeclipse.manager.util.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,7 +76,8 @@ public class JBDS extends Eclipse {
 
 	private static String createInstallationFile(File target, String jbdsVersion, String jreLocation)
 			throws IOException {
-		String jre = getJreLocation(jreLocation);
+		File jre = OS.getJre(jreLocation);
+		log.info("JRE: " + jre);
 		if (jre == null) {
 			throw new IllegalStateException("Cannot find JRE location!");
 		}
@@ -103,7 +101,7 @@ public class JBDS extends Eclipse {
 		BufferedWriter out = new BufferedWriter(new FileWriter(targetFile));
 		String line = null;
 		while ((line = in.readLine()) != null) {
-			out.write(line.replace("@DEST@", dest).replace("@JRE@", jre));
+			out.write(line.replace("@DEST@", dest).replace("@JRE@", jre.getAbsolutePath()));
 			out.newLine();
 		}
 		out.flush();
@@ -112,24 +110,6 @@ public class JBDS extends Eclipse {
 
 		new File(tempFile).delete();
 		return targetFile;
-	}
-
-	private static String getJreLocation(String location) {
-		String jreLoc = null;
-
-		// find jre location from java home
-		String javaHome = location;
-		if (location == null || location.length() == 0) {
-			javaHome = System.getProperty("java.home");
-		}
-		log.info("JRE: " + javaHome);
-		FileSearch fileSearch = new FileSearch();
-		List<File> result = fileSearch.find(new File(javaHome), new IsJavaExecutable());
-		if (!result.isEmpty()) {
-			jreLoc = result.get(0).getAbsolutePath();
-		}
-
-		return jreLoc;
 	}
 
 	public static String getJBDSVersion(File installer) {
