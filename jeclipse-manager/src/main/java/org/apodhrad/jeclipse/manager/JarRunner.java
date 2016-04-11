@@ -109,7 +109,7 @@ public class JarRunner implements Runnable {
 					if (output != null) {
 						output.append(line);
 					}
-					if (line.contains("ERROR") && !line.contains("level=ERROR")) {
+					if (line.contains("ERROR") && !line.contains("level=ERROR") && !line.contains("!MESSAGE")) {
 						status = "Following line was found during auto.xml installation: " + line;
 						break;
 					}
