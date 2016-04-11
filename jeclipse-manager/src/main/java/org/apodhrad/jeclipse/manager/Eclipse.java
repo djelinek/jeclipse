@@ -61,6 +61,7 @@ public class Eclipse {
 	private static Logger log = LoggerFactory.getLogger(Eclipse.class);
 	private File jarFile;
 	private Set<String> updateSites;
+	private Set<String> ignoredFeatures;
 
 	public Eclipse(String path) {
 		this(new File(path));
@@ -80,6 +81,7 @@ public class Eclipse {
 		}
 		this.jarFile = file;
 		this.updateSites = new HashSet<String>();
+		this.ignoredFeatures = new HashSet<String>();
 	}
 
 	public File getLauncher() {
@@ -136,6 +138,23 @@ public class Eclipse {
 		return Collections.unmodifiableSet(updateSites);
 	}
 
+	public void ignoreFeature(String regex) {
+		ignoredFeatures.add(regex);
+	}
+
+	public Set<String> getIgnoredFeatures() {
+		return ignoredFeatures;
+	}
+
+	public boolean isFeatureIgnored(String feature) {
+		for (String ignoredFeature : ignoredFeatures) {
+			if (feature.matches(ignoredFeature)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public List<Bundle> listFeatures() {
 		return listFeatures(getUpdateSites());
 	}
@@ -187,9 +206,17 @@ public class Eclipse {
 	}
 
 	public EclipseExecutionOutput installAllFeaturesFromUpdateSite(boolean followReferences, String updateSite) {
+		return installAllFeaturesFromUpdateSite(followReferences, updateSite, true);
+	}
+
+	public EclipseExecutionOutput installAllFeaturesFromUpdateSite(boolean followReferences, String updateSite,
+			boolean ignoreFeatures) {
 		List<Bundle> features = listFeatures(updateSite);
 		List<String> listOfUIs = new ArrayList<String>();
 		for (Bundle feature : features) {
+			if (ignoreFeatures && isFeatureIgnored(feature.getName())) {
+				continue;
+			}
 			listOfUIs.add(feature.getName() + ".feature.group");
 		}
 		addUpdateSite(updateSite);
@@ -215,7 +242,7 @@ public class Eclipse {
 		command.add(feature);
 
 		EclipseExecutionOutput output = execute(command);
-		for (String line: output.getLines()) {
+		for (String line : output.getLines()) {
 			if (line.contains("Operation completed in")) {
 				return output;
 			}
