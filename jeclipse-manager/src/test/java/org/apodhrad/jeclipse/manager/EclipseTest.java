@@ -13,7 +13,7 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apodhrad.jdownload.manager.JDownloadManager;
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -34,8 +34,8 @@ public class EclipseTest {
 	private static String eclipsePath;
 	private static File eclipseFile;
 
-	@BeforeClass
-	public static void beforeClass() throws IOException {
+	@Before
+	public void prepareEclipse() throws IOException {
 		targetPath = System.getProperty("project.build.directory", "target");
 		assertNotNull("Set system property project.build.directory", targetPath);
 		targetFile = new File(targetPath);
