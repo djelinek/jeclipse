@@ -94,6 +94,9 @@ public class JBDS extends Eclipse {
 		if (jbdsVersion != null && jbdsVersion.startsWith("9")) {
 			sourceFile = "/install-9.xml";
 		}
+		if (jbdsVersion != null && jbdsVersion.startsWith("10")) {
+			sourceFile = "/install-10.xml";
+		}
 		URL url = JBDS.class.getResource(sourceFile);
 
 		FileUtils.copyURLToFile(url, new File(tempFile));
