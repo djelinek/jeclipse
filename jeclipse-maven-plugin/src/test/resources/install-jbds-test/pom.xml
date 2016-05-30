@@ -13,8 +13,7 @@
 	      <artifactId>jeclipse-maven-plugin</artifactId>
 	      <version>${jeclipse.version}</version>
 		  <configuration>
-		    <jbds.installer>${jeclipse.test.jbds.url}</jbds.installer>
-		    <jbds.installer.sha256>${jeclipse.test.jbds.sha256}</jbds.installer.sha256>
+		    <jbds.installer>${jbds.url}</jbds.installer>
 		  </configuration>
 	      <executions>
 		<execution>

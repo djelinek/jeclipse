@@ -72,8 +72,9 @@
 	    <org.slf4j.simpleLogger.defaultLogLevel>debug</org.slf4j.simpleLogger.defaultLogLevel>
 	    <project.build.directory>${project.build.directory}</project.build.directory>
 	    <jeclipse.version>${project.version}</jeclipse.version>
-	    <jeclipse.test.jbds.url>${jeclipse.test.jbds.url}</jeclipse.test.jbds.url>
-	    <jeclipse.test.jbds.sha256>${jeclipse.test.jbds.sha256}</jeclipse.test.jbds.sha256>
+	    <jbds7.url>${jbds7.url}</jbds7.url>
+	    <jbds8.url>${jbds8.url}</jbds8.url>
+	    <jbds9.url>${jbds9.url}</jbds9.url>
 	  </systemPropertyVariables>
 	</configuration>
       </plugin>

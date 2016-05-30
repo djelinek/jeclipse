@@ -13,11 +13,11 @@
 				<artifactId>jeclipse-maven-plugin</artifactId>
 				<version>${jeclipse.version}</version>
 				<configuration>
-					<eclipseVersion>jee-luna-SR2</eclipseVersion>
+					<eclipseVersion>${eclipse.version}</eclipseVersion>
 				</configuration>
 				<executions>
 					<execution>
-						<id>install-eclipse-luna</id>
+						<id>install-eclipse</id>
 						<goals>
 							<goal>install</goal>
 						</goals>

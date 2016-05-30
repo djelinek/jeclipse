@@ -1,140 +1,82 @@
 package org.apodhrad.jeclipse.maven.plugin;
 
+import static org.junit.Assume.assumeTrue;
+
 import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.Collections;
-import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.maven.shared.invoker.DefaultInvocationRequest;
-import org.apache.maven.shared.invoker.DefaultInvoker;
-import org.apache.maven.shared.invoker.InvocationRequest;
-import org.apache.maven.shared.invoker.InvocationResult;
-import org.apache.maven.shared.invoker.Invoker;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class InstallerTest extends BetterAbstractMojoTestCase {
 
-	private static String TARGET;
-	private static String JBDS_URL;
-	private static String JBDS_SHA256;
+	public static final String ECLIPSE_LUNA_VERSION = "jee-luna-SR2";
+	public static final String ECLIPSE_LUNA_PLUGIN = "org.eclipse.platform_4.4.2.v20150204-1700";
+	
+	public static final String ECLIPSE_MARS_VERSION = "jee-mars-2";
+	public static final String ECLIPSE_MARS_PLUGIN = "org.eclipse.platform_4.5.2.v20160212-1500";
 
-//	@BeforeClass
-	public static void beforeClass() throws IOException {
-		TARGET = systemProperty("project.build.directory");
-		JBDS_URL = systemProperty("jeclipse.test.jbds.url");
-		JBDS_SHA256 = systemProperty("jeclipse.test.jbds.sha256");
+	public static final String JBDS_7_PLUGIN = "com.jboss.jbds.product_7.1.1.GA-v20140314-2145-B688.jar";
+	public static final String JBDS_8_PLUGIN = "com.jboss.devstudio.core_8.1.0.GA-v20150327-1349-B467.jar";
+	public static final String JBDS_9_PLUGIN = "com.jboss.devstudio.core_9.1.0.GA-v20160414-0124-B497.jar";
+
+	private static String TARGET = systemProperty("project.build.directory");
+
+	@Test
+	public void testEclipseLunaInstallation() throws Exception {
+		System.setProperty("eclipse.version", ECLIPSE_LUNA_VERSION);
+
+		File target = execMaven("install-eclipse-test", "install");
+		assertTrue(new File(target, "eclipse/plugins/" + ECLIPSE_LUNA_PLUGIN).exists());
 	}
 
-//	@Test
-	public void installEclipseLunaTest() throws Exception {
-		File pomFile = prepareMavenProject("install-eclipse-luna");
+	@Test
+	public void testEclipseMarsInstallation() throws Exception {
+		System.setProperty("eclipse.version", "jee-mars-2");
 
-		InvocationRequest request = new DefaultInvocationRequest();
-		request.setPomFile(pomFile);
-		request.setGoals(Collections.singletonList("package"));
+		File target = execMaven("install-eclipse-test", "install");
+		assertTrue(new File(target, "eclipse/plugins/" + ECLIPSE_MARS_PLUGIN).exists());
+	}
 
-		Properties systemProperties = new Properties();
-		systemProperties.put("jeclipse.version", System.getProperty("jeclipse.version"));
-		request.setProperties(systemProperties);
+	@Test
+	public void testJBDS8Installation() throws Exception {
+		String jbdsUrl = assumeProperty("jbds8.url");
+		System.setProperty("jbds.url", jbdsUrl);
 
-		Invoker invoker = new DefaultInvoker();
-		InvocationResult result = invoker.execute(request);
-
-		int exitCode = result.getExitCode();
-		assertEquals("Build failed (exit code " + exitCode + ")", 0, exitCode);
+		File target = execMaven("install-jbds-test", "install");
+		assertTrue(new File(target, "jbdevstudio/studio/plugins/" + JBDS_8_PLUGIN).exists());
 	}
 	
 	@Test
-	public void testinstallEclipseLuna2Test() throws Exception {
-		File pom = getTestFile("src/test/resources/install-eclipse-luna-test/pom.xml");
+	public void testJBDS9Installation() throws Exception {
+		String jbdsUrl = assumeProperty("jbds9.url");
+		System.setProperty("jbds.url", jbdsUrl);
+
+		File target = execMaven("install-jbds-test", "install");
+		assertTrue(new File(target, "jbdevstudio/studio/plugins/" + JBDS_9_PLUGIN).exists());
+	}
+
+	private File execMaven(String project, String goal) throws Exception {
+		File pom = getTestFile(TARGET, "test-classes/" + project + "/pom.xml");
 		assertNotNull(pom);
 		assertTrue(pom.exists());
-
-		Installer installer = (Installer) lookupConfiguredMojo("install", pom);
+		File target = new File(pom.getParent(), "target");
+		FileUtils.deleteQuietly(target);
+		Installer installer = (Installer) lookupConfiguredMojo(goal, pom);
 		assertNotNull(installer);
 		installer.execute();
-	}
-	
-
-	@Test
-	public void testinstallEclipseMars2Test() throws Exception {
-		File pom = getTestFile("src/test/resources/install-eclipse-mars-test/pom.xml");
-		assertNotNull(pom);
-		assertTrue(pom.exists());
-
-		Installer installer = (Installer) lookupConfiguredMojo("install", pom);
-		assertNotNull(installer);
-		installer.execute();
-	}
-	
-
-	@Test
-	public void testinstallJBDS2Test() throws Exception {
-		File pom = getTestFile("src/test/resources/install-jbds-test/pom.xml");
-		assertNotNull(pom);
-		assertTrue(pom.exists());
-
-		Installer installer = (Installer) lookupConfiguredMojo("install", pom);
-		assertNotNull(installer);
-		installer.execute();
+		return target;
 	}
 
-//	@Test
-	public void installEclipseMarsTest() throws Exception {
-		File pomFile = prepareMavenProject("install-eclipse-mars");
-
-		InvocationRequest request = new DefaultInvocationRequest();
-		request.setPomFile(pomFile);
-		request.setGoals(Collections.singletonList("package"));
-
-		Properties systemProperties = new Properties();
-		systemProperties.put("jeclipse.version", System.getProperty("jeclipse.version"));
-		request.setProperties(systemProperties);
-
-		Invoker invoker = new DefaultInvoker();
-		InvocationResult result = invoker.execute(request);
-
-		int exitCode = result.getExitCode();
-		assertEquals("Build failed (exit code " + exitCode + ")", 0, exitCode);
-	}
-
-//	@Test
-	public void installJBDSTest() throws Exception {
-		File pomFile = prepareMavenProject("install-jbds");
-
-		InvocationRequest request = new DefaultInvocationRequest();
-		request.setPomFile(pomFile);
-		request.setGoals(Collections.singletonList("package"));
-
-		Properties systemProperties = new Properties();
-		systemProperties.put("jeclipse.version", System.getProperty("jeclipse.version"));
-		systemProperties.put("jeclipse.test.jbds.url", JBDS_URL);
-		systemProperties.put("jeclipse.test.jbds.sha256", JBDS_SHA256);
-		request.setProperties(systemProperties);
-
-		Invoker invoker = new DefaultInvoker();
-		InvocationResult result = invoker.execute(request);
-
-		int exitCode = result.getExitCode();
-		assertEquals("Build failed (exit code " + exitCode + ")", 0, exitCode);
-	}
-
-	static public String systemProperty(String key) {
+	private static String systemProperty(String key) {
 		String value = System.getProperty(key);
 		assertTrue("The system property '" + key + "' must be defined!", value != null && value.length() > 0);
 		return value;
 	}
 
-	private File prepareMavenProject(String name) throws IOException {
-		URL url = InstallerTest.class.getResource("/" + name + ".xml");
-		File target = new File(TARGET, name);
-		target.mkdir();
-		File pomFile = new File(target, "pom.xml");
-		FileUtils.copyURLToFile(url, pomFile);
-		return pomFile;
+	private static String assumeProperty(String key) {
+		String value = System.getProperty(key);
+		assumeTrue("The system property '" + key + "' is not defined!", value != null && value.length() > 0);
+		return value;
 	}
 
 }

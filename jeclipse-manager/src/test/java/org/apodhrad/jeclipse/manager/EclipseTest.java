@@ -12,8 +12,15 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apodhrad.jdownload.manager.JDownloadManager;
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.DefaultHandler;
+import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.handler.ResourceHandler;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -23,16 +30,43 @@ import org.junit.Test;
  */
 public class EclipseTest {
 
+	private static final String TARGET = System.getProperty("project.build.directory", "target");;
+
+	public static final int JETTY_SERVER_PORT = 8180;
+	public static final File JETTY_RESOURCE_BASE = new File(TARGET, "jettyResource");
+
 	public static final String ECLIPSE_VERSION = "jee-mars-2";
 	public static final String ECLIPSE_LAUNCHER = "org.eclipse.equinox.launcher_1.3.100.v20150511-1540.jar";
 	public static final String REDDEER_VERSION = "1.0.1.Final";
-	public static final String REDDEER = "http://download.jboss.org/jbosstools/updates/stable/mars/core/reddeer/1.0.1/";
+	public static final String REDDEER = "http://localhost:" + JETTY_SERVER_PORT;
 	public static final String REDDEER_ZIP = "https://github.com/jboss-reddeer/reddeer/releases/download/v1.0.1/org.jboss.reddeer.site-1.0.1.Final.zip";
 
+	private static Server server;
 	private static String targetPath;
 	private static File targetFile;
 	private static String eclipsePath;
 	private static File eclipseFile;
+
+	@BeforeClass
+	public static void starteServer() throws Exception {
+		FileUtils.forceMkdir(JETTY_RESOURCE_BASE);
+		new JDownloadManager().download(REDDEER_ZIP, JETTY_RESOURCE_BASE, true);
+
+		ResourceHandler resource_handler = new ResourceHandler();
+		resource_handler.setDirectoriesListed(true);
+		resource_handler.setWelcomeFiles(new String[] { "index.html" });
+		resource_handler.setResourceBase(JETTY_RESOURCE_BASE.getPath());
+		HandlerList handlers = new HandlerList();
+		handlers.setHandlers(new Handler[] { resource_handler, new DefaultHandler() });
+		server = new Server(JETTY_SERVER_PORT);
+		server.setHandler(handlers);
+		server.start();
+	}
+
+	@AfterClass
+	public static void stopServer() throws Exception {
+		server.stop();
+	}
 
 	@Before
 	public void prepareEclipse() throws IOException {
