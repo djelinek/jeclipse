@@ -74,6 +74,8 @@
 	    <jeclipse.version>${project.version}</jeclipse.version>
 	    <jeclipse.test.jbds.url>${jeclipse.test.jbds.url}</jeclipse.test.jbds.url>
 	    <jeclipse.test.jbds.sha256>${jeclipse.test.jbds.sha256}</jeclipse.test.jbds.sha256>
+	    <jeclipse.test.jbdsis.url>${jeclipse.test.jbdsis.url}</jeclipse.test.jbdsis.url>
+	    <jeclipse.test.jbdsis.md5>${jeclipse.test.jbdsis.md5}</jeclipse.test.jbdsis.md5>
 	  </systemPropertyVariables>
 	</configuration>
       </plugin>

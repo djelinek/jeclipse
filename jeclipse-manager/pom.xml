@@ -10,10 +10,6 @@
   <packaging>jar</packaging>
   <name>.: JEclipse Manager :.</name>
   
-  <properties>
-    <jeclipse.test.jbds.url></jeclipse.test.jbds.url>
-  </properties>
-  
   <dependencies>
     <dependency>
       <groupId>org.hamcrest</groupId>

@@ -70,6 +70,9 @@ public class Installer extends AbstractMojo {
 	private java.util.List remoteRepositories;
 
 	@Parameter
+	private String[] ius;
+	
+	@Parameter
 	private Set<String> features;
 
 	@Parameter(alias = "jre.location")
@@ -132,8 +135,11 @@ public class Installer extends AbstractMojo {
 					hash = new URLHash(jbdsInstallerSHA256);
 				}
 			}
+			if (ius == null) {
+				ius = new String[0];
+			}
 			try {
-				eclipse = JBDS.installJBDS(new File(target), jbdsInstaller.toString(), jreLocation, hash);
+				eclipse = JBDS.installJBDS(new File(target), jbdsInstaller.toString(), hash, jreLocation, ius);
 			} catch (IOException ioe) {
 				throw new MojoExecutionException("I/O exception occured during installing Eclipse IDE", ioe);
 			}

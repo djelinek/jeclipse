@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.util.StringJoiner;
 
 import org.apache.commons.io.FileUtils;
 import org.apodhrad.jdownload.manager.JDownloadManager;
@@ -34,28 +35,30 @@ public class JBDS extends Eclipse {
 	}
 
 	public static JBDS installJBDS(File target, String url) throws IOException {
-		return installJBDS(target, url, null, new NullHash());
+		return installJBDS(target, url, new NullHash(), null);
 	}
 
 	public static JBDS installJBDS(File target, String url, String jreLocation) throws IOException {
-		return installJBDS(target, url, jreLocation, new NullHash());
+		return installJBDS(target, url, new NullHash(), jreLocation);
 	}
 
 	public static JBDS installJBDS(File target, String url, Hash hash) throws IOException {
-		return installJBDS(target, url, null, hash);
+		return installJBDS(target, url, hash, null);
 	}
 
-	public static JBDS installJBDS(File target, String url, String jreLocation, Hash hash) throws IOException {
+	public static JBDS installJBDS(File target, String url, Hash hash, String jreLocation, String... ius)
+			throws IOException {
 		JDownloadManager manager = new JDownloadManager();
 		File installerJarFile = manager.download(url, target, hash);
-		return installJBDS(target, installerJarFile, jreLocation);
+		return installJBDS(target, installerJarFile, jreLocation, ius);
 	}
-	
-	public static JBDS installJBDS(File target, File installerJarFile, String jreLocation) throws IOException {
+
+	public static JBDS installJBDS(File target, File installerJarFile, String jreLocation, String... ius)
+			throws IOException {
 		// Install JBDS
 		String installationFile = null;
 		try {
-			installationFile = createInstallationFile(target, getJBDSVersion(installerJarFile), jreLocation);
+			installationFile = createInstallationFile(target, getJBDSVersion(installerJarFile), jreLocation, ius);
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
 			throw new RuntimeException("Exception occured during creating installation file");
@@ -74,12 +77,25 @@ public class JBDS extends Eclipse {
 		return new JBDS(new File(target, "jbdevstudio"));
 	}
 
-	private static String createInstallationFile(File target, String jbdsVersion, String jreLocation)
-			throws IOException {
+	private static String createInstallationFile(File target, String jbdsVersion, String jreLocation,
+			String... ius) throws IOException {
 		File jre = OS.getJre(jreLocation);
 		log.info("JRE: " + jre);
 		if (jre == null) {
 			throw new IllegalStateException("Cannot find JRE location!");
+		}
+
+		StringJoiner iuList = new StringJoiner(",");
+		iuList.add("com.jboss.devstudio.core.package");
+		iuList.add("org.testng.eclipse.feature.group");
+		for (String feature : ius) {
+			iuList.add(feature);
+		}
+
+		StringJoiner productList = new StringJoiner(",");
+		productList.add("jbds");
+		if (ius.length > 0) {
+			productList.add("jbdsis");
 		}
 
 		String dest = new File(target, "jbdevstudio").getAbsolutePath();
@@ -104,7 +120,11 @@ public class JBDS extends Eclipse {
 		BufferedWriter out = new BufferedWriter(new FileWriter(targetFile));
 		String line = null;
 		while ((line = in.readLine()) != null) {
-			out.write(line.replace("@DEST@", dest).replace("@JRE@", jre.getAbsolutePath()));
+			line = line.replace("@DEST@", dest);
+			line = line.replace("@JRE@", jre.getAbsolutePath());
+			line = line.replace("@IUS@", iuList.toString());
+			line = line.replace("@PRODUCTS@", productList.toString());
+			out.write(line);
 			out.newLine();
 		}
 		out.flush();

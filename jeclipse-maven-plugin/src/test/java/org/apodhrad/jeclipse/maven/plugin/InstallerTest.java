@@ -71,9 +71,20 @@ public class InstallerTest extends BetterAbstractMojoTestCase {
 	}
 	
 
-	@Test
+//	@Test
 	public void testinstallJBDS2Test() throws Exception {
 		File pom = getTestFile("src/test/resources/install-jbds-test/pom.xml");
+		assertNotNull(pom);
+		assertTrue(pom.exists());
+
+		Installer installer = (Installer) lookupConfiguredMojo("install", pom);
+		assertNotNull(installer);
+		installer.execute();
+	}
+	
+	@Test
+	public void testinstallJBDSISTest() throws Exception {
+		File pom = getTestFile("src/test/resources/install-jbdsis-test/pom.xml");
 		assertNotNull(pom);
 		assertTrue(pom.exists());
 
