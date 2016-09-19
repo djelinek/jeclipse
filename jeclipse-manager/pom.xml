@@ -39,7 +39,7 @@
     <dependency>
       <groupId>org.apodhrad.jdownload</groupId>
       <artifactId>jdownload-manager</artifactId>
-      <version>1.0.1</version>
+      <version>1.0.3</version>
     </dependency>
   </dependencies>
    
