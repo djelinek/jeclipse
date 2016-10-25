@@ -1,5 +1,9 @@
 package org.apodhrad.jeclipse.manager;
 
+import static org.apodhrad.jeclipse.manager.EclipseRelease.ECLIPSE_DEFAULT_MIRROR;
+import static org.apodhrad.jeclipse.manager.EclipseRelease.getEclipseInstaller;
+import static org.apodhrad.jeclipse.manager.EclipseRelease.getEclipseUrl;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -32,6 +36,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Eclipse {
 
+	public static final String ECLIPSE_NEON_JEE_VERSION = "jee-neon-1-RC3";
 	public static final String ECLIPSE_MARS_JEE_VERSION = "jee-mars-1";
 	public static final String ECLIPSE_LUNA_JEE_VERSION = "jee-luna-SR2";
 	@SuppressWarnings("serial")
@@ -52,7 +57,6 @@ public class Eclipse {
 	};
 
 	public static final String ECLIPSE_DEFAULT_VERSION = ECLIPSE_LUNA_JEE_VERSION;
-	public static final String ECLIPSE_DEFAULT_MIRROR = "http://www.eclipse.org/downloads/download.php?r=1&file=/technology/epp/downloads/release";
 
 	public static final String TIMEOUT_PROPERTY = "jeclipse.timeout";
 
@@ -396,40 +400,6 @@ public class Eclipse {
 			eclipseFolder = "Eclipse.app";
 		}
 		return new Eclipse(new File(target, eclipseFolder));
-	}
-
-	private static String getEclipseUrl(String eclipseVersion, String eclipseMirror) {
-		String[] version = eclipseVersion.split("-");
-		return eclipseMirror + "/" + version[1] + "/" + version[2] + "/" + getEclipseInstaller(eclipseVersion);
-	}
-
-	private static String getEclipseInstaller(String eclipseVersion) {
-		String os_property = OS.getName();
-		String arch_property = OS.getArch();
-
-		String platform = null;
-		String archive = "zip";
-
-		if (os_property.contains("linux")) {
-			platform = "linux-gtk";
-			archive = "tar.gz";
-		} else if (os_property.contains("win")) {
-			platform = "win32";
-			archive = "zip";
-		} else if (os_property.contains("mac")) {
-			platform = "macosx-cocoa";
-			archive = "tar.gz";
-		}
-
-		if (platform == null) {
-			throw new RuntimeException("Unknown platform '" + os_property + "'");
-		}
-
-		if (arch_property.contains("64")) {
-			platform += "-x86_64";
-		}
-
-		return "eclipse-" + eclipseVersion + "-" + platform + "." + archive;
 	}
 
 	public void mirrorRepository(String source, File destination) throws IOException {
