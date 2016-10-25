@@ -4,23 +4,19 @@
 <com.izforge.izpack.panels.HTMLLicencePanel id="licence"/>
 <com.jboss.devstudio.core.installer.PathInputPanel id="target">
 <!-- JBDS Destination -->
-<installpath>@DEST@</installpath>
+<installpath>INSTALL_PATH</installpath>
 </com.jboss.devstudio.core.installer.PathInputPanel>
 <com.jboss.devstudio.core.installer.JREPathPanel id="jre"/>
 <com.jboss.devstudio.core.installer.JBossAsSelectPanel id="as">
-<installgroup>devstudio</installgroup>
+<installgroup>jbds</installgroup>
 </com.jboss.devstudio.core.installer.JBossAsSelectPanel>
-<com.jboss.devstudio.core.installer.InstallAdditionalFeaturesPanel id="features">
-<ius>@IUS@</ius>
-<locations>@PRODUCTS@</locations>
-</com.jboss.devstudio.core.installer.InstallAdditionalFeaturesPanel>
 <com.jboss.devstudio.core.installer.UpdatePacksPanel id="updatepacks"/>
 <com.jboss.devstudio.core.installer.DiskSpaceCheckPanel id="diskspacecheck"/>
 <com.izforge.izpack.panels.SummaryPanel id="summary"/>
 <com.izforge.izpack.panels.InstallPanel id="install"/>
 <com.jboss.devstudio.core.installer.CreateLinkPanel id="createlink">
 <!-- JRE Location -->
-<jrelocation>@JRE@</jrelocation>
+<jrelocation>JRE_LOCATION</jrelocation>
 </com.jboss.devstudio.core.installer.CreateLinkPanel>
 <com.izforge.izpack.panels.ShortcutPanel id="shortcut"/>
 <com.jboss.devstudio.core.installer.ShortcutPanelPatch id="shortcutpatch"/>

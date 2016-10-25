@@ -3,7 +3,6 @@
 <com.jboss.devstudio.core.installer.HTMLInfoPanelWithRootWarning id="introduction"/>
 <com.izforge.izpack.panels.HTMLLicencePanel id="licence"/>
 <com.jboss.devstudio.core.installer.PathInputPanel id="target">
-<!-- JBDS Destination -->
 <installpath>@DEST@</installpath>
 </com.jboss.devstudio.core.installer.PathInputPanel>
 <com.jboss.devstudio.core.installer.JREPathPanel id="jre"/>

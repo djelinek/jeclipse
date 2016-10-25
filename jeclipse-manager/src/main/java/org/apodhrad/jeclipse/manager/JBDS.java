@@ -77,8 +77,8 @@ public class JBDS extends Eclipse {
 		return new JBDS(new File(target, "jbdevstudio"));
 	}
 
-	private static String createInstallationFile(File target, String jbdsVersion, String jreLocation,
-			String... ius) throws IOException {
+	public static String createInstallationFile(File target, String jbdsVersion, String jreLocation, String... ius)
+			throws IOException {
 		File jre = OS.getJre(jreLocation);
 		log.info("JRE: " + jre);
 		if (jre == null) {
@@ -93,9 +93,9 @@ public class JBDS extends Eclipse {
 		}
 
 		StringJoiner productList = new StringJoiner(",");
-		productList.add("jbds");
+		productList.add(jbdsVersion.startsWith("10") ? "devstudio" : "jbds");
 		if (ius.length > 0) {
-			productList.add("jbdsis");
+			productList.add(jbdsVersion.startsWith("10") ? "devstudio-is" : "jbdsis");
 		}
 
 		String dest = new File(target, "jbdevstudio").getAbsolutePath();
