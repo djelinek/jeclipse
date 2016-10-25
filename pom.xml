@@ -66,7 +66,7 @@
         </executions>
       </plugin>
       <plugin>
-	<artifactId>maven-surefire-plugin</artifactId>
+	<artifactId>maven-failsafe-plugin</artifactId>
 	<configuration>
 	  <systemPropertyVariables>
 	    <org.slf4j.simpleLogger.defaultLogLevel>debug</org.slf4j.simpleLogger.defaultLogLevel>

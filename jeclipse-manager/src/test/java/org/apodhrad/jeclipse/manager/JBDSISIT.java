@@ -10,7 +10,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class JBDSISTest {
+public class JBDSISIT {
 
 	public static final String FUSE_FEATURE = "com.jboss.devstudio.integration-stack.fuse.feature.feature.group";
 

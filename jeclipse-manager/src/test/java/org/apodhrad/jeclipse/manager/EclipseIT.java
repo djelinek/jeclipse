@@ -21,7 +21,7 @@ import org.junit.Test;
  * @author apodhrad
  *
  */
-public class EclipseTest {
+public class EclipseIT {
 
 	public static final String ECLIPSE_VERSION = "jee-mars-2";
 	public static final String ECLIPSE_LAUNCHER = "org.eclipse.equinox.launcher_1.3.100.v20150511-1540.jar";

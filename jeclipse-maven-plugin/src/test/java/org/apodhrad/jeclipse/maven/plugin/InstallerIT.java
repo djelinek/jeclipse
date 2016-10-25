@@ -15,7 +15,7 @@ import org.apache.maven.shared.invoker.Invoker;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class InstallerTest extends BetterAbstractMojoTestCase {
+public class InstallerIT extends BetterAbstractMojoTestCase {
 
 	private static String TARGET;
 	private static String JBDS_URL;
@@ -140,7 +140,7 @@ public class InstallerTest extends BetterAbstractMojoTestCase {
 	}
 
 	private File prepareMavenProject(String name) throws IOException {
-		URL url = InstallerTest.class.getResource("/" + name + ".xml");
+		URL url = InstallerIT.class.getResource("/" + name + ".xml");
 		File target = new File(TARGET, name);
 		target.mkdir();
 		File pomFile = new File(target, "pom.xml");

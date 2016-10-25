@@ -9,7 +9,7 @@ import org.apodhrad.jdownload.manager.hash.NullHash;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class JBDSTest {
+public class JBDSIT {
 
 	private static String JBDS_URL;
 	private static String TARGET;
