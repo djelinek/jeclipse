@@ -66,6 +66,16 @@
         </executions>
       </plugin>
       <plugin>
+	<artifactId>maven-surefire-plugin</artifactId>
+	<configuration>
+	  <systemPropertyVariables>
+	    <org.slf4j.simpleLogger.defaultLogLevel>debug</org.slf4j.simpleLogger.defaultLogLevel>
+	    <project.build.directory>${project.build.directory}</project.build.directory>
+	    <jeclipse.version>${project.version}</jeclipse.version>
+	  </systemPropertyVariables>
+	</configuration>
+      </plugin>
+      <plugin>
 	<artifactId>maven-failsafe-plugin</artifactId>
     <executions>
       <execution>

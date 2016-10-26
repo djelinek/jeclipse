@@ -71,6 +71,9 @@ public class Installer extends AbstractMojo {
 
 	@Parameter
 	private String[] ius;
+
+	@Parameter
+	private String[] runtimes;
 	
 	@Parameter
 	private Set<String> features;

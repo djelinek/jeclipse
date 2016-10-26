@@ -76,6 +76,21 @@ public class JBDS extends Eclipse {
 
 		return new JBDS(new File(target, "jbdevstudio"));
 	}
+	
+	public static JBDS installJBDS(File installerJarFile, JBDSConfigRecord config)
+			throws IOException {
+		// Switch IzPack mode to privileged on Windows
+		if (OS.isWindows()) {
+			System.setProperty("izpack.mode", "privileged");
+		}
+
+		JarRunner jarRunner = new JarRunner(installerJarFile.getAbsolutePath(), config.getFile().getAbsolutePath());
+		jarRunner.setOutput(new EclipseExecutionOutput());
+		jarRunner.setTimeout(getJEclipseTimeout());
+		jarRunner.run();
+
+		return new JBDS(new File(config.getInstallPath(), "jbdevstudio"));
+	}
 
 	public static String createInstallationFile(File target, File installerJarFile, String jreLocation, String... ius)
 			throws IOException {
