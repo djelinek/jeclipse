@@ -7,12 +7,15 @@
 </com.jboss.devstudio.core.installer.PathInputPanel>
 <com.jboss.devstudio.core.installer.JREPathPanel id="jre"/>
 <com.jboss.devstudio.core.installer.JBossAsSelectPanel id="as">
-<installgroup>devstudio</installgroup>
+<installgroup>@GROUP@</installgroup>
 </com.jboss.devstudio.core.installer.JBossAsSelectPanel>
 <com.jboss.devstudio.core.installer.InstallAdditionalFeaturesPanel id="features">
 <ius>@IUS@</ius>
 <locations>@PRODUCTS@</locations>
 </com.jboss.devstudio.core.installer.InstallAdditionalFeaturesPanel>
+<com.jboss.devstudio.core.installer.InstallAdditionalRuntimesPanel id="runtimes">
+<locations>@RUNTIMES@</locations>
+</com.jboss.devstudio.core.installer.InstallAdditionalRuntimesPanel>
 <com.jboss.devstudio.core.installer.UpdatePacksPanel id="updatepacks"/>
 <com.jboss.devstudio.core.installer.DiskSpaceCheckPanel id="diskspacecheck"/>
 <com.izforge.izpack.panels.SummaryPanel id="summary"/>

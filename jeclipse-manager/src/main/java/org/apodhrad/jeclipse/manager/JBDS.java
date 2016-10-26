@@ -58,7 +58,7 @@ public class JBDS extends Eclipse {
 		// Install JBDS
 		String installationFile = null;
 		try {
-			installationFile = createInstallationFile(target, getJBDSVersion(installerJarFile), jreLocation, ius);
+			installationFile = createInstallationFile(target, installerJarFile, jreLocation, ius);
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
 			throw new RuntimeException("Exception occured during creating installation file");
@@ -77,9 +77,20 @@ public class JBDS extends Eclipse {
 		return new JBDS(new File(target, "jbdevstudio"));
 	}
 
-	public static String createInstallationFile(File target, String jbdsVersion, String jreLocation, String... ius)
+	public static String createInstallationFile(File target, File installerJarFile, String jreLocation, String... ius)
 			throws IOException {
-		File jre = OS.getJre(jreLocation);
+		JBDSConfig config = new JBDSConfig();
+		config.setTarget(target);
+		config.setInstallerJarFile(installerJarFile);
+		config.setJreLocation(jreLocation);
+		for (String iu : ius) {
+			config.addInstallableUnit(iu);
+		}
+		return createInstallationFile(config);
+	}
+
+	public static String createInstallationFile(JBDSConfig config) throws IOException {
+		File jre = OS.getJre(config.getJreLocation());
 		log.info("JRE: " + jre);
 		if (jre == null) {
 			throw new IllegalStateException("Cannot find JRE location!");
@@ -88,20 +99,29 @@ public class JBDS extends Eclipse {
 		StringJoiner iuList = new StringJoiner(",");
 		iuList.add("com.jboss.devstudio.core.package");
 		iuList.add("org.testng.eclipse.feature.group");
-		for (String feature : ius) {
+		for (String feature : config.getInstallabelUnits()) {
 			iuList.add(feature);
 		}
 
+		StringJoiner runtimeList = new StringJoiner(",");
+		runtimeList.setEmptyValue("");
+		for (String runtime : config.getRuntimes()) {
+			runtimeList.add(runtime);
+		}
+
+		String group = "devstudio";
+
+		String jbdsVersion = getJBDSVersion(config.getInstallerJarFile());
 		StringJoiner productList = new StringJoiner(",");
 		productList.add(jbdsVersion.startsWith("10") ? "devstudio" : "jbds");
-		if (ius.length > 0) {
+		if (!config.getInstallabelUnits().isEmpty()) {
 			productList.add(jbdsVersion.startsWith("10") ? "devstudio-is" : "jbdsis");
 		}
 
-		String dest = new File(target, "jbdevstudio").getAbsolutePath();
+		String dest = new File(config.getTarget(), "jbdevstudio").getAbsolutePath();
 
-		String tempFile = new File(target, "/install.xml").getAbsolutePath();
-		String targetFile = new File(target, "/installation.xml").getAbsolutePath();
+		String tempFile = new File(config.getTarget(), "/install.xml").getAbsolutePath();
+		String targetFile = new File(config.getTarget(), "/installation.xml").getAbsolutePath();
 
 		String sourceFile = "/install.xml";
 		if (jbdsVersion != null && jbdsVersion.startsWith("8")) {
@@ -112,6 +132,13 @@ public class JBDS extends Eclipse {
 		}
 		if (jbdsVersion != null && jbdsVersion.startsWith("10")) {
 			sourceFile = "/install-10.xml";
+			if (runtimeList.length() > 0) {
+				sourceFile = "/install-10-runtime.xml";
+			}
+			if (config.getInstallerJarFile().getName().contains("eap")) {
+				group = "jbosseap";
+				sourceFile = "/install-10-runtime.xml";
+			}
 		}
 		URL url = JBDS.class.getResource(sourceFile);
 
@@ -121,9 +148,11 @@ public class JBDS extends Eclipse {
 		String line = null;
 		while ((line = in.readLine()) != null) {
 			line = line.replace("@DEST@", dest);
+			line = line.replace("@GROUP@", group);
 			line = line.replace("@JRE@", jre.getAbsolutePath());
 			line = line.replace("@IUS@", iuList.toString());
 			line = line.replace("@PRODUCTS@", productList.toString());
+			line = line.replace("@RUNTIMES@", runtimeList.toString());
 			out.write(line);
 			out.newLine();
 		}

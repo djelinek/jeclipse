@@ -3,7 +3,6 @@
 <com.jboss.devstudio.core.installer.HTMLInfoPanelWithRootWarning id="introduction"/>
 <com.izforge.izpack.panels.HTMLLicencePanel id="licence"/>
 <com.jboss.devstudio.core.installer.PathInputPanel id="target">
-<!-- JBDS Destination -->
 <installpath>@DEST@</installpath>
 </com.jboss.devstudio.core.installer.PathInputPanel>
 <com.jboss.devstudio.core.installer.JREPathPanel id="jre"/>
@@ -15,7 +14,6 @@
 <com.izforge.izpack.panels.SummaryPanel id="summary"/>
 <com.izforge.izpack.panels.InstallPanel id="install"/>
 <com.jboss.devstudio.core.installer.CreateLinkPanel id="createlink">
-<!-- JRE Location -->
 <jrelocation>@JRE@</jrelocation>
 </com.jboss.devstudio.core.installer.CreateLinkPanel>
 <com.izforge.izpack.panels.ShortcutPanel id="shortcut"/>
