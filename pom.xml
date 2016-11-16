@@ -4,7 +4,7 @@
   <groupId>org.apodhrad.jeclipse</groupId>
   <artifactId>jeclipse-parent</artifactId>
   <packaging>pom</packaging>
-  <version>1.0.2</version>
+  <version>1.0.3-SNAPSHOT</version>
   <name>.: JEclipse Parent :.</name>
   <url>https://github.com/apodhrad/jeclipse</url>
 
@@ -90,7 +90,7 @@
       <plugin>
 	<groupId>org.jacoco</groupId>
 	<artifactId>jacoco-maven-plugin</artifactId>
-	<version>0.7.5.201505241946</version>
+	<version>0.7.5.201.0.3-SNAPSHOT41946</version>
 	<executions>
 	  <execution>
 	    <id>jacoco-initialize</id>
