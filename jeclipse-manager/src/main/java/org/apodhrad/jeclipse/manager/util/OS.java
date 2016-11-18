@@ -20,12 +20,20 @@ public class OS {
 		return System.getProperty("os.arch").toLowerCase();
 	}
 
+	public static boolean isLinux() {
+		return getName().contains("linux");
+	}
+
 	public static boolean isWindows() {
 		return getName().contains("win");
 	}
 
 	public static boolean isMac() {
 		return getName().contains("mac");
+	}
+
+	public static boolean is64() {
+		return getArch().contains("64");
 	}
 
 	public static File getJre(String location) {
@@ -40,7 +48,7 @@ public class OS {
 		List<File> jreLocations = fileSearch.find(new File(javaHomeParent, "bin"), new IsJavaExecutable());
 		if (jreLocations.isEmpty()) {
 			jreLocations = fileSearch.find(new File(javaHome), new IsJavaExecutable());
-		}		
+		}
 		if (jreLocations.isEmpty()) {
 			throw new RuntimeException("Cannot find JRE location!");
 		}
