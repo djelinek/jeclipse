@@ -30,13 +30,13 @@ public class EclipseConfigTest {
 
 	@Test
 	public void testGettingUrlWithDefaultMirror() {
-		assertEquals("http://www.eclipse.org/downloads/download.php?r=1&file=/com/example/hello.zip&mirror_id=1196",
+		assertEquals("http://www.eclipse.org/downloads/download.php?r=1&mirror_id=1196&file=/com/example/hello.zip",
 				eclispeConfig("/com/example/hello.zip", null).getUrl());
 	}
 
 	@Test
 	public void testGettingUrlWithSpecifiedMirror() {
-		assertEquals("http://www.eclipse.org/downloads/download.php?r=1&file=/com/example/hello.zip&mirror_id=123",
+		assertEquals("http://www.eclipse.org/downloads/download.php?r=1&mirror_id=123&file=/com/example/hello.zip",
 				eclispeConfig("/com/example/hello.zip", null).getUrl(123));
 	}
 
@@ -44,6 +44,18 @@ public class EclipseConfigTest {
 	public void testGettingUrlWithNoMirror() {
 		assertEquals("http://www.eclipse.org/downloads/download.php?r=1&file=/com/example/hello.zip",
 				eclispeConfig("/com/example/hello.zip", null).getUrl(0));
+	}
+	
+	@Test
+	public void testGettingHashUrl() {
+		assertEquals("http://www.eclipse.org/downloads/download.php?r=1&mirror_id=1196&file=hello.zip.md5",
+				eclispeConfig("hello.zip", "eb05524b6eca8ee7aa3a657788bcdbb5").getHashUrl());
+	}
+	
+	@Test
+	public void testGettingHashUrlWithMirrorId() {
+		assertEquals("http://www.eclipse.org/downloads/download.php?r=1&mirror_id=123&file=hello.zip.md5",
+				eclispeConfig("hello.zip", "eb05524b6eca8ee7aa3a657788bcdbb5").getHashUrl(123));
 	}
 
 	@Test

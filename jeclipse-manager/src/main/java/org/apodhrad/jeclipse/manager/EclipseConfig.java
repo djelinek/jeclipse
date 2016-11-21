@@ -2,6 +2,8 @@ package org.apodhrad.jeclipse.manager;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apodhrad.jeclipse.manager.util.OS;
 
@@ -16,7 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class EclipseConfig {
 
-	public static final String ECLIPSE_URL = "http://www.eclipse.org/downloads/download.php?r=1&file=";
+	public static final String ECLIPSE_DOWNLOAD_URL = "http://www.eclipse.org/downloads/download.php";
 	public static final int ECLIPSE_DEFAULT_MIRROR_ID = 1196; // CZ.NIC
 
 	private String os;
@@ -69,11 +71,29 @@ public class EclipseConfig {
 	}
 
 	public String getUrl(int mirrorId) {
-		String url = ECLIPSE_URL + getPath();
+		return getUrl(getPath(), mirrorId);
+	}
+
+	public String getHashUrl() {
+		return getUrl(getPath() + ".md5", ECLIPSE_DEFAULT_MIRROR_ID);
+	}
+
+	public String getHashUrl(int mirrorId) {
+		return getUrl(getPath() + ".md5", mirrorId);
+	}
+
+	protected String getUrl(String path, int mirrorId) {
+		List<String> params = new ArrayList<String>();
+		params.add("r=1");
 		if (mirrorId > 0) {
-			url += "&mirror_id=" + mirrorId;
+			params.add("mirror_id=" + mirrorId);
 		}
-		return url;
+		params.add("file=" + path);
+		return getUrl(params);
+	}
+
+	protected String getUrl(List<String> params) {
+		return ECLIPSE_DOWNLOAD_URL + "?" + String.join("&", params);
 	}
 
 	public String getName() {

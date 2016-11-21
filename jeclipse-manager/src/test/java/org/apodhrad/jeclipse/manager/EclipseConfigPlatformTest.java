@@ -1,8 +1,9 @@
 package org.apodhrad.jeclipse.manager;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apodhrad.jdownload.manager.hash.URLHash;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -20,9 +21,19 @@ import org.junit.runners.Parameterized.Parameters;
 public class EclipseConfigPlatformTest {
 
 	@Parameters(name = "{0}")
-	public static Collection<TestingPlatform> getPlatforms() {
-		return Arrays.asList(new TestingPlatform[] { TestingPlatform.Fedora24_32, TestingPlatform.Fedora24_64,
-				TestingPlatform.Mac_10_11, TestingPlatform.Win10_32, TestingPlatform.Win10_64 });
+	public static Collection<EclipseConfigCombination> getPlatforms() {
+		String[] eclipseVersions = new String[] { "jee-mars-1", "jee-luna-SR2" };
+		TestingPlatform[] platforms = new TestingPlatform[] { TestingPlatform.Fedora24_32, TestingPlatform.Fedora24_64,
+				TestingPlatform.Mac_10_11, TestingPlatform.Win10_32, TestingPlatform.Win10_64 };
+
+		Collection<EclipseConfigCombination> combinations = new ArrayList<EclipseConfigCombination>();
+		for (String eclipseVersion : eclipseVersions) {
+			for (TestingPlatform platform : platforms) {
+				combinations.add(new EclipseConfigCombination(eclipseVersion, platform));
+			}
+		}
+
+		return combinations;
 	}
 
 	@After
@@ -35,16 +46,50 @@ public class EclipseConfigPlatformTest {
 		platform.apply();
 	}
 
+	private String eclipseVersion;
 	private TestingPlatform platform;
 
-	public EclipseConfigPlatformTest(TestingPlatform platform) {
-		this.platform = platform;
+	public EclipseConfigPlatformTest(EclipseConfigCombination combination) {
+		this.eclipseVersion = combination.getEclipseVersion();
+		this.platform = combination.getPlatform();
 	}
 
 	@Test
-	public void testGettingArchiveNameForJEEMars1() throws Exception {
-		EclipseConfig config = EclipseConfig.load("jee-mars-1", platform.getOs(), platform.getArch());
-		Assert.assertEquals(config.getName(), EclipseConfig.getArchiveName("jee-mars-1"));
+	public void testArchiveName() throws Exception {
+		EclipseConfig config = EclipseConfig.load(eclipseVersion, platform.getOs(), platform.getArch());
+		Assert.assertEquals(EclipseConfig.getArchiveName(eclipseVersion), config.getName());
+	}
+
+	@Test
+	public void testHashSum() throws Exception {
+		EclipseConfig config = EclipseConfig.load(eclipseVersion, platform.getOs(), platform.getArch());
+		String expectedHashSum = new URLHash(config.getHashUrl()).toString();
+		Assert.assertEquals(expectedHashSum, "MD5 " + config.getMd5() + "  " + config.getName());
+	}
+
+	private static class EclipseConfigCombination {
+
+		private String eclipseVersion;
+		private TestingPlatform platform;
+
+		public EclipseConfigCombination(String eclipseVersion, TestingPlatform platform) {
+			this.eclipseVersion = eclipseVersion;
+			this.platform = platform;
+		}
+
+		public String getEclipseVersion() {
+			return eclipseVersion;
+		}
+
+		public TestingPlatform getPlatform() {
+			return platform;
+		}
+
+		@Override
+		public String toString() {
+			return eclipseVersion + " on " + platform;
+		}
+
 	}
 
 }
