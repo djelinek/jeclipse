@@ -105,6 +105,16 @@ public class EclipseConfigTest {
 	}
 
 	@Test
+	public void testLoadingFromFileForSolaris() throws Exception {
+		try {
+			EclipseConfig.load(inputStream("jee-mars-1"), "SunOS", "sparc");
+			fail("EclipseException was expected");
+		} catch (EclipseException ee) {
+			assertEquals("Cannot find a config for OS 'SunOS' with arch 'sparc'", ee.getMessage());
+		}
+	}
+
+	@Test
 	public void testLoadingNonexistingConfig() throws Exception {
 		try {
 			EclipseConfig.load(inputStream("jee-foo"), "Mac OS X", "x86_64");

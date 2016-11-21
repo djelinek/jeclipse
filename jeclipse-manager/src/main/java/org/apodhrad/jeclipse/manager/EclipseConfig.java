@@ -99,23 +99,7 @@ public class EclipseConfig {
 			}
 		}
 
-		return null;
-	}
-
-	public static EclipseConfig create(String eclipseVersion, String os, String arch)
-			throws JsonParseException, JsonMappingException, IOException {
-		String configFileName = "/eclipse/" + eclipseVersion + ".json";
-		InputStream configInputStream = EclipseConfig.class.getResourceAsStream(configFileName);
-		ObjectMapper mapper = new ObjectMapper();
-		EclipseConfig[] configs = mapper.readValue(configInputStream, EclipseConfig[].class);
-
-		for (EclipseConfig config : configs) {
-			if (config.isSupported(os, arch)) {
-				return config;
-			}
-		}
-
-		return null;
+		throw new EclipseException("Cannot find a config for OS '" + os + "' with arch '" + arch + "'");
 	}
 
 	@Override
