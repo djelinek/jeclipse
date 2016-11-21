@@ -1,0 +1,32 @@
+[
+	{
+		"os": "linux",
+		"arch": "32",
+		"path": "/technology/epp/downloads/release/neon/1a/eclipse-jee-neon-1a-linux-gtk.tar.gz",
+		"md5": "361bc3969502c0e0d43c1d2704385213"
+	},
+	{
+		"os": "linux",
+		"arch": "64",
+		"path": "/technology/epp/downloads/release/neon/1a/eclipse-jee-neon-1a-linux-gtk-x86_64.tar.gz",
+		"md5": "4c7a65f88eb4efbf7d80cb851db48474"
+	},
+	{
+		"os": "mac",
+		"arch": "64",
+		"path": "/technology/epp/downloads/release/neon/1a/eclipse-jee-neon-1a-macosx-cocoa-x86_64.tar.gz",
+		"md5": "955778c822abd42c0b6f17822a8322c3"
+	},
+	{
+		"os": "win",
+		"arch": "32",
+		"path": "/technology/epp/downloads/release/neon/1a/eclipse-jee-neon-1a-win32.zip",
+		"md5": "cabc835d345c6040d63ee12c6566e301"
+	},
+	{
+		"os": "win",
+		"arch": "64",
+		"path": "/technology/epp/downloads/release/neon/1a/eclipse-jee-neon-1a-win32-x86_64.zip",
+		"md5": "3b51e27a8d5cb3ffaf0111055d51a42d"
+	}
+]

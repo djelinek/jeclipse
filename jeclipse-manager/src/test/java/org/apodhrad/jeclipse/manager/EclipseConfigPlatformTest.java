@@ -22,7 +22,7 @@ public class EclipseConfigPlatformTest {
 
 	@Parameters(name = "{0}")
 	public static Collection<EclipseConfigCombination> getPlatforms() {
-		String[] eclipseVersions = new String[] { "jee-mars-1", "jee-luna-SR2" };
+		String[] eclipseVersions = new String[] { "jee-mars-1", "jee-luna-SR2", "jee-neon-1a" };
 		TestingPlatform[] platforms = new TestingPlatform[] { TestingPlatform.Fedora24_32, TestingPlatform.Fedora24_64,
 				TestingPlatform.Mac_10_11, TestingPlatform.Win10_32, TestingPlatform.Win10_64 };
 
