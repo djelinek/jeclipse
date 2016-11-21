@@ -91,7 +91,7 @@ public class JBDS extends Eclipse {
 
 	public static String createInstallationFile(JBDSConfig config) throws IOException {
 		File jre = OSUtils.getJre(config.getJreLocation());
-		log.info("JRE: " + jre);
+		log.debug("JRE: " + jre);
 		if (jre == null) {
 			throw new IllegalStateException("Cannot find JRE location!");
 		}
