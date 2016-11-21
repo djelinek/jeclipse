@@ -1,9 +1,11 @@
 package org.apodhrad.jeclipse.manager;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apodhrad.jdownload.manager.hash.URLHash;
+import org.apodhrad.jeclipse.manager.util.EclipseUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -18,7 +20,7 @@ import org.junit.runners.Parameterized.Parameters;
  *
  */
 @RunWith(Parameterized.class)
-public class EclipseConfigPlatformTest {
+public class EclipseConfigIT {
 
 	@Parameters(name = "{0}")
 	public static Collection<EclipseConfigCombination> getPlatforms() {
@@ -49,22 +51,23 @@ public class EclipseConfigPlatformTest {
 	private String eclipseVersion;
 	private TestingPlatform platform;
 
-	public EclipseConfigPlatformTest(EclipseConfigCombination combination) {
+	public EclipseConfigIT(EclipseConfigCombination combination) {
 		this.eclipseVersion = combination.getEclipseVersion();
 		this.platform = combination.getPlatform();
 	}
 
 	@Test
 	public void testArchiveName() throws Exception {
-		EclipseConfig config = EclipseConfig.load(eclipseVersion, platform.getOs(), platform.getArch());
-		Assert.assertEquals(EclipseConfig.getArchiveName(eclipseVersion), config.getName());
+		EclipseConfig config = EclipseConfig.load(inputStream(eclipseVersion), platform.getOs(), platform.getArch());
+		Assert.assertEquals(EclipseUtils.getArchiveName(eclipseVersion, platform.getOs(), platform.getArch()),
+				config.getArchiveName());
 	}
 
 	@Test
 	public void testHashSum() throws Exception {
-		EclipseConfig config = EclipseConfig.load(eclipseVersion, platform.getOs(), platform.getArch());
+		EclipseConfig config = EclipseConfig.load(inputStream(eclipseVersion), platform.getOs(), platform.getArch());
 		String expectedHashSum = new URLHash(config.getHashUrl()).toString();
-		Assert.assertEquals(expectedHashSum, "MD5 " + config.getMd5() + "  " + config.getName());
+		Assert.assertEquals(expectedHashSum, "MD5 " + config.getMd5() + "  " + config.getArchiveName());
 	}
 
 	private static class EclipseConfigCombination {
@@ -92,4 +95,8 @@ public class EclipseConfigPlatformTest {
 
 	}
 
+	private static InputStream inputStream(String eclipseVersion) {
+		String configFileName = "/eclipse/" + eclipseVersion + ".json";
+		return EclipseConfig.class.getResourceAsStream(configFileName);
+	}
 }

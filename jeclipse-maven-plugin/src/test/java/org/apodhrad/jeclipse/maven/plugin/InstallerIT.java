@@ -12,7 +12,6 @@ import org.apache.maven.shared.invoker.DefaultInvoker;
 import org.apache.maven.shared.invoker.InvocationRequest;
 import org.apache.maven.shared.invoker.InvocationResult;
 import org.apache.maven.shared.invoker.Invoker;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class InstallerIT extends BetterAbstractMojoTestCase {

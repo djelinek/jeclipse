@@ -2,10 +2,8 @@ package org.apodhrad.jeclipse.manager;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.apodhrad.jeclipse.manager.util.OS;
+import org.apodhrad.jeclipse.manager.util.EclipseUtils;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -17,9 +15,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *
  */
 public class EclipseConfig {
-
-	public static final String ECLIPSE_DOWNLOAD_URL = "http://www.eclipse.org/downloads/download.php";
-	public static final int ECLIPSE_DEFAULT_MIRROR_ID = 1196; // CZ.NIC
 
 	private String os;
 	private String arch;
@@ -67,36 +62,22 @@ public class EclipseConfig {
 	}
 
 	public String getUrl() {
-		return getUrl(ECLIPSE_DEFAULT_MIRROR_ID);
+		return getUrl(EclipseUtils.ECLIPSE_DEFAULT_MIRROR_ID);
 	}
 
 	public String getUrl(int mirrorId) {
-		return getUrl(getPath(), mirrorId);
+		return EclipseUtils.getUrl(getPath(), mirrorId);
 	}
 
 	public String getHashUrl() {
-		return getUrl(getPath() + ".md5", ECLIPSE_DEFAULT_MIRROR_ID);
+		return getHashUrl(EclipseUtils.ECLIPSE_DEFAULT_MIRROR_ID);
 	}
 
 	public String getHashUrl(int mirrorId) {
-		return getUrl(getPath() + ".md5", mirrorId);
+		return EclipseUtils.getUrl(getPath() + ".md5", mirrorId);
 	}
 
-	protected String getUrl(String path, int mirrorId) {
-		List<String> params = new ArrayList<String>();
-		params.add("r=1");
-		if (mirrorId > 0) {
-			params.add("mirror_id=" + mirrorId);
-		}
-		params.add("file=" + path);
-		return getUrl(params);
-	}
-
-	protected String getUrl(List<String> params) {
-		return ECLIPSE_DOWNLOAD_URL + "?" + String.join("&", params);
-	}
-
-	public String getName() {
+	public String getArchiveName() {
 		if (getPath() == null) {
 			return null;
 		}
@@ -104,10 +85,11 @@ public class EclipseConfig {
 		return getPath().substring(index + 1);
 	}
 
-	public static EclipseConfig load(String version, String os, String arch)
+	public static EclipseConfig load(InputStream configInputStream, String os, String arch)
 			throws JsonParseException, JsonMappingException, IOException {
-		String configFileName = "/eclipse/" + version + ".json";
-		InputStream configInputStream = EclipseConfig.class.getResourceAsStream(configFileName);
+		if (configInputStream == null) {
+			throw new IllegalArgumentException("The input stream for loading eclipse config is null");
+		}
 		ObjectMapper mapper = new ObjectMapper();
 		EclipseConfig[] configs = mapper.readValue(configInputStream, EclipseConfig[].class);
 
@@ -120,33 +102,20 @@ public class EclipseConfig {
 		return null;
 	}
 
-	public static String getArchiveName(String version) {
-		String os_property = OS.getName();
-		String arch_property = OS.getArch();
+	public static EclipseConfig create(String eclipseVersion, String os, String arch)
+			throws JsonParseException, JsonMappingException, IOException {
+		String configFileName = "/eclipse/" + eclipseVersion + ".json";
+		InputStream configInputStream = EclipseConfig.class.getResourceAsStream(configFileName);
+		ObjectMapper mapper = new ObjectMapper();
+		EclipseConfig[] configs = mapper.readValue(configInputStream, EclipseConfig[].class);
 
-		String platform = null;
-		String archive = "zip";
-
-		if (os_property.contains("linux")) {
-			platform = "linux-gtk";
-			archive = "tar.gz";
-		} else if (os_property.contains("win")) {
-			platform = "win32";
-			archive = "zip";
-		} else if (os_property.contains("mac")) {
-			platform = "macosx-cocoa";
-			archive = "tar.gz";
+		for (EclipseConfig config : configs) {
+			if (config.isSupported(os, arch)) {
+				return config;
+			}
 		}
 
-		if (platform == null) {
-			throw new RuntimeException("Unknown platform '" + os_property + "'");
-		}
-
-		if (arch_property.contains("64")) {
-			platform += "-x86_64";
-		}
-
-		return "eclipse-" + version + "-" + platform + "." + archive;
+		return null;
 	}
 
 	@Override

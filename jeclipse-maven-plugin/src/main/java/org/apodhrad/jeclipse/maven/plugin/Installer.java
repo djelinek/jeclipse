@@ -1,6 +1,5 @@
 package org.apodhrad.jeclipse.maven.plugin;
 
-import static org.apodhrad.jeclipse.manager.Eclipse.ECLIPSE_DEFAULT_MIRROR;
 import static org.apodhrad.jeclipse.manager.Eclipse.installEclipse;
 
 import java.io.File;
@@ -27,6 +26,7 @@ import org.apodhrad.jdownload.manager.hash.SHA256Hash;
 import org.apodhrad.jdownload.manager.hash.URLHash;
 import org.apodhrad.jeclipse.manager.Eclipse;
 import org.apodhrad.jeclipse.manager.JBDS;
+import org.apodhrad.jeclipse.manager.util.EclipseUtils;
 
 /**
  * 
@@ -37,6 +37,8 @@ import org.apodhrad.jeclipse.manager.JBDS;
  */
 @Mojo(name = "install", defaultPhase = LifecyclePhase.PACKAGE)
 public class Installer extends AbstractMojo {
+	
+	public static final String ECLIPSE_MIRROR_DEFAULT = String.valueOf(EclipseUtils.ECLIPSE_DEFAULT_MIRROR_ID);
 
 	@Parameter(defaultValue = "${project}")
 	private MavenProject project;
@@ -78,7 +80,7 @@ public class Installer extends AbstractMojo {
 	@Parameter(alias = "jre.location")
 	private String jreLocation;
 
-	@Parameter(alias = "eclipse.mirror", defaultValue = ECLIPSE_DEFAULT_MIRROR)
+	@Parameter(alias = "eclipse.mirror")
 	private String eclipseMirror;
 
 	@Parameter

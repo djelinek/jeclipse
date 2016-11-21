@@ -9,7 +9,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class OSTest {
+public class OSUtilsTest {
 
 	private static String TARGET;
 
@@ -29,13 +29,13 @@ public class OSTest {
 
 	@Test
 	public void getJreFromJreTest() {
-		File jre = OS.getJre(new File(TARGET, "jre").getAbsolutePath());
+		File jre = OSUtils.getJre(new File(TARGET, "jre").getAbsolutePath());
 		Assert.assertEquals(new File(TARGET, "jre/bin/java").getAbsolutePath(), jre.getAbsolutePath());
 	}
 	
 	@Test
 	public void getJreFromJdkTest() {
-		File jre = OS.getJre(new File(TARGET, "jdk/jre").getAbsolutePath());
+		File jre = OSUtils.getJre(new File(TARGET, "jdk/jre").getAbsolutePath());
 		Assert.assertEquals(new File(TARGET, "jdk/bin/java").getAbsolutePath(), jre.getAbsolutePath());
 	}
 

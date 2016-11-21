@@ -13,7 +13,7 @@ import org.apache.commons.io.FileUtils;
 import org.apodhrad.jdownload.manager.JDownloadManager;
 import org.apodhrad.jdownload.manager.hash.Hash;
 import org.apodhrad.jdownload.manager.hash.NullHash;
-import org.apodhrad.jeclipse.manager.util.OS;
+import org.apodhrad.jeclipse.manager.util.OSUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +65,7 @@ public class JBDS extends Eclipse {
 		}
 
 		// Switch IzPack mode to privileged on Windows
-		if (OS.isWindows()) {
+		if (OSUtils.isWindows()) {
 			System.setProperty("izpack.mode", "privileged");
 		}
 
@@ -90,7 +90,7 @@ public class JBDS extends Eclipse {
 	}
 
 	public static String createInstallationFile(JBDSConfig config) throws IOException {
-		File jre = OS.getJre(config.getJreLocation());
+		File jre = OSUtils.getJre(config.getJreLocation());
 		log.info("JRE: " + jre);
 		if (jre == null) {
 			throw new IllegalStateException("Cannot find JRE location!");

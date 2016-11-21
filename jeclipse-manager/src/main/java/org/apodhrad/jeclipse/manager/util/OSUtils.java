@@ -10,7 +10,7 @@ import org.apodhrad.jeclipse.manager.matcher.IsJavaExecutable;
  * @author apodhrad
  *
  */
-public class OS {
+public class OSUtils {
 
 	public static String getName() {
 		return System.getProperty("os.name").toLowerCase();
