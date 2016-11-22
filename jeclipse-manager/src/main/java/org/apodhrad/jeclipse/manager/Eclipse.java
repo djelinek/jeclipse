@@ -50,6 +50,7 @@ public class Eclipse {
 	private File jarFile;
 	private Set<String> updateSites;
 	private Set<String> ignoredFeatures;
+	private ExecutionRunner executionRunner;
 
 	public Eclipse(String path) {
 		this(new File(path));
@@ -70,6 +71,19 @@ public class Eclipse {
 		this.jarFile = file;
 		this.updateSites = new HashSet<String>();
 		this.ignoredFeatures = new HashSet<String>();
+		this.executionRunner = getDefaultExecutionRunner();
+	}
+
+	protected ExecutionRunner getExecutionRunner() {
+		return executionRunner;
+	}
+
+	protected void setExecutionRunner(ExecutionRunner executionRunner) {
+		this.executionRunner = executionRunner;
+	}
+
+	protected ExecutionRunner getDefaultExecutionRunner() {
+		return new JarRunner(jarFile.getAbsolutePath());
 	}
 
 	public File getLauncher() {
@@ -133,6 +147,10 @@ public class Eclipse {
 	public Set<String> getIgnoredFeatures() {
 		return ignoredFeatures;
 	}
+	
+	public void removeIgnoredFeatures() {
+		ignoredFeatures = new HashSet<String>();
+	}
 
 	public boolean isFeatureIgnored(String feature) {
 		for (String ignoredFeature : ignoredFeatures) {
@@ -194,15 +212,10 @@ public class Eclipse {
 	}
 
 	public EclipseExecutionOutput installAllFeaturesFromUpdateSite(boolean followReferences, String updateSite) {
-		return installAllFeaturesFromUpdateSite(followReferences, updateSite, true);
-	}
-
-	public EclipseExecutionOutput installAllFeaturesFromUpdateSite(boolean followReferences, String updateSite,
-			boolean ignoreFeatures) {
 		List<Bundle> features = listFeatures(updateSite);
 		List<String> listOfUIs = new ArrayList<String>();
 		for (Bundle feature : features) {
-			if (ignoreFeatures && isFeatureIgnored(feature.getName())) {
+			if (isFeatureIgnored(feature.getName())) {
 				continue;
 			}
 			listOfUIs.add(feature.getName() + ".feature.group");
@@ -235,7 +248,7 @@ public class Eclipse {
 				return output;
 			}
 		}
-		throw new EclipseException("Installation failed.");
+		throw new EclipseException("Execution failed");
 	}
 
 	public EclipseExecutionOutput execute(List<String> command) {
@@ -244,10 +257,9 @@ public class Eclipse {
 
 	public EclipseExecutionOutput execute(String[] command) {
 		EclipseExecutionOutput eclipseExecutionOutput = new EclipseExecutionOutput();
-		JarRunner jarRunner = new JarRunner(jarFile.getAbsolutePath(), command);
-		jarRunner.setOutput(eclipseExecutionOutput);
-		jarRunner.setTimeout(getJEclipseTimeout());
-		jarRunner.run();
+		executionRunner.setExecutionOutput(eclipseExecutionOutput);
+		executionRunner.setTimeout(getJEclipseTimeout());
+		executionRunner.execute(command);
 		return eclipseExecutionOutput;
 	}
 

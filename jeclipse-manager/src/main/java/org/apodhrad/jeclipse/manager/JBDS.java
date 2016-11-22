@@ -69,10 +69,10 @@ public class JBDS extends Eclipse {
 			System.setProperty("izpack.mode", "privileged");
 		}
 
-		JarRunner jarRunner = new JarRunner(installerJarFile.getAbsolutePath(), installationFile);
-		jarRunner.setOutput(new EclipseExecutionOutput());
+		JarRunner jarRunner = new JarRunner(installerJarFile.getAbsolutePath());
+		jarRunner.setExecutionOutput(new EclipseExecutionOutput());
 		jarRunner.setTimeout(getJEclipseTimeout());
-		jarRunner.run();
+		jarRunner.execute(installationFile);
 
 		return new JBDS(new File(target, "jbdevstudio"));
 	}

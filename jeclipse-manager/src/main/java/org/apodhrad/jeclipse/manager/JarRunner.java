@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
  * @author apodhrad
  *
  */
-public class JarRunner implements Runnable {
+public class JarRunner implements ExecutionRunner {
 
 	public static final int DEFAULT_TIMEOUT = 10 * 60;
 
@@ -29,29 +29,39 @@ public class JarRunner implements Runnable {
 	private Appendable output;
 	private int timeout;
 
-	public JarRunner(String installer, String... args) {
+	public JarRunner(String installer) {
 		this.jarFile = installer;
-		this.args = args;
 		this.timeout = DEFAULT_TIMEOUT;
+	}
+	
+	public String[] getArgs() {
+		return args;
+	}
+	
+	public void setArgs(String... args) {
+		this.args = args;
 	}
 
 	public int getTimeout() {
 		return timeout;
 	}
 
+	@Override
 	public void setTimeout(int timeout) {
 		this.timeout = timeout;
 	}
 
-	public void setOutput(Appendable output) {
+	@Override
+	public void setExecutionOutput(Appendable output) {
 		this.output = output;
 	}
 
-	public Appendable getOutput() {
+	public Appendable getExecutionOutput() {
 		return output;
 	}
 
-	public void run() {
+	@Override
+	public void execute(String... args) {
 		Process process = null;
 
 		JarCommand jarCommand = new JarCommand(jarFile);

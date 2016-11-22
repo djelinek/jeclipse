@@ -3,6 +3,7 @@ package org.apodhrad.jeclipse.manager;
 import static org.apodhrad.jeclipse.manager.TestingPlatform.Fedora24_64;
 import static org.apodhrad.jeclipse.manager.TestingPlatform.Mac_10_11;
 import static org.apodhrad.jeclipse.manager.TestingPlatform.Win10_64;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -11,11 +12,13 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -34,6 +37,7 @@ import org.junit.runners.Parameterized.Parameters;
 public class EclipseTest {
 
 	public static final String LAUNCHER_VERSION = "1.3.200.v20160318-1642";
+	public static final String HELLO_VERSION = "1.2.3.v20161121-9999";
 
 	@Rule
 	public TemporaryFolder target = new TemporaryFolder();
@@ -192,8 +196,8 @@ public class EclipseTest {
 	public void testGettingFeatures() {
 		Eclipse eclipse = new Eclipse(eclipseFolder);
 		Bundle[] features = eclipse.getFeatures();
-		assertContainsBundle(features, "com.example.hello", "1.2.3.v20161121-9999");
-		assertContainsBundle(features, "com.example.hello.source", "1.2.3.v20161121-9999");
+		assertContainsBundle(features, "com.example.hello", HELLO_VERSION);
+		assertContainsBundle(features, "com.example.hello.source", HELLO_VERSION);
 		assertEquals(2, features.length);
 	}
 
@@ -201,8 +205,8 @@ public class EclipseTest {
 	public void testGettingPlugins() {
 		Eclipse eclipse = new Eclipse(eclipseFolder);
 		Bundle[] features = eclipse.getPlugins();
-		assertContainsBundle(features, "com.example.hello", "1.2.3.v20161121-9999");
-		assertContainsBundle(features, "com.example.hello.source", "1.2.3.v20161121-9999");
+		assertContainsBundle(features, "com.example.hello", HELLO_VERSION);
+		assertContainsBundle(features, "com.example.hello.source", HELLO_VERSION);
 		assertContainsBundle(features, "org.eclipse.equinox.launcher", LAUNCHER_VERSION);
 		assertEquals(3, features.length);
 	}
@@ -215,6 +219,15 @@ public class EclipseTest {
 		assertTrue(eclipse.getIgnoredFeatures().contains("abc.*"));
 		assertTrue(eclipse.getIgnoredFeatures().contains("[abc]+*"));
 		assertEquals(2, eclipse.getIgnoredFeatures().size());
+	}
+
+	@Test
+	public void testRemovingIgnoredFeatures() {
+		Eclipse eclipse = new Eclipse(eclipseFolder);
+		eclipse.ignoreFeature("abc");
+		eclipse.ignoreFeature("xyz");
+		eclipse.removeIgnoredFeatures();
+		assertTrue(eclipse.getIgnoredFeatures().isEmpty());
 	}
 
 	@Test
@@ -233,6 +246,146 @@ public class EclipseTest {
 		assertTrue(eclipse.isFeatureIgnored("com.example.helloworld"));
 		assertTrue(eclipse.isFeatureIgnored("com.foo.hello"));
 		assertFalse(eclipse.isFeatureIgnored("com.example.worldhello"));
+	}
+
+	@Test
+	public void testInstallingFeatureWithUpdateSite() {
+		TestingExecutionRunner testingRunner = new TestingExecutionRunner("output-ok.txt");
+
+		Eclipse eclipse = new Eclipse(eclipseFolder);
+		eclipse.setExecutionRunner(testingRunner);
+		eclipse.addUpdateSite("helloworld");
+		eclipse.installFeature("hello");
+
+		String[] command = testingRunner.getArgs();
+		assertArrayEquals(new String[] { "-application", "org.eclipse.equinox.p2.director", "-consoleLog",
+				"-followReferences", "-nosplash", "-repository", "helloworld", "-installIUs", "hello" }, command);
+	}
+
+	@Test
+	public void testInstallingFeatureWithoutUpdateSite() {
+		TestingExecutionRunner testingRunner = new TestingExecutionRunner("output-ok.txt");
+
+		Eclipse eclipse = new Eclipse(eclipseFolder);
+		eclipse.setExecutionRunner(testingRunner);
+		eclipse.installFeature("hello");
+
+		String[] command = testingRunner.getArgs();
+		assertArrayEquals(new String[] { "-application", "org.eclipse.equinox.p2.director", "-consoleLog",
+				"-followReferences", "-nosplash", "-repository", "", "-installIUs", "hello" }, command);
+	}
+
+	@Test
+	public void testInstallingFeatureWithoutReferences() {
+		TestingExecutionRunner testingRunner = new TestingExecutionRunner("output-ok.txt");
+
+		Eclipse eclipse = new Eclipse(eclipseFolder);
+		eclipse.setExecutionRunner(testingRunner);
+		eclipse.installFeature(false, "hello");
+
+		String[] command = testingRunner.getArgs();
+		assertArrayEquals(new String[] { "-application", "org.eclipse.equinox.p2.director", "-consoleLog", "-nosplash",
+				"-repository", "", "-installIUs", "hello" }, command);
+	}
+
+	@Test
+	public void testInstallingIncorrectFeature() {
+		TestingExecutionRunner testingRunner = new TestingExecutionRunner("output-fail.txt");
+
+		Eclipse eclipse = new Eclipse(eclipseFolder);
+		eclipse.setExecutionRunner(testingRunner);
+		try {
+			eclipse.installFeature("hell");
+			Assert.fail("EclipseException was expected");
+		} catch (EclipseException ee) {
+			assertEquals("Execution failed", ee.getMessage());
+		}
+	}
+
+	@Test
+	public void testInstallingFeaturesWithoutUpdateSite() {
+		TestingExecutionRunner testingRunner = new TestingExecutionRunner("output-ok.txt");
+
+		Eclipse eclipse = new Eclipse(eclipseFolder);
+		eclipse.setExecutionRunner(testingRunner);
+		eclipse.installFeatures("hello", "hello.source");
+
+		String[] command = testingRunner.getArgs();
+		assertArrayEquals(new String[] { "-application", "org.eclipse.equinox.p2.director", "-consoleLog",
+				"-followReferences", "-nosplash", "-repository", "", "-installIUs", "hello,hello.source" }, command);
+	}
+
+	@Test
+	public void testListingFeaturesWithUpdateSite() {
+		TestingExecutionRunner testingRunner = new TestingExecutionRunner("output-list.txt");
+
+		Eclipse eclipse = new Eclipse(eclipseFolder);
+		eclipse.addUpdateSite("helloworld");
+		eclipse.setExecutionRunner(testingRunner);
+		List<Bundle> features = eclipse.listFeatures();
+
+		String[] command = testingRunner.getArgs();
+		assertArrayEquals(new String[] { "-application", "org.eclipse.equinox.p2.director", "-consoleLog",
+				"-followReferences", "-nosplash", "-repository", "helloworld", "-list" }, command);
+		assertContainsBundle(features, "hello", HELLO_VERSION);
+		assertContainsBundle(features, "hello.source", HELLO_VERSION);
+	}
+
+	@Test
+	public void testListingFeaturesWithoutUpdateSite() {
+		TestingExecutionRunner testingRunner = new TestingExecutionRunner("output-ok.txt");
+
+		Eclipse eclipse = new Eclipse(eclipseFolder);
+		eclipse.setExecutionRunner(testingRunner);
+		List<Bundle> features = eclipse.listFeatures();
+
+		String[] command = testingRunner.getArgs();
+		assertArrayEquals(new String[] { "-application", "org.eclipse.equinox.p2.director", "-consoleLog",
+				"-followReferences", "-nosplash", "-repository", "", "-list" }, command);
+		assertTrue(features.isEmpty());
+	}
+
+	@Test
+	public void testInstallingAllFeaturesFromUpdateSite() {
+		TestingExecutionRunner testingRunnerList = new TestingExecutionRunner("output-list.txt", "output-ok.txt");
+
+		Eclipse eclipse = new Eclipse(eclipseFolder);
+		eclipse.setExecutionRunner(testingRunnerList);
+		eclipse.installAllFeaturesFromUpdateSite("helloworld");
+
+		String[] command = testingRunnerList.getArgs();
+		assertArrayEquals(new String[] { "-application", "org.eclipse.equinox.p2.director", "-consoleLog",
+				"-followReferences", "-nosplash", "-repository", "helloworld", "-installIUs",
+				"hello.feature.group,hello.source.feature.group" }, command);
+	}
+
+	@Test
+	public void testInstallingAllFeaturesFromUpdateSiteWithIgnoring() {
+		TestingExecutionRunner testingRunnerList = new TestingExecutionRunner("output-list.txt", "output-ok.txt");
+
+		Eclipse eclipse = new Eclipse(eclipseFolder);
+		eclipse.setExecutionRunner(testingRunnerList);
+		eclipse.ignoreFeature(".*\\.source");
+		eclipse.installAllFeaturesFromUpdateSite(false, "helloworld");
+
+		String[] command = testingRunnerList.getArgs();
+		assertArrayEquals(new String[] { "-application", "org.eclipse.equinox.p2.director", "-consoleLog", "-nosplash",
+				"-repository", "helloworld", "-installIUs", "hello.feature.group" }, command);
+	}
+
+	@Test
+	public void testMirroringRepository() throws Exception {
+		File mirrorFile = target.newFolder("mirror");
+
+		TestingExecutionRunner testingRunnerList = new TestingExecutionRunner("output-ok.txt", "output-ok.txt");
+
+		Eclipse eclipse = new Eclipse(eclipseFolder);
+		eclipse.setExecutionRunner(testingRunnerList);
+		eclipse.mirrorRepository("helloworld", mirrorFile);
+
+		String[] command = testingRunnerList.getArgs();
+		assertArrayEquals(new String[] { "-application", "org.eclipse.equinox.p2.artifact.repository.mirrorApplication",
+				"-source", "helloworld", "-destination", mirrorFile.getAbsolutePath(), "-nosplash" }, command);
 	}
 
 	private void prepareEclipseStructureForLinux() throws IOException {
@@ -294,6 +447,56 @@ public class EclipseTest {
 
 	private static void assertNotContainsBundle(Bundle[] bundles, String expectedName, String expectedVersion) {
 		assertNotContainsBundle(Arrays.asList(bundles), expectedName, expectedVersion);
+	}
+
+	private class TestingExecutionRunner implements ExecutionRunner {
+
+		private Appendable executionOutput;
+		private int timeout;
+		private String[] args;
+		private String[] fileNames;
+		private int executionCount;
+
+		public TestingExecutionRunner(String... fileNames) {
+			this.fileNames = fileNames;
+			this.executionCount = 0;
+		}
+
+		@Override
+		public void setExecutionOutput(Appendable executionOutput) {
+			this.executionOutput = executionOutput;
+		}
+
+		public int getTimeout() {
+			return timeout;
+		}
+
+		@Override
+		public void setTimeout(int timeout) {
+			this.timeout = timeout;
+		}
+
+		public String[] getArgs() {
+			return args;
+		}
+
+		@Override
+		public void execute(String... args) {
+			this.args = args;
+			try {
+				String fileName = "/eclipse/" + fileNames[executionCount++];
+				InputStream input = TestingExecutionRunner.class.getResourceAsStream(fileName);
+				if (input == null) {
+					throw new RuntimeException("Cannot find resource '" + fileName + "'");
+				}
+				for (String line : IOUtils.readLines(input)) {
+					executionOutput.append(line);
+				}
+			} catch (IOException e) {
+				new RuntimeException(e);
+			}
+		}
+
 	}
 
 }
