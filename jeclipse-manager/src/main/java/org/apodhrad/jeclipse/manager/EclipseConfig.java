@@ -16,10 +16,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class EclipseConfig {
 
+	private String version;
 	private String os;
 	private String arch;
 	private String path;
 	private String md5;
+
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
 
 	public String getOs() {
 		return os;
@@ -106,6 +115,7 @@ public class EclipseConfig {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((version == null) ? 0 : version.hashCode());
 		result = prime * result + ((arch == null) ? 0 : arch.hashCode());
 		result = prime * result + ((md5 == null) ? 0 : md5.hashCode());
 		result = prime * result + ((os == null) ? 0 : os.hashCode());
@@ -122,7 +132,10 @@ public class EclipseConfig {
 		if (getClass() != obj.getClass())
 			return false;
 		EclipseConfig other = (EclipseConfig) obj;
-		if (arch == null) {
+		if (version == null) {
+			if (other.version != null)
+				return false;
+		} else if (arch == null) {
 			if (other.arch != null)
 				return false;
 		} else if (!arch.equals(other.arch))
@@ -147,7 +160,8 @@ public class EclipseConfig {
 
 	@Override
 	public String toString() {
-		return "EclipseConfig [os=" + os + ", arch=" + arch + ", path=" + path + ", md5=" + md5 + "]";
+		return "EclipseConfig [version = " + version + ", os=" + os + ", arch=" + arch + ", path=" + path + ", md5="
+				+ md5 + "]";
 	}
 
 }

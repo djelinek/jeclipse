@@ -1,29 +1,34 @@
 [
 	{
+		"version": "4.5.1.v20150904-0015",
 		"os": "linux",
 		"arch": "32",
 		"path": "/technology/epp/downloads/release/mars/1/eclipse-jee-mars-1-linux-gtk.tar.gz",
 		"md5": "dce33eba239a4f1e745976e7cb576569"
 	},
 	{
+		"version": "4.5.1.v20150904-0015",
 		"os": "linux",
 		"arch": "64",
 		"path": "/technology/epp/downloads/release/mars/1/eclipse-jee-mars-1-linux-gtk-x86_64.tar.gz",
 		"md5": "72a722a59a43e8ed6c47ae279fb3d355"
 	},
 	{
+		"version": "4.5.1.v20150904-0015",
 		"os": "mac",
 		"arch": "64",
 		"path": "/technology/epp/downloads/release/mars/1/eclipse-jee-mars-1-macosx-cocoa-x86_64.tar.gz",
 		"md5": "8d053622066166886d4a7116fd18dc93"
 	},
 	{
+		"version": "4.5.1.v20150904-0015",
 		"os": "win",
 		"arch": "32",
 		"path": "/technology/epp/downloads/release/mars/1/eclipse-jee-mars-1-win32.zip",
 		"md5": "fd0e5ceebc2a5b40274cb6146e78a4c3"
 	},
 	{
+		"version": "4.5.1.v20150904-0015",
 		"os": "win",
 		"arch": "64",
 		"path": "/technology/epp/downloads/release/mars/1/eclipse-jee-mars-1-win32-x86_64.zip",

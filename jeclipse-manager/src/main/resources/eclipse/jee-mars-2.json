@@ -1,0 +1,37 @@
+[
+	{
+		"version": "4.5.2.v20160212-1500",
+		"os": "linux",
+		"arch": "32",
+		"path": "/technology/epp/downloads/release/mars/2/eclipse-jee-mars-2-linux-gtk.tar.gz",
+		"md5": "3859084ed0db52f06436c62f115472d7"
+	},
+	{
+		"version": "4.5.2.v20160212-1500",
+		"os": "linux",
+		"arch": "64",
+		"path": "/technology/epp/downloads/release/mars/2/eclipse-jee-mars-2-linux-gtk-x86_64.tar.gz",
+		"md5": "dc96ba1a0ef95e222154e79873c74f51"
+	},
+	{
+		"version": "4.5.2.v20160212-1500",
+		"os": "mac",
+		"arch": "64",
+		"path": "/technology/epp/downloads/release/mars/2/eclipse-jee-mars-2-macosx-cocoa-x86_64.tar.gz",
+		"md5": "0ce714791de23c93e5488d9b22fdf73c"
+	},
+	{
+		"version": "4.5.2.v20160212-1500",
+		"os": "win",
+		"arch": "32",
+		"path": "/technology/epp/downloads/release/mars/2/eclipse-jee-mars-2-win32.zip",
+		"md5": "48e16baa1e7753fd2ffdb1de5a9024a4"
+	},
+	{
+		"version": "4.5.2.v20160212-1500",
+		"os": "win",
+		"arch": "64",
+		"path": "/technology/epp/downloads/release/mars/2/eclipse-jee-mars-2-win32-x86_64.zip",
+		"md5": "686f0c8dfa1aab53fa13e50aacd84a4a"
+	}
+]

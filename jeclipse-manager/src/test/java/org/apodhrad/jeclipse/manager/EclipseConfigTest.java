@@ -16,6 +16,8 @@ import org.junit.Test;
  */
 public class EclipseConfigTest {
 
+	public static final String ECLIPSE_VERSION = "jee-mars-1";
+
 	@Test
 	public void testGettingName() {
 		assertEquals("hello.zip", eclispeConfig("/com/example/hello.zip", null).getArchiveName());
@@ -130,6 +132,7 @@ public class EclipseConfigTest {
 
 	private static EclipseConfig eclispeConfig(String os, String arch, String path, String md5) {
 		EclipseConfig eclipseConfig = new EclipseConfig();
+		eclipseConfig.setVersion(ECLIPSE_VERSION);
 		eclipseConfig.setOs(os);
 		eclipseConfig.setArch(arch);
 		eclipseConfig.setPath(path);

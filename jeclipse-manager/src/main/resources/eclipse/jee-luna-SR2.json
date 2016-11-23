@@ -1,35 +1,41 @@
 [
 	{
+		"version": "4.4.2.v20150204-1700",
 		"os": "linux",
 		"arch": "32",
 		"path": "/technology/epp/downloads/release/luna/SR2/eclipse-jee-luna-SR2-linux-gtk.tar.gz",
 		"md5": "d8e1b995e95dbec95d69d62ddf6f94f6"
 	},
 	{
+		"version": "4.4.2.v20150204-1700",
 		"os": "linux",
 		"arch": "64",
 		"path": "/technology/epp/downloads/release/luna/SR2/eclipse-jee-luna-SR2-linux-gtk-x86_64.tar.gz",
 		"md5": "be9391112776755e898801d3f3f51b74"
 	},
 	{
+		"version": "4.4.2.v20150204-1700",
 		"os": "mac",
 		"arch": "32",
 		"path": "/technology/epp/downloads/release/luna/SR2/clipse-jee-luna-SR2-macosx-cocoa.tar.gz",
 		"md5": "46f741dab6e94f5509dd2ecfe0e1d295"
 	},
 	{
+		"version": "4.4.2.v20150204-1700",
 		"os": "mac",
 		"arch": "64",
 		"path": "/technology/epp/downloads/release/luna/SR2/eclipse-jee-luna-SR2-macosx-cocoa-x86_64.tar.gz",
 		"md5": "8e8b8ae2c66838d0cc3bf0b316576212"
 	},
 	{
+		"version": "4.4.2.v20150204-1700",
 		"os": "win",
 		"arch": "32",
 		"path": "/technology/epp/downloads/release/luna/SR2/eclipse-jee-luna-SR2-win32.zip",
 		"md5": "3e36cea1287c8e4b602eb0510c8a1dc1"
 	},
 	{
+		"version": "4.4.2.v20150204-1700",
 		"os": "win",
 		"arch": "64",
 		"path": "/technology/epp/downloads/release/luna/SR2/eclipse-jee-luna-SR2-win32-x86_64.zip",

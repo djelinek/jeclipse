@@ -147,7 +147,7 @@ public class Eclipse {
 	public Set<String> getIgnoredFeatures() {
 		return ignoredFeatures;
 	}
-	
+
 	public void removeIgnoredFeatures() {
 		ignoredFeatures = new HashSet<String>();
 	}
@@ -392,6 +392,25 @@ public class Eclipse {
 
 		JDownloadManager manager = new JDownloadManager();
 		manager.download(config.getUrl(eclipseMirror), target, true, hash);
+		String eclipseFolder = "eclipse";
+		if (OSUtils.isMac() && new File(target, "Eclipse.app").exists()) {
+			eclipseFolder = "Eclipse.app";
+		}
+		return new Eclipse(new File(target, eclipseFolder));
+	}
+
+	private static Eclipse installEclipse(File target, EclipseConfig config) throws IOException {
+		return installEclipse(target, config, ECLIPSE_DEFAULT_MIRROR_ID);
+	}
+
+	public static Eclipse installEclipse(File target, EclipseConfig config, int mirrorId) throws IOException {
+		Hash hash = new NullHash();
+		if (config.getMd5() != null) {
+			hash = new MD5Hash(config.getMd5());
+		}
+
+		JDownloadManager manager = new JDownloadManager();
+		manager.download(config.getUrl(mirrorId), target, true, hash);
 		String eclipseFolder = "eclipse";
 		if (OSUtils.isMac() && new File(target, "Eclipse.app").exists()) {
 			eclipseFolder = "Eclipse.app";
