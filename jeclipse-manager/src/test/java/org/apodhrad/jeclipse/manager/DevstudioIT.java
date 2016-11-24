@@ -6,13 +6,10 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apodhrad.jdownload.manager.hash.NullHash;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class JBDSISIT {
-
-	public static final String FUSE_FEATURE = "com.jboss.devstudio.integration-stack.fuse.feature.feature.group";
+public class DevstudioIT {
 
 	private static String JBDS_URL;
 	private static String TARGET;
@@ -20,19 +17,12 @@ public class JBDSISIT {
 	@BeforeClass
 	public static void beforeClass() throws IOException {
 		TARGET = systemProperty("project.build.directory");
-		JBDS_URL = systemProperty("jeclipse.test.jbdsis.url");
+		JBDS_URL = systemProperty("jeclipse.test.jbds.url");
 	}
 
-	@Test
+//	@Test
 	public void jbdsInstallTest() throws IOException {
-		JBDS jbdsis = JBDS.installJBDS(new File(TARGET), JBDS_URL, new NullHash(), null, FUSE_FEATURE);
-
-		for (Bundle feature : jbdsis.getFeatures()) {
-			if (feature.getName().contains("fusesource")) {
-				return;
-			}
-		}
-		Assert.fail("Cannot find any feature matching '.*fusesource.*'");
+		Devstudio.installJBDS(new File(TARGET), JBDS_URL, new NullHash());
 	}
 
 	static public String systemProperty(String key) {

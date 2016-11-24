@@ -46,6 +46,8 @@ public class Eclipse {
 
 	private static final String LAUNCHER_PREFIX = "org.eclipse.equinox.launcher_";
 
+	private static final String PLATFORM_PLUGIN = "org.eclipse.platform";
+
 	private static Logger log = LoggerFactory.getLogger(Eclipse.class);
 	private File jarFile;
 	private Set<String> updateSites;
@@ -110,6 +112,23 @@ public class Eclipse {
 			return false;
 		}
 		return true;
+	}
+
+	public String getPlatformVersion() {
+		Bundle platformPlugin = getPlugin(PLATFORM_PLUGIN);
+		if (platformPlugin != null) {
+			return platformPlugin.getVersion();
+		}
+		return null;
+	}
+
+	public Bundle getPlugin(String pluginName) {
+		for (Bundle plugin : getPlugins()) {
+			if (plugin.getName().equals(pluginName)) {
+				return plugin;
+			}
+		}
+		return null;
 	}
 
 	public Bundle[] getFeatures() {

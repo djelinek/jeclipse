@@ -11,7 +11,7 @@ import org.apodhrad.jdownload.manager.hash.Hash;
  * @author apodhrad
  *
  */
-public class JBDSConfig {
+public class DevstudioConfig {
 
 	private File target;
 //	private String installerUrl;
@@ -21,7 +21,7 @@ public class JBDSConfig {
 	private List<String> installableUnits;
 	private List<String> runtimes;
 	
-	public JBDSConfig() {
+	public DevstudioConfig() {
 		installableUnits = new ArrayList<String>();
 		runtimes = new ArrayList<String>();
 	}

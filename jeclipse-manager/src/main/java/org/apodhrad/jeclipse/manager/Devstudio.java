@@ -22,38 +22,40 @@ import org.slf4j.LoggerFactory;
  * @author apodhrad
  *
  */
-public class JBDS extends Eclipse {
+public class Devstudio extends Eclipse {
+	
+	private static final String CORE_PLUGIN = "com.devstudio.core";
 
-	private static Logger log = LoggerFactory.getLogger(JBDS.class);
+	private static Logger log = LoggerFactory.getLogger(Devstudio.class);
 
-	public JBDS(String path) {
+	public Devstudio(String path) {
 		super(path);
 	}
 
-	public JBDS(File file) {
+	public Devstudio(File file) {
 		super(file);
 	}
 
-	public static JBDS installJBDS(File target, String url) throws IOException {
+	public static Devstudio installJBDS(File target, String url) throws IOException {
 		return installJBDS(target, url, new NullHash(), null);
 	}
 
-	public static JBDS installJBDS(File target, String url, String jreLocation) throws IOException {
+	public static Devstudio installJBDS(File target, String url, String jreLocation) throws IOException {
 		return installJBDS(target, url, new NullHash(), jreLocation);
 	}
 
-	public static JBDS installJBDS(File target, String url, Hash hash) throws IOException {
+	public static Devstudio installJBDS(File target, String url, Hash hash) throws IOException {
 		return installJBDS(target, url, hash, null);
 	}
 
-	public static JBDS installJBDS(File target, String url, Hash hash, String jreLocation, String... ius)
+	public static Devstudio installJBDS(File target, String url, Hash hash, String jreLocation, String... ius)
 			throws IOException {
 		JDownloadManager manager = new JDownloadManager();
 		File installerJarFile = manager.download(url, target, hash);
 		return installJBDS(target, installerJarFile, jreLocation, ius);
 	}
 
-	public static JBDS installJBDS(File target, File installerJarFile, String jreLocation, String... ius)
+	public static Devstudio installJBDS(File target, File installerJarFile, String jreLocation, String... ius)
 			throws IOException {
 		// Install JBDS
 		String installationFile = null;
@@ -74,12 +76,12 @@ public class JBDS extends Eclipse {
 		jarRunner.setTimeout(getJEclipseTimeout());
 		jarRunner.execute(installationFile);
 
-		return new JBDS(new File(target, "jbdevstudio"));
+		return new Devstudio(new File(target, "jbdevstudio"));
 	}
 
 	public static String createInstallationFile(File target, File installerJarFile, String jreLocation, String... ius)
 			throws IOException {
-		JBDSConfig config = new JBDSConfig();
+		DevstudioConfig config = new DevstudioConfig();
 		config.setTarget(target);
 		config.setInstallerJarFile(installerJarFile);
 		config.setJreLocation(jreLocation);
@@ -89,7 +91,7 @@ public class JBDS extends Eclipse {
 		return createInstallationFile(config);
 	}
 
-	public static String createInstallationFile(JBDSConfig config) throws IOException {
+	public static String createInstallationFile(DevstudioConfig config) throws IOException {
 		File jre = OSUtils.getJre(config.getJreLocation());
 		log.debug("JRE: " + jre);
 		if (jre == null) {
@@ -123,24 +125,27 @@ public class JBDS extends Eclipse {
 		String tempFile = new File(config.getTarget(), "/install.xml").getAbsolutePath();
 		String targetFile = new File(config.getTarget(), "/installation.xml").getAbsolutePath();
 
-		String sourceFile = "/install.xml";
+		String sourceFile = null;
+		if (jbdsVersion != null && jbdsVersion.startsWith("7")) {
+			sourceFile = "jbds-7.xml";
+		}
 		if (jbdsVersion != null && jbdsVersion.startsWith("8")) {
-			sourceFile = "/install-8.xml";
+			sourceFile = "jbds-8.xml";
 		}
 		if (jbdsVersion != null && jbdsVersion.startsWith("9")) {
-			sourceFile = "/install-9.xml";
+			sourceFile = "jbds-9.xml";
 		}
 		if (jbdsVersion != null && jbdsVersion.startsWith("10")) {
-			sourceFile = "/install-10.xml";
+			sourceFile = "devstudio-10.xml";
 			if (runtimeList.length() > 0) {
-				sourceFile = "/install-10-runtime.xml";
+				sourceFile = "devstudio-10-runtime.xml";
 			}
 			if (config.getInstallerJarFile().getName().contains("eap")) {
 				group = "jbosseap";
-				sourceFile = "/install-10-runtime.xml";
+				sourceFile = "devstudio-10-runtime.xml";
 			}
 		}
-		URL url = JBDS.class.getResource(sourceFile);
+		URL url = Devstudio.class.getResource("/devstudio/" + sourceFile);
 
 		FileUtils.copyURLToFile(url, new File(tempFile));
 		BufferedReader in = new BufferedReader(new FileReader(tempFile));
@@ -164,6 +169,15 @@ public class JBDS extends Eclipse {
 		return targetFile;
 	}
 
+	public String getCoreVersion() {
+		Bundle platformPlugin = getPlugin(CORE_PLUGIN);
+		if (platformPlugin != null) {
+			return platformPlugin.getVersion();
+		}
+		return null;
+	}
+
+	
 	public static String getJBDSVersion(File installer) {
 		return getJBDSVersion(installer.getName());
 	}

@@ -25,7 +25,7 @@ import org.apodhrad.jdownload.manager.hash.SHA1Hash;
 import org.apodhrad.jdownload.manager.hash.SHA256Hash;
 import org.apodhrad.jdownload.manager.hash.URLHash;
 import org.apodhrad.jeclipse.manager.Eclipse;
-import org.apodhrad.jeclipse.manager.JBDS;
+import org.apodhrad.jeclipse.manager.Devstudio;
 import org.apodhrad.jeclipse.manager.util.EclipseUtils;
 
 /**
@@ -141,7 +141,7 @@ public class Installer extends AbstractMojo {
 				ius = new String[0];
 			}
 			try {
-				eclipse = JBDS.installJBDS(new File(target), jbdsInstaller.toString(), hash, jreLocation, ius);
+				eclipse = Devstudio.installJBDS(new File(target), jbdsInstaller.toString(), hash, jreLocation, ius);
 			} catch (IOException ioe) {
 				throw new MojoExecutionException("I/O exception occured during installing Eclipse IDE", ioe);
 			}
