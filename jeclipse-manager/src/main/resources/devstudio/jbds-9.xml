@@ -3,14 +3,14 @@
 <com.jboss.devstudio.core.installer.HTMLInfoPanelWithRootWarning id="introduction"/>
 <com.izforge.izpack.panels.HTMLLicencePanel id="licence"/>
 <com.jboss.devstudio.core.installer.PathInputPanel id="target">
-<installpath>@DEST@</installpath>
+<installpath>@TARGET@</installpath>
 </com.jboss.devstudio.core.installer.PathInputPanel>
 <com.jboss.devstudio.core.installer.JREPathPanel id="jre"/>
 <com.jboss.devstudio.core.installer.JBossAsSelectPanel id="as">
 <installgroup>jbds</installgroup>
 </com.jboss.devstudio.core.installer.JBossAsSelectPanel>
 <com.jboss.devstudio.core.installer.InstallAdditionalFeaturesPanel id="features">
-<ius>@IUS@</ius>
+<ius>@FEATURES@</ius>
 <locations>@PRODUCTS@</locations>
 </com.jboss.devstudio.core.installer.InstallAdditionalFeaturesPanel>
 <com.jboss.devstudio.core.installer.UpdatePacksPanel id="updatepacks"/>

@@ -57,6 +57,9 @@ public class Devstudio extends Eclipse {
 
 	public static Devstudio installJBDS(File target, File installerJarFile, String jreLocation, String... ius)
 			throws IOException {
+		if (target.isDirectory()) {
+			target = new File(target, "jbdevstudio");
+		}
 		// Install JBDS
 		String installationFile = null;
 		try {
@@ -76,97 +79,37 @@ public class Devstudio extends Eclipse {
 		jarRunner.setTimeout(getJEclipseTimeout());
 		jarRunner.execute(installationFile);
 
+		return new Devstudio(target);
+	}
+	
+	public static Devstudio installJBDS(File target, File installerJarFile, File installerConfigFile)
+			throws IOException {
+		// Switch IzPack mode to privileged on Windows
+		if (OSUtils.isWindows()) {
+			System.setProperty("izpack.mode", "privileged");
+		}
+
+		JarRunner jarRunner = new JarRunner(installerJarFile.getAbsolutePath());
+		jarRunner.setExecutionOutput(new EclipseExecutionOutput());
+		jarRunner.setTimeout(getJEclipseTimeout());
+		jarRunner.execute(installerConfigFile.getAbsolutePath());
+
 		return new Devstudio(new File(target, "jbdevstudio"));
 	}
 
 	public static String createInstallationFile(File target, File installerJarFile, String jreLocation, String... ius)
 			throws IOException {
-		DevstudioConfig config = new DevstudioConfig();
-		config.setTarget(target);
-		config.setInstallerJarFile(installerJarFile);
-		config.setJreLocation(jreLocation);
+		DevstudioConfig config = DevstudioConfig.createFromInstallerName(installerJarFile.getName());
+		config.setTarget(target.getAbsolutePath());
+		config.setJre(jreLocation);
 		for (String iu : ius) {
-			config.addInstallableUnit(iu);
+			config.addFeature(iu);
 		}
 		return createInstallationFile(config);
 	}
 
 	public static String createInstallationFile(DevstudioConfig config) throws IOException {
-		File jre = OSUtils.getJre(config.getJreLocation());
-		log.debug("JRE: " + jre);
-		if (jre == null) {
-			throw new IllegalStateException("Cannot find JRE location!");
-		}
-
-		StringJoiner iuList = new StringJoiner(",");
-		iuList.add("com.jboss.devstudio.core.package");
-		iuList.add("org.testng.eclipse.feature.group");
-		for (String feature : config.getInstallabelUnits()) {
-			iuList.add(feature);
-		}
-
-		StringJoiner runtimeList = new StringJoiner(",");
-		runtimeList.setEmptyValue("");
-		for (String runtime : config.getRuntimes()) {
-			runtimeList.add(runtime);
-		}
-
-		String group = "devstudio";
-
-		String jbdsVersion = getJBDSVersion(config.getInstallerJarFile());
-		StringJoiner productList = new StringJoiner(",");
-		productList.add(jbdsVersion.startsWith("10") ? "devstudio" : "jbds");
-		if (!config.getInstallabelUnits().isEmpty()) {
-			productList.add(jbdsVersion.startsWith("10") ? "devstudio-is" : "jbdsis");
-		}
-
-		String dest = new File(config.getTarget(), "jbdevstudio").getAbsolutePath();
-
-		String tempFile = new File(config.getTarget(), "/install.xml").getAbsolutePath();
-		String targetFile = new File(config.getTarget(), "/installation.xml").getAbsolutePath();
-
-		String sourceFile = null;
-		if (jbdsVersion != null && jbdsVersion.startsWith("7")) {
-			sourceFile = "jbds-7.xml";
-		}
-		if (jbdsVersion != null && jbdsVersion.startsWith("8")) {
-			sourceFile = "jbds-8.xml";
-		}
-		if (jbdsVersion != null && jbdsVersion.startsWith("9")) {
-			sourceFile = "jbds-9.xml";
-		}
-		if (jbdsVersion != null && jbdsVersion.startsWith("10")) {
-			sourceFile = "devstudio-10.xml";
-			if (runtimeList.length() > 0) {
-				sourceFile = "devstudio-10-runtime.xml";
-			}
-			if (config.getInstallerJarFile().getName().contains("eap")) {
-				group = "jbosseap";
-				sourceFile = "devstudio-10-runtime.xml";
-			}
-		}
-		URL url = Devstudio.class.getResource("/devstudio/" + sourceFile);
-
-		FileUtils.copyURLToFile(url, new File(tempFile));
-		BufferedReader in = new BufferedReader(new FileReader(tempFile));
-		BufferedWriter out = new BufferedWriter(new FileWriter(targetFile));
-		String line = null;
-		while ((line = in.readLine()) != null) {
-			line = line.replace("@DEST@", dest);
-			line = line.replace("@GROUP@", group);
-			line = line.replace("@JRE@", jre.getAbsolutePath());
-			line = line.replace("@IUS@", iuList.toString());
-			line = line.replace("@PRODUCTS@", productList.toString());
-			line = line.replace("@RUNTIMES@", runtimeList.toString());
-			out.write(line);
-			out.newLine();
-		}
-		out.flush();
-		out.close();
-		in.close();
-
-		new File(tempFile).delete();
-		return targetFile;
+		return config.toFile(new File(config.getTarget(), "installation.xml")).getAbsolutePath();
 	}
 
 	public String getCoreVersion() {

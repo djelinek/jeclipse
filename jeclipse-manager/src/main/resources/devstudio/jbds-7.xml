@@ -3,7 +3,7 @@
 <com.jboss.jbds.installer.HTMLInfoPanelWithRootWarning id="introduction"/>
 <com.izforge.izpack.panels.HTMLLicencePanel id="licence"/>
 <com.jboss.jbds.installer.PathInputPanel id="target">
-<installpath>@DEST@</installpath>
+<installpath>@TARGET@</installpath>
 </com.jboss.jbds.installer.PathInputPanel>
 <com.jboss.jbds.installer.JREPathPanel id="jre"/>
 <com.jboss.jbds.installer.JBossAsSelectPanel id="as">
