@@ -11,7 +11,7 @@
 </com.jboss.devstudio.core.installer.JBossAsSelectPanel>
 <com.jboss.devstudio.core.installer.InstallAdditionalFeaturesPanel id="features">
 <ius>com.jboss.devstudio.core.package,org.testng.eclipse.feature.group</ius>
-<locations>devstudio</locations>
+<locations>devstudio,devstudio-is</locations>
 </com.jboss.devstudio.core.installer.InstallAdditionalFeaturesPanel>
 <com.jboss.devstudio.core.installer.InstallAdditionalRuntimesPanel id="runtimes">
 <locations>devstudio-is/runtime/jboss-fuse-karaf-6.3.0.redhat-187.zip</locations>

@@ -1,15 +1,8 @@
 package org.apodhrad.jeclipse.manager;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URL;
-import java.util.StringJoiner;
 
-import org.apache.commons.io.FileUtils;
 import org.apodhrad.jdownload.manager.JDownloadManager;
 import org.apodhrad.jdownload.manager.hash.Hash;
 import org.apodhrad.jdownload.manager.hash.NullHash;
@@ -24,7 +17,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Devstudio extends Eclipse {
 	
-	private static final String CORE_PLUGIN = "com.devstudio.core";
+	public static final String CORE_PLUGIN = "com.jboss.devstudio.core";
 
 	private static Logger log = LoggerFactory.getLogger(Devstudio.class);
 

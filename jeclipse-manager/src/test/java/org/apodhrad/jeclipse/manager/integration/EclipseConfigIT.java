@@ -1,10 +1,12 @@
-package org.apodhrad.jeclipse.manager;
+package org.apodhrad.jeclipse.manager.integration;
 
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apodhrad.jdownload.manager.hash.URLHash;
+import org.apodhrad.jeclipse.manager.EclipseConfig;
+import org.apodhrad.jeclipse.manager.TestingPlatform;
 import org.apodhrad.jeclipse.manager.util.EclipseUtils;
 import org.junit.After;
 import org.junit.Assert;

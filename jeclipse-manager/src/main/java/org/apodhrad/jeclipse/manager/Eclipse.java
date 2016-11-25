@@ -131,6 +131,15 @@ public class Eclipse {
 		return null;
 	}
 
+	public Bundle getFeature(String featureName) {
+		for (Bundle feature : getFeatures()) {
+			if (feature.getName().equals(featureName)) {
+				return feature;
+			}
+		}
+		return null;
+	}
+
 	public Bundle[] getFeatures() {
 		File featuresDir = new File(jarFile.getParentFile().getParentFile(), "features");
 		File[] featureFiles = featuresDir.listFiles();

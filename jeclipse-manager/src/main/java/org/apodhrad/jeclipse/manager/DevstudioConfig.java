@@ -20,16 +20,18 @@ public class DevstudioConfig {
 
 	private String target;
 	private String jre;
+	private String group;
 	private String devstudioVersion;
-	private List<String> groups;
 	private List<String> features;
 	private List<String> products;
 	private List<String> runtimes;
 
+	private boolean isDevstudioEap;
+	private boolean isDevstudioIntegrationStack;
+
 	public DevstudioConfig(String devstudioVersion) {
 		this.devstudioVersion = devstudioVersion;
 
-		groups = new ArrayList<String>();
 		features = new ArrayList<String>();
 		products = new ArrayList<String>();
 		runtimes = new ArrayList<String>();
@@ -37,19 +39,6 @@ public class DevstudioConfig {
 		/* default settings */
 		target = getDefaultTarget();
 		jre = getDefaultJre();
-		features.add("com.jboss.devstudio.core.package");
-		features.add("org.testng.eclipse.feature.group");
-		if (devstudioVersion.startsWith("10")) {
-			groups.add("devstudio");
-			products.add("devstudio");
-		} else {
-			groups.add("jbds");
-			products.add("jbds");
-		}
-	}
-
-	public String getDevstudioVersion() {
-		return devstudioVersion;
 	}
 
 	public String getTarget() {
@@ -80,15 +69,8 @@ public class DevstudioConfig {
 		return features;
 	}
 
-	public void addFeature(String iu) {
-		features.add(iu);
-		if (iu.contains("integration-stack")) {
-			if (devstudioVersion.startsWith("10")) {
-				addProduct("devstudio-is");
-			} else {
-				addProduct("jbdsis");
-			}
-		}
+	public void addFeature(String feature) {
+		features.add(feature);
 	}
 
 	public List<String> getRuntimes() {
@@ -99,23 +81,36 @@ public class DevstudioConfig {
 		runtimes.add(runtime);
 	}
 
-	public List<String> getGroups() {
-		return groups;
+	public String getGroup() {
+		return group;
 	}
 
-	public void addGroup(String group) {
-		if ("jbosseap".equals(group)) {
-			groups.clear();
-		}
-		groups.add(group);
+	private void setGroup(String group) {
+		this.group = group;
 	}
 
 	public List<String> getProducts() {
 		return products;
 	}
 
-	public void addProduct(String product) {
+	private void addProduct(String product) {
 		products.add(product);
+	}
+
+	public boolean isDevstudioEap() {
+		return isDevstudioEap;
+	}
+
+	public void setDevstudioEap(boolean isDevstudioEap) {
+		this.isDevstudioEap = isDevstudioEap;
+	}
+
+	public boolean isDevstudioIntegrationStack() {
+		return isDevstudioIntegrationStack;
+	}
+
+	public void setDevstudioIntegrationStack(boolean isDevstudioIntegrationStack) {
+		this.isDevstudioIntegrationStack = isDevstudioIntegrationStack;
 	}
 
 	public File toFile(File installationConfigFile) throws IOException {
@@ -123,43 +118,72 @@ public class DevstudioConfig {
 			installationConfigFile = new File(installationConfigFile, "InstallationConfigRecord.xml");
 		}
 
-		Map<String, String> vars = new HashMap<String, String>();
-		vars.put("@TARGET@", target);
-		vars.put("@JRE@", jre);
-		vars.put("@FEATURES@", String.join(",", features));
-		vars.put("@PRODUCTS@", String.join(",", products));
-		vars.put("@GROUPS@", String.join(",", groups));
-		vars.put("@RUNTIMES@", String.join(",", runtimes));
-
-		InputStream source = Devstudio.class.getResourceAsStream("/devstudio/" + getSourceConfigName());
-		InpuStreamUtils.copyToFileAndReplace(source, installationConfigFile, vars);
-		return installationConfigFile;
-	}
-
-	private String getSourceConfigName() {
 		String sourceConfigName = null;
-		if (devstudioVersion != null && devstudioVersion.startsWith("7")) {
+		if (devstudioVersion.startsWith("7")) {
 			sourceConfigName = "jbds-7.xml";
 		}
-		if (devstudioVersion != null && devstudioVersion.startsWith("8")) {
+		if (devstudioVersion.startsWith("8")) {
 			sourceConfigName = "jbds-8.xml";
 		}
-		if (devstudioVersion != null && devstudioVersion.startsWith("9")) {
+		if (devstudioVersion.startsWith("9")) {
 			sourceConfigName = "jbds-9.xml";
+			addProduct("jbds");
+			setGroup("jbds");
+			if (isDevstudioIntegrationStack) {
+				addProduct("jbdsis");
+			}
 		}
-		if (devstudioVersion != null && devstudioVersion.startsWith("10")) {
+		if (devstudioVersion.startsWith("10")) {
 			sourceConfigName = "devstudio-10.xml";
 			if (!runtimes.isEmpty()) {
 				sourceConfigName = "devstudio-10-runtime.xml";
 			}
+			addProduct("devstudio");
+			setGroup("devstudio");
+			if (isDevstudioIntegrationStack) {
+				addProduct("devstudio-is");
+			}
 		}
-		return sourceConfigName;
+		if (isDevstudioEap) {
+			setGroup("jbosseap");
+		}
+
+		Map<String, String> vars = new HashMap<String, String>();
+		vars.put("@TARGET@", target);
+		vars.put("@JRE@", jre);
+		vars.put("@GROUP@", String.join(",", group));
+		vars.put("@FEATURES@", String.join(",", features));
+		vars.put("@PRODUCTS@", String.join(",", products));
+		vars.put("@RUNTIMES@", String.join(",", runtimes));
+
+		InputStream source = Devstudio.class.getResourceAsStream("/devstudio/" + sourceConfigName);
+		InpuStreamUtils.copyToFileAndReplace(source, installationConfigFile, vars);
+		return installationConfigFile;
 	}
 
 	public static DevstudioConfig createFromInstallerName(String installerName) {
-		DevstudioConfig config = new DevstudioConfig(getJBDSVersion(installerName));
+		String devstudioVersion = getJBDSVersion(installerName);
+
+		DevstudioConfig config = new DevstudioConfig(devstudioVersion);
+		config.addFeature("com.jboss.devstudio.core.package");
+		config.addFeature("org.testng.eclipse.feature.group");
 		if (installerName.contains("eap")) {
-			config.addGroup("jbosseap");
+			config.setDevstudioEap(true);
+		}
+		if (installerName.contains("integration-stack") || installerName.contains("devstudio-is")) {
+			config.setDevstudioIntegrationStack(true);
+		}
+		return config;
+	}
+
+	public static DevstudioConfig createFromInstaller(File installerJar) throws IOException {
+		DevstudioInstaller installer = new DevstudioInstaller(installerJar);
+
+		DevstudioConfig config = new DevstudioConfig(installer.getCoreVersion());
+		config.setGroup(installer.getDefaultGroup());
+		for (String feature : installer.getCoreFeatures()) {
+			config.addFeature(feature);
+			config.addProduct(installer.getFeatureProduct(feature));
 		}
 		return config;
 	}

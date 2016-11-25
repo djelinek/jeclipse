@@ -21,11 +21,13 @@ public class DevstudioConfigTest {
 	public static final String JBDS_7_1_1_GA = "jbdevstudio-product-universal-7.1.1.GA-v20140314-2145-B688.jar";
 	public static final String JBDS_8_1_0_GA = "jboss-devstudio-8.1.0.GA-installer-standalone.jar";
 	public static final String JBDS_9_1_0_GA = "jboss-devstudio-9.1.0.GA-installer-standalone.jar";
-	public static final String JBDS_10_1_0_GA = "devstudio-10.1.0.GA-installer-standalone.jar";
-	public static final String JBDS_10_1_0_GA_EAP = "devstudio-10.1.0.GA-installer-eap.jar";
-	public static final String JBDS_10_2_0_AM2 = "devstudio-10.2.0.AM2-v20161014-1657-B6205-installer-standalone.jar";
-	public static final String JBDSIS_10_0_0_CR1 = "devstudio-integration-stack-10.0.0.CR1-standalone-installer.jar";
-	public static final String JBDSIS_10_0_0_CR1_RT = "devstudio-integration-stack-rt-10.0.0.CR1-standalone-installer.jar";
+	public static final String DEVSTUDIO_10_1_0_GA = "devstudio-10.1.0.GA-installer-standalone.jar";
+	public static final String DEVSTUDIO_10_1_0_GA_EAP = "devstudio-10.1.0.GA-installer-eap.jar";
+	public static final String DEVSTUDIO_10_2_0_AM2 = "devstudio-10.2.0.AM2-v20161014-1657-B6205-installer-standalone.jar";
+
+	public static final String JBDSIS_9_0_3_GA = "devstudio-integration-stack-9.0.3.GA-standalone-installer.jar";
+	public static final String DEVSTUDIOIS_10_0_0_GA = "devstudio-integration-stack-10.0.0.GA-standalone-installer.jar";
+	public static final String DEVSTUDIOIS_10_0_0_GA_RT = "devstudio-integration-stack-10.0.0.GA-runtime-installer.jar";
 
 	@Rule
 	public TemporaryFolder tempFolder = new TemporaryFolder();
@@ -57,33 +59,33 @@ public class DevstudioConfigTest {
 
 	@Test
 	public void testCreatingInstallationFileForJBDS9WithIU() throws Exception {
-		DevstudioConfig config = devstudioConfig(JBDS_9_1_0_GA);
+		DevstudioConfig config = devstudioConfig(JBDSIS_9_0_3_GA);
 		config.addFeature("com.jboss.devstudio.integration-stack.fuse.feature.feature.group");
 		assertInstallationFile("/test-install-9-iu.xml", config.toFile(target));
 	}
 
 	@Test
-	public void testCreatingInstallationFileForJBDS10() throws Exception {
-		DevstudioConfig config = devstudioConfig(JBDS_10_1_0_GA);
+	public void testCreatingInstallationFileForDevstudio10() throws Exception {
+		DevstudioConfig config = devstudioConfig(DEVSTUDIO_10_1_0_GA);
 		assertInstallationFile("/test-install-10.xml", config.toFile(target));
 	}
 
 	@Test
-	public void testCreatingInstallationFileForJBDS10WithEAP() throws Exception {
-		DevstudioConfig config = devstudioConfig(JBDS_10_1_0_GA_EAP);
+	public void testCreatingInstallationFileForDevstudio10WithEAP() throws Exception {
+		DevstudioConfig config = devstudioConfig(DEVSTUDIO_10_1_0_GA_EAP);
 		assertInstallationFile("/test-install-10-eap.xml", config.toFile(target));
 	}
 
 	@Test
-	public void testCreatingInstallationFileForJBDS10WithIU() throws Exception {
-		DevstudioConfig config = devstudioConfig(JBDS_10_1_0_GA);
+	public void testCreatingInstallationFileForDevstudioIS10WithIU() throws Exception {
+		DevstudioConfig config = devstudioConfig(DEVSTUDIOIS_10_0_0_GA);
 		config.addFeature("com.jboss.devstudio.integration-stack.fuse.feature.feature.group");
 		assertInstallationFile("/test-install-10-iu.xml", config.toFile(target));
 	}
 
 	@Test
-	public void testCreatingInstallationFileForJBDSIS10WithFuse() throws Exception {
-		DevstudioConfig config = devstudioConfig(JBDSIS_10_0_0_CR1_RT);
+	public void testCreatingInstallationFileForDevstudioIS10WithFuse() throws Exception {
+		DevstudioConfig config = devstudioConfig(DEVSTUDIOIS_10_0_0_GA_RT);
 		config.addRuntime("devstudio-is/runtime/jboss-fuse-karaf-6.3.0.redhat-187.zip");
 		assertInstallationFile("/test-install-10-fuse.xml", config.toFile(target));
 	}

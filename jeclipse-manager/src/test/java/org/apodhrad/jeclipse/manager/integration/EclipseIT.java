@@ -1,4 +1,4 @@
-package org.apodhrad.jeclipse.manager;
+package org.apodhrad.jeclipse.manager.integration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -12,6 +12,8 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apodhrad.jdownload.manager.JDownloadManager;
+import org.apodhrad.jeclipse.manager.Bundle;
+import org.apodhrad.jeclipse.manager.Eclipse;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

@@ -7,7 +7,7 @@
 </com.jboss.devstudio.core.installer.PathInputPanel>
 <com.jboss.devstudio.core.installer.JREPathPanel id="jre"/>
 <com.jboss.devstudio.core.installer.JBossAsSelectPanel id="as">
-<installgroup>@GROUPS@</installgroup>
+<installgroup>@GROUP@</installgroup>
 </com.jboss.devstudio.core.installer.JBossAsSelectPanel>
 <com.jboss.devstudio.core.installer.InstallAdditionalFeaturesPanel id="features">
 <ius>@FEATURES@</ius>

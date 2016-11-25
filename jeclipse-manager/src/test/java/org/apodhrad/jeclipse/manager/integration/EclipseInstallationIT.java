@@ -1,4 +1,4 @@
-package org.apodhrad.jeclipse.manager;
+package org.apodhrad.jeclipse.manager.integration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -8,6 +8,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apodhrad.jeclipse.manager.Bundle;
+import org.apodhrad.jeclipse.manager.Eclipse;
+import org.apodhrad.jeclipse.manager.EclipseConfig;
+import org.apodhrad.jeclipse.manager.TestingPlatform;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
