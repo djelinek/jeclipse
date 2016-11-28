@@ -3,10 +3,10 @@ package org.apodhrad.jeclipse.manager;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apodhrad.jeclipse.manager.util.InpuStreamUtils;
 import org.apodhrad.jeclipse.manager.util.OSUtils;
@@ -22,9 +22,9 @@ public class DevstudioConfig {
 	private String jre;
 	private String group;
 	private String devstudioVersion;
-	private List<String> features;
-	private List<String> products;
-	private List<String> runtimes;
+	private Set<String> features;
+	private Set<String> products;
+	private Set<String> runtimes;
 
 	private boolean isDevstudioEap;
 	private boolean isDevstudioIntegrationStack;
@@ -32,9 +32,9 @@ public class DevstudioConfig {
 	public DevstudioConfig(String devstudioVersion) {
 		this.devstudioVersion = devstudioVersion;
 
-		features = new ArrayList<String>();
-		products = new ArrayList<String>();
-		runtimes = new ArrayList<String>();
+		features = new LinkedHashSet<String>();
+		products = new LinkedHashSet<String>();
+		runtimes = new LinkedHashSet<String>();
 
 		/* default settings */
 		target = getDefaultTarget();
@@ -65,7 +65,7 @@ public class DevstudioConfig {
 		return OSUtils.getJre(null).getAbsolutePath();
 	}
 
-	public List<String> getFeatures() {
+	public Set<String> getFeatures() {
 		return features;
 	}
 
@@ -73,7 +73,7 @@ public class DevstudioConfig {
 		features.add(feature);
 	}
 
-	public List<String> getRuntimes() {
+	public Set<String> getRuntimes() {
 		return runtimes;
 	}
 
@@ -89,7 +89,7 @@ public class DevstudioConfig {
 		this.group = group;
 	}
 
-	public List<String> getProducts() {
+	public Set<String> getProducts() {
 		return products;
 	}
 
@@ -176,14 +176,17 @@ public class DevstudioConfig {
 		return config;
 	}
 
-	public static DevstudioConfig createFromInstaller(File installerJar) throws IOException {
+	public static DevstudioConfig createFromInstallerFile(File installerJar) throws IOException {
 		DevstudioInstaller installer = new DevstudioInstaller(installerJar);
 
 		DevstudioConfig config = new DevstudioConfig(installer.getCoreVersion());
 		config.setGroup(installer.getDefaultGroup());
-		for (String feature : installer.getCoreFeatures()) {
-			config.addFeature(feature);
-			config.addProduct(installer.getFeatureProduct(feature));
+		for (DevstudioSpec featureSpec : installer.getCoreFeatures()) {
+			config.addFeature(featureSpec.getId());
+			config.addProduct(featureSpec.getPath());
+		}
+		if (!installer.getAdditionalFeatures().isEmpty()) {
+			config.setDevstudioIntegrationStack(true);
 		}
 		return config;
 	}

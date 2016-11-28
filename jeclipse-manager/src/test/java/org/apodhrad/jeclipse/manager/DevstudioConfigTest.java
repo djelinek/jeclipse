@@ -1,10 +1,13 @@
 package org.apodhrad.jeclipse.manager;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.jar.JarOutputStream;
+import java.util.zip.ZipEntry;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -40,54 +43,97 @@ public class DevstudioConfigTest {
 	}
 
 	@Test
-	public void testCreatingInstallationFileForJBDS7() throws Exception {
+	public void testCreatingInstallationFileFromNameForJBDS7() throws Exception {
 		DevstudioConfig config = devstudioConfig(JBDS_7_1_1_GA);
 		assertInstallationFile("/test-install-7.xml", config.toFile(target));
 	}
 
 	@Test
-	public void testCreatingInstallationFileForJBDS8() throws Exception {
+	public void testCreatingInstallationFileFromNameForJBDS8() throws Exception {
 		DevstudioConfig config = devstudioConfig(JBDS_8_1_0_GA);
 		assertInstallationFile("/test-install-8.xml", config.toFile(target));
 	}
 
 	@Test
-	public void testCreatingInstallationFileForJBDS9() throws Exception {
+	public void testCreatingInstallationFileFromNameForJBDS9() throws Exception {
 		DevstudioConfig config = devstudioConfig(JBDS_9_1_0_GA);
 		assertInstallationFile("/test-install-9.xml", config.toFile(target));
 	}
 
 	@Test
-	public void testCreatingInstallationFileForJBDS9WithIU() throws Exception {
+	public void testCreatingInstallationFileFromNameForJBDSIS9WithIU() throws Exception {
 		DevstudioConfig config = devstudioConfig(JBDSIS_9_0_3_GA);
 		config.addFeature("com.jboss.devstudio.integration-stack.fuse.feature.feature.group");
 		assertInstallationFile("/test-install-9-iu.xml", config.toFile(target));
 	}
 
 	@Test
-	public void testCreatingInstallationFileForDevstudio10() throws Exception {
+	public void testCreatingInstallationFileFromNameForDevstudio10() throws Exception {
 		DevstudioConfig config = devstudioConfig(DEVSTUDIO_10_1_0_GA);
 		assertInstallationFile("/test-install-10.xml", config.toFile(target));
 	}
 
 	@Test
-	public void testCreatingInstallationFileForDevstudio10WithEAP() throws Exception {
+	public void testCreatingInstallationFileFromNameForDevstudio10WithEAP() throws Exception {
 		DevstudioConfig config = devstudioConfig(DEVSTUDIO_10_1_0_GA_EAP);
 		assertInstallationFile("/test-install-10-eap.xml", config.toFile(target));
 	}
 
 	@Test
-	public void testCreatingInstallationFileForDevstudioIS10WithIU() throws Exception {
+	public void testCreatingInstallationFileFromNameForDevstudioIS10WithIU() throws Exception {
 		DevstudioConfig config = devstudioConfig(DEVSTUDIOIS_10_0_0_GA);
 		config.addFeature("com.jboss.devstudio.integration-stack.fuse.feature.feature.group");
 		assertInstallationFile("/test-install-10-iu.xml", config.toFile(target));
 	}
 
 	@Test
-	public void testCreatingInstallationFileForDevstudioIS10WithFuse() throws Exception {
+	public void testCreatingInstallationFileFromNameForDevstudioIS10WithFuse() throws Exception {
 		DevstudioConfig config = devstudioConfig(DEVSTUDIOIS_10_0_0_GA_RT);
 		config.addRuntime("devstudio-is/runtime/jboss-fuse-karaf-6.3.0.redhat-187.zip");
 		assertInstallationFile("/test-install-10-fuse.xml", config.toFile(target));
+	}
+
+	@Test
+	public void testCreatingInstallationFileFromInstallerForJBDS7() throws Exception {
+		File installerJar = prepareDevstudioInstaller7(tempFolder.newFile("installer.jar"),
+				"7.1.1.GA-v20140314-2145-B688");
+		DevstudioConfig config = devstudioConfig(installerJar);
+		assertInstallationFile("/test-install-7.xml", config.toFile(target));
+	}
+
+	@Test
+	public void testCreatingInstallationFileFromInstallerForJBDS8() throws Exception {
+		File installerJar = prepareDevstudioInstaller8(tempFolder.newFile("installer.jar"),
+				"8.1.0.GA-v20150327-1349-B467");
+		DevstudioConfig config = devstudioConfig(installerJar);
+		assertInstallationFile("/test-install-8.xml", config.toFile(target));
+	}
+
+	@Test
+	public void testCreatingInstallationFileFromInstallerForJBDS9() throws Exception {
+		File installerJar = prepareDevstudioInstaller9(tempFolder.newFile("installer.jar"),
+				"9.1.0.GA-v20160414-0124-B497");
+		DevstudioConfig config = devstudioConfig(installerJar);
+		assertInstallationFile("/test-install-9.xml", config.toFile(target));
+	}
+
+	@Test
+	public void testCreatingInstallationFileFromInstallerForJBDSIS9WithIU() throws Exception {
+		File installerJar = prepareDevstudioInstaller9(tempFolder.newFile("installer-is.jar"),
+				"9.1.0.GA-v20160414-0124-B497");
+		DevstudioConfig config = devstudioConfig(installerJar);
+		config.addFeature("com.jboss.devstudio.integration-stack.fuse.feature.feature.group");
+		assertInstallationFile("/test-install-9-iu.xml", config.toFile(target));
+	}
+
+	@Test
+	public void testCreatingInstallationFileFromInstallerForDevstudioIS10WithFuseAndIU() throws Exception {
+		File installerJar = prepareDevstudioInstaller10(tempFolder.newFile("installer-is.jar"),
+				"10.1.0.GA-v20160902-1725-B43");
+		DevstudioConfig config = devstudioConfig(installerJar);
+		config.addFeature("com.jboss.devstudio.integration-stack.fuse.feature.feature.group");
+		config.addRuntime("devstudio-is/runtime/jboss-fuse-karaf-6.3.0.redhat-187.zip");
+		assertInstallationFile("/test-install-10-fuse-iu.xml", config.toFile(target));
 	}
 
 	private static DevstudioConfig devstudioConfig(String installerName) {
@@ -95,6 +141,73 @@ public class DevstudioConfigTest {
 		config.setTarget("INSTALL_PATH");
 		config.setJre("JRE_LOCATION");
 		return config;
+	}
+
+	private static DevstudioConfig devstudioConfig(File installerJar) throws IOException {
+		DevstudioConfig config = DevstudioConfig.createFromInstallerFile(installerJar);
+		config.setTarget("INSTALL_PATH");
+		config.setJre("JRE_LOCATION");
+		return config;
+	}
+
+	private File prepareDevstudioInstaller7(File file, String fullVersion) throws IOException {
+		JarOutputStream out = new JarOutputStream(new FileOutputStream(file));
+		if (fullVersion != null) {
+			out.putNextEntry(new ZipEntry("jbds/plugins/com.jboss.jbds.product_" + fullVersion + ".jar"));
+		}
+		out.flush();
+		out.close();
+		return file;
+	}
+
+	private File prepareDevstudioInstaller8(File file, String fullVersion) throws IOException {
+		JarOutputStream out = new JarOutputStream(new FileOutputStream(file));
+		if (fullVersion != null) {
+			out.putNextEntry(new ZipEntry("jbds/plugins/com.jboss.devstudio.core_" + fullVersion + ".jar"));
+		}
+		out.flush();
+		out.close();
+		return file;
+	}
+
+	private File prepareDevstudioInstaller9(File file, String fullVersion) throws IOException {
+		JarOutputStream out = new JarOutputStream(new FileOutputStream(file));
+		if (fullVersion != null) {
+			out.putNextEntry(new ZipEntry("jbds/plugins/com.jboss.devstudio.core_" + fullVersion + ".jar"));
+		}
+		out.putNextEntry(new ZipEntry("res/DevstudioFeaturesSpec.json"));
+		out.write(
+				"[{\"id\": \"com.jboss.devstudio.core.package\", \"path\": \"jbds\"}, {\"id\": \"org.testng.eclipse.feature.group\", \"path\": \"jbds\"}]"
+						.getBytes());
+		if (file.getName().contains("is")) {
+			out.putNextEntry(new ZipEntry("res/AdditionalFeaturesSpec.json"));
+			out.write(
+					"[{\"id\": \"com.jboss.devstudio.integration-stack.fuse.feature.feature.group\", \"path\": \"jbdsis\"}]"
+							.getBytes());
+		}
+		out.flush();
+		out.close();
+		return file;
+	}
+
+	private File prepareDevstudioInstaller10(File file, String fullVersion) throws IOException {
+		JarOutputStream out = new JarOutputStream(new FileOutputStream(file));
+		if (fullVersion != null) {
+			out.putNextEntry(new ZipEntry("devstudio/plugins/com.jboss.devstudio.core_" + fullVersion + ".jar"));
+		}
+		out.putNextEntry(new ZipEntry("res/DevstudioFeaturesSpec.json"));
+		out.write(
+				"[{\"id\": \"com.jboss.devstudio.core.package\", \"path\": \"devstudio\"}, {\"id\": \"org.testng.eclipse.feature.group\", \"path\": \"devstudio\"}]"
+						.getBytes());
+		if (file.getName().contains("is")) {
+			out.putNextEntry(new ZipEntry("res/AdditionalFeaturesSpec.json"));
+			out.write(
+					"[{\"id\": \"com.jboss.devstudio.integration-stack.fuse.feature.feature.group\", \"path\": \"seconddevstudi-is\"}]"
+							.getBytes());
+		}
+		out.flush();
+		out.close();
+		return file;
 	}
 
 	private static void assertInstallationFile(String expected, File actual) throws Exception {

@@ -5,7 +5,8 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.jar.JarOutputStream;
 import java.util.zip.ZipEntry;
@@ -53,14 +54,18 @@ public class DevstudioInstallerTest {
 	public void testGettingCoreFeatures() throws Exception {
 		installerJar = prepareDevstudioInstaller(target.newFile("installer.jar"), DEVSTUDIO_VERSION);
 		DevstudioInstaller installer = new DevstudioInstaller(installerJar);
-		assertEquals(Arrays.asList(new String[] { ("hello.feature.group") }), installer.getCoreFeatures());
+		List<DevstudioSpec> features = new ArrayList<DevstudioSpec>();
+		features.add(featureSpec("hello.feature.group", "firstProduct"));
+		assertEquals(features, installer.getCoreFeatures());
 	}
 
 	@Test
 	public void testGettingAdditionalFeatures() throws Exception {
 		installerJar = prepareDevstudioInstaller(target.newFile("installer.jar"), DEVSTUDIO_VERSION);
 		DevstudioInstaller installer = new DevstudioInstaller(installerJar);
-		assertEquals(Arrays.asList(new String[] { ("hello.source.feature.group") }), installer.getAdditionalFeatures());
+		List<DevstudioSpec> features = new ArrayList<DevstudioSpec>();
+		features.add(featureSpec("hello.source.feature.group", "secondProduct"));
+		assertEquals(features, installer.getAdditionalFeatures());
 	}
 
 	@Test
@@ -89,5 +94,12 @@ public class DevstudioInstallerTest {
 		out.flush();
 		out.close();
 		return file;
+	}
+
+	private static DevstudioSpec featureSpec(String id, String path) {
+		DevstudioSpec featureSpec = new DevstudioSpec();
+		featureSpec.setId(id);
+		featureSpec.setPath(path);
+		return featureSpec;
 	}
 }

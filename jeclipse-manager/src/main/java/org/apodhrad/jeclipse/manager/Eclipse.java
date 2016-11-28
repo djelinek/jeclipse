@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.apodhrad.jdownload.manager.JDownloadManager;
@@ -122,18 +123,26 @@ public class Eclipse {
 		return null;
 	}
 
-	public Bundle getPlugin(String pluginName) {
+	public Bundle getPlugin(String pluginNameRegex) {
+		return getPlugin(Pattern.compile(pluginNameRegex));
+	}
+
+	public Bundle getPlugin(Pattern pluginNamePattern) {
 		for (Bundle plugin : getPlugins()) {
-			if (plugin.getName().equals(pluginName)) {
+			if (pluginNamePattern.matcher(plugin.getName()).matches()) {
 				return plugin;
 			}
 		}
 		return null;
 	}
 
-	public Bundle getFeature(String featureName) {
-		for (Bundle feature : getFeatures()) {
-			if (feature.getName().equals(featureName)) {
+	public Bundle getFeature(String featureNameRegex) {
+		return getFeature(Pattern.compile(featureNameRegex));
+	}
+
+	public Bundle getFeature(Pattern featureNamePattern) {
+		for (Bundle feature : getPlugins()) {
+			if (featureNamePattern.matcher(feature.getName()).matches()) {
 				return feature;
 			}
 		}

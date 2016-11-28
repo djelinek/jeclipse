@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -24,6 +25,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *
  */
 public class DevstudioInstaller {
+
+	public static final Pattern CORE_PLUGIN_PATTERN = Pattern.compile(".*(" + Devstudio.CORE_PLUGIN_PATTERN + ")_.*");
+	public static final String DEFAULT_PRODUCT = "jbds";
 
 	private File installer;
 
@@ -47,7 +51,7 @@ public class DevstudioInstaller {
 			Enumeration<JarEntry> entries = jarFile.entries();
 			while (entries.hasMoreElements()) {
 				String name = entries.nextElement().getName();
-				if (name.contains(Devstudio.CORE_PLUGIN + "_")) {
+				if (CORE_PLUGIN_PATTERN.matcher(name).matches()) {
 					return name.substring(name.indexOf("_") + 1).replace(".jar", "");
 				}
 			}
@@ -55,32 +59,35 @@ public class DevstudioInstaller {
 		throw new NoSuchElementException("Cannot find the core plugin for detecting its version");
 	}
 
-	public List<String> getCoreFeatures() throws IOException {
-		return getFeatures("res/DevstudioFeaturesSpec.json");
-	}
-
-	public List<String> getAdditionalFeatures() throws IOException {
-		return getFeatures("res/AdditionalFeaturesSpec.json");
-	}
-
-	private List<String> getFeatures(String resource) throws IOException {
-		List<String> features = new ArrayList<String>();
-		for (DevstudioSpec spec : loadSpecs(resource)) {
-			features.add(spec.getId());
+	public List<DevstudioSpec> getCoreFeatures() throws IOException {
+		String resource = "res/DevstudioFeaturesSpec.json";
+		if (resourceExists(resource)) {
+			return Arrays.asList(loadSpecs(resource));
+		} else {
+			return new ArrayList<DevstudioSpec>();
 		}
-		return features;
+	}
+
+	public List<DevstudioSpec> getAdditionalFeatures() throws IOException {
+		String resource = "res/AdditionalFeaturesSpec.json";
+		if (resourceExists(resource)) {
+			return Arrays.asList(loadSpecs(resource));
+		} else {
+			return new ArrayList<DevstudioSpec>();
+		}
 	}
 
 	public String getFeatureProduct(String feature) throws IOException {
 		List<DevstudioSpec> specs = new ArrayList<DevstudioSpec>();
-		specs.addAll(Arrays.asList(loadSpecs("res/DevstudioFeaturesSpec.json")));
-		specs.addAll(Arrays.asList(loadSpecs("res/AdditionalFeaturesSpec.json")));
+		specs.addAll(getCoreFeatures());
+		specs.addAll(getAdditionalFeatures());
+		specs.addAll(getCoreFeatures());
 		for (DevstudioSpec spec : specs) {
 			if (spec.getId().equals(feature)) {
 				return spec.getPath();
 			}
 		}
-		throw new NoSuchElementException("Cannot find a product for feature '" + feature + "'");
+		return DEFAULT_PRODUCT;
 	}
 
 	public String getDefaultGroup() throws IOException {
@@ -100,63 +107,11 @@ public class DevstudioInstaller {
 
 	}
 
-	private static class DevstudioSpec {
-
-		private String id;
-		private String label;
-		private String description;
-		private String selected;
-		private String path;
-		private String size;
-
-		public String getId() {
-			return id;
+	public boolean resourceExists(String resource) throws IOException {
+		try (URLClassLoader classLoader = new URLClassLoader(new URL[] { installer.toURI().toURL() },
+				this.getClass().getClassLoader())) {
+			return classLoader.getResource(resource) != null;
 		}
-
-		public void setId(String id) {
-			this.id = id;
-		}
-
-		public String getLabel() {
-			return label;
-		}
-
-		public void setLabel(String label) {
-			this.label = label;
-		}
-
-		public String getDescription() {
-			return description;
-		}
-
-		public void setDescription(String description) {
-			this.description = description;
-		}
-
-		public String getSelected() {
-			return selected;
-		}
-
-		public void setSelected(String selected) {
-			this.selected = selected;
-		}
-
-		public String getPath() {
-			return path;
-		}
-
-		public void setPath(String path) {
-			this.path = path;
-		}
-
-		public String getSize() {
-			return size;
-		}
-
-		public void setSize(String size) {
-			this.size = size;
-		}
-
 	}
 
 }

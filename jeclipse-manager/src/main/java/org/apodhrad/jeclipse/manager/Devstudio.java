@@ -2,6 +2,7 @@ package org.apodhrad.jeclipse.manager;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 import org.apodhrad.jdownload.manager.JDownloadManager;
 import org.apodhrad.jdownload.manager.hash.Hash;
@@ -16,8 +17,9 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class Devstudio extends Eclipse {
-	
-	public static final String CORE_PLUGIN = "com.jboss.devstudio.core";
+
+	public static final String CORE_PLUGIN_REGEX = "com.jboss.devstudio.core|com.jboss.jbds.product";
+	public static final Pattern CORE_PLUGIN_PATTERN = Pattern.compile(CORE_PLUGIN_REGEX);
 
 	private static Logger log = LoggerFactory.getLogger(Devstudio.class);
 
@@ -74,7 +76,7 @@ public class Devstudio extends Eclipse {
 
 		return new Devstudio(target);
 	}
-	
+
 	public static Devstudio installJBDS(File target, File installerJarFile, File installerConfigFile)
 			throws IOException {
 		// Switch IzPack mode to privileged on Windows
@@ -106,14 +108,13 @@ public class Devstudio extends Eclipse {
 	}
 
 	public String getCoreVersion() {
-		Bundle platformPlugin = getPlugin(CORE_PLUGIN);
+		Bundle platformPlugin = getPlugin(CORE_PLUGIN_PATTERN);
 		if (platformPlugin != null) {
 			return platformPlugin.getVersion();
 		}
 		return null;
 	}
 
-	
 	public static String getJBDSVersion(File installer) {
 		return getJBDSVersion(installer.getName());
 	}
