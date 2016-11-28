@@ -7,6 +7,7 @@ import java.util.Collection;
 
 import org.apodhrad.jdownload.manager.hash.NullHash;
 import org.apodhrad.jeclipse.manager.Devstudio;
+import org.apodhrad.jeclipse.manager.DevstudioConfig;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -45,8 +46,12 @@ public class DevstudioInstallationIT {
 		if (installer.contains("integration-stack")) {
 			features = new String[] { "com.jboss.devstudio.integration-stack.fuse.feature.feature.group" };
 		}
-		Devstudio devstudio = Devstudio.installJBDS(target.getRoot(), getUrl(installer), new NullHash(), null,
-				features);
+		DevstudioConfig config = new DevstudioConfig();
+		config.setTarget(target.getRoot().getAbsolutePath());
+		for (String feature : features) {
+			config.addFeature(feature);
+		}
+		Devstudio devstudio = Devstudio.installJBDS(getUrl(installer), new NullHash(), config);
 		for (String feature : features) {
 			feature = feature.replace(".feature.group", "");
 			assertNotNull("Cannot find feature '" + feature + "'", devstudio.getFeature(feature));

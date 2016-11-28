@@ -2,15 +2,14 @@ package org.apodhrad.jeclipse.manager.integration;
 
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.apodhrad.jdownload.manager.hash.NullHash;
 import org.apodhrad.jeclipse.manager.Bundle;
 import org.apodhrad.jeclipse.manager.Devstudio;
+import org.apodhrad.jeclipse.manager.DevstudioConfig;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Test;
 
 public class DevstudioISIT {
 
@@ -27,7 +26,10 @@ public class DevstudioISIT {
 
 //	@Test
 	public void jbdsInstallTest() throws IOException {
-		Devstudio jbdsis = Devstudio.installJBDS(new File(TARGET), JBDS_URL, new NullHash(), null, FUSE_FEATURE);
+		DevstudioConfig config = new DevstudioConfig();
+		config.setTarget(TARGET);
+		config.addFeature(FUSE_FEATURE);
+		Devstudio jbdsis = Devstudio.installJBDS(JBDS_URL, new NullHash(), config);
 
 		for (Bundle feature : jbdsis.getFeatures()) {
 			if (feature.getName().contains("fusesource")) {

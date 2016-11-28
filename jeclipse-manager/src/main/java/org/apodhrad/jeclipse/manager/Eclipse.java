@@ -141,7 +141,7 @@ public class Eclipse {
 	}
 
 	public Bundle getFeature(Pattern featureNamePattern) {
-		for (Bundle feature : getPlugins()) {
+		for (Bundle feature : getFeatures()) {
 			if (featureNamePattern.matcher(feature.getName()).matches()) {
 				return feature;
 			}

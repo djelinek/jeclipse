@@ -26,6 +26,7 @@ import org.apodhrad.jdownload.manager.hash.SHA256Hash;
 import org.apodhrad.jdownload.manager.hash.URLHash;
 import org.apodhrad.jeclipse.manager.Eclipse;
 import org.apodhrad.jeclipse.manager.Devstudio;
+import org.apodhrad.jeclipse.manager.DevstudioConfig;
 import org.apodhrad.jeclipse.manager.util.EclipseUtils;
 
 /**
@@ -140,8 +141,14 @@ public class Installer extends AbstractMojo {
 			if (ius == null) {
 				ius = new String[0];
 			}
+			DevstudioConfig config = new DevstudioConfig();
+			config.setTarget(new File(target, "jbdevstudio").getAbsolutePath());
+			config.setJre(jreLocation);
+			for (String iu: ius) {
+				config.addFeature(iu);
+			}
 			try {
-				eclipse = Devstudio.installJBDS(new File(target), jbdsInstaller.toString(), hash, jreLocation, ius);
+				eclipse = Devstudio.installJBDS(jbdsInstaller.toString(), hash, config);
 			} catch (IOException ioe) {
 				throw new MojoExecutionException("I/O exception occured during installing Eclipse IDE", ioe);
 			}

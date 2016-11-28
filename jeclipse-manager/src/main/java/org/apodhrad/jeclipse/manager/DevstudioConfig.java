@@ -3,8 +3,10 @@ package org.apodhrad.jeclipse.manager;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,10 +20,12 @@ import org.apodhrad.jeclipse.manager.util.OSUtils;
  */
 public class DevstudioConfig {
 
+	public static final String DEFAULT_CONFIG_NAME = "InstallConfigRecord.xml";
+	public static final String DEFAULT_DEVSTUDIO_DIR = "jbdevstudio";
+
 	private String target;
 	private String jre;
 	private String group;
-	private String devstudioVersion;
 	private Set<String> features;
 	private Set<String> products;
 	private Set<String> runtimes;
@@ -29,9 +33,7 @@ public class DevstudioConfig {
 	private boolean isDevstudioEap;
 	private boolean isDevstudioIntegrationStack;
 
-	public DevstudioConfig(String devstudioVersion) {
-		this.devstudioVersion = devstudioVersion;
-
+	public DevstudioConfig() {
 		features = new LinkedHashSet<String>();
 		products = new LinkedHashSet<String>();
 		runtimes = new LinkedHashSet<String>();
@@ -50,7 +52,7 @@ public class DevstudioConfig {
 	}
 
 	public String getDefaultTarget() {
-		return OSUtils.getUserHome("jbdevstudio").getAbsolutePath();
+		return OSUtils.getUserHome(DEFAULT_DEVSTUDIO_DIR).getAbsolutePath();
 	}
 
 	public String getJre() {
@@ -113,11 +115,35 @@ public class DevstudioConfig {
 		this.isDevstudioIntegrationStack = isDevstudioIntegrationStack;
 	}
 
-	public File toFile(File installationConfigFile) throws IOException {
-		if (installationConfigFile.isDirectory()) {
-			installationConfigFile = new File(installationConfigFile, "InstallationConfigRecord.xml");
+	public File toFile(File installationJar) throws IOException {
+		return toFile(installationJar, DEFAULT_CONFIG_NAME);
+	}
+
+	public File toFile(File installerFile, String configName) throws IOException {
+		return toFile(installerFile, new File(target, configName));
+	}
+
+	public File toFile(File installerFile, File installationConfigFile) throws IOException {
+		DevstudioInstaller installer = new DevstudioInstaller(installerFile);
+
+		setGroup(installer.getDefaultGroup());
+		List<String> newFeatures = new ArrayList<String>();
+		for (String feature : this.features) {
+			newFeatures.add(feature);
+		}
+		this.features.clear();
+		for (DevstudioSpec featureSpec : installer.getCoreFeatures()) {
+			addFeature(featureSpec.getId());
+			addProduct(featureSpec.getPath());
+		}
+		for (String feature : newFeatures) {
+			addFeature(feature);
+		}
+		if (!installer.getAdditionalFeatures().isEmpty()) {
+			setDevstudioIntegrationStack(true);
 		}
 
+		String devstudioVersion = installer.getCoreVersion();
 		String sourceConfigName = null;
 		if (devstudioVersion.startsWith("7")) {
 			sourceConfigName = "jbds-7.xml";
@@ -159,36 +185,6 @@ public class DevstudioConfig {
 		InputStream source = Devstudio.class.getResourceAsStream("/devstudio/" + sourceConfigName);
 		InpuStreamUtils.copyToFileAndReplace(source, installationConfigFile, vars);
 		return installationConfigFile;
-	}
-
-	public static DevstudioConfig createFromInstallerName(String installerName) {
-		String devstudioVersion = getJBDSVersion(installerName);
-
-		DevstudioConfig config = new DevstudioConfig(devstudioVersion);
-		config.addFeature("com.jboss.devstudio.core.package");
-		config.addFeature("org.testng.eclipse.feature.group");
-		if (installerName.contains("eap")) {
-			config.setDevstudioEap(true);
-		}
-		if (installerName.contains("integration-stack") || installerName.contains("devstudio-is")) {
-			config.setDevstudioIntegrationStack(true);
-		}
-		return config;
-	}
-
-	public static DevstudioConfig createFromInstallerFile(File installerJar) throws IOException {
-		DevstudioInstaller installer = new DevstudioInstaller(installerJar);
-
-		DevstudioConfig config = new DevstudioConfig(installer.getCoreVersion());
-		config.setGroup(installer.getDefaultGroup());
-		for (DevstudioSpec featureSpec : installer.getCoreFeatures()) {
-			config.addFeature(featureSpec.getId());
-			config.addProduct(featureSpec.getPath());
-		}
-		if (!installer.getAdditionalFeatures().isEmpty()) {
-			config.setDevstudioIntegrationStack(true);
-		}
-		return config;
 	}
 
 	public static String getJBDSVersion(File installer) {

@@ -1,5 +1,8 @@
 package org.apodhrad.jeclipse.manager;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -14,7 +17,6 @@ import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -35,62 +37,15 @@ public class DevstudioConfigTest {
 	@Rule
 	public TemporaryFolder tempFolder = new TemporaryFolder();
 
-	private File target;
-
-	@Before
-	public void createTargetDir() throws IOException {
-		target = tempFolder.newFolder();
-	}
-
 	@Test
-	public void testCreatingInstallationFileFromNameForJBDS7() throws Exception {
-		DevstudioConfig config = devstudioConfig(JBDS_7_1_1_GA);
-		assertInstallationFile("/test-install-7.xml", config.toFile(target));
-	}
-
-	@Test
-	public void testCreatingInstallationFileFromNameForJBDS8() throws Exception {
-		DevstudioConfig config = devstudioConfig(JBDS_8_1_0_GA);
-		assertInstallationFile("/test-install-8.xml", config.toFile(target));
-	}
-
-	@Test
-	public void testCreatingInstallationFileFromNameForJBDS9() throws Exception {
-		DevstudioConfig config = devstudioConfig(JBDS_9_1_0_GA);
-		assertInstallationFile("/test-install-9.xml", config.toFile(target));
-	}
-
-	@Test
-	public void testCreatingInstallationFileFromNameForJBDSIS9WithIU() throws Exception {
-		DevstudioConfig config = devstudioConfig(JBDSIS_9_0_3_GA);
-		config.addFeature("com.jboss.devstudio.integration-stack.fuse.feature.feature.group");
-		assertInstallationFile("/test-install-9-iu.xml", config.toFile(target));
-	}
-
-	@Test
-	public void testCreatingInstallationFileFromNameForDevstudio10() throws Exception {
-		DevstudioConfig config = devstudioConfig(DEVSTUDIO_10_1_0_GA);
-		assertInstallationFile("/test-install-10.xml", config.toFile(target));
-	}
-
-	@Test
-	public void testCreatingInstallationFileFromNameForDevstudio10WithEAP() throws Exception {
-		DevstudioConfig config = devstudioConfig(DEVSTUDIO_10_1_0_GA_EAP);
-		assertInstallationFile("/test-install-10-eap.xml", config.toFile(target));
-	}
-
-	@Test
-	public void testCreatingInstallationFileFromNameForDevstudioIS10WithIU() throws Exception {
-		DevstudioConfig config = devstudioConfig(DEVSTUDIOIS_10_0_0_GA);
-		config.addFeature("com.jboss.devstudio.integration-stack.fuse.feature.feature.group");
-		assertInstallationFile("/test-install-10-iu.xml", config.toFile(target));
-	}
-
-	@Test
-	public void testCreatingInstallationFileFromNameForDevstudioIS10WithFuse() throws Exception {
-		DevstudioConfig config = devstudioConfig(DEVSTUDIOIS_10_0_0_GA_RT);
-		config.addRuntime("devstudio-is/runtime/jboss-fuse-karaf-6.3.0.redhat-187.zip");
-		assertInstallationFile("/test-install-10-fuse.xml", config.toFile(target));
+	public void testCreatingInstallationFileInNonexistingDir() throws Exception {
+		File installerJar = prepareDevstudioInstaller10(tempFolder.newFile("installer.jar"),
+				"7.1.1.GA-v20140314-2145-B688");
+		DevstudioConfig config = new DevstudioConfig();
+		config.setTarget(tempFolder.getRoot().getAbsolutePath() + "/myDevstudio");
+		File expectedConfigFile = new File(tempFolder.getRoot(), "myDevstudio/InstallConfigRecord.xml");
+		assertEquals(expectedConfigFile, config.toFile(installerJar));
+		assertTrue(expectedConfigFile.exists());
 	}
 
 	@Test
@@ -98,7 +53,7 @@ public class DevstudioConfigTest {
 		File installerJar = prepareDevstudioInstaller7(tempFolder.newFile("installer.jar"),
 				"7.1.1.GA-v20140314-2145-B688");
 		DevstudioConfig config = devstudioConfig(installerJar);
-		assertInstallationFile("/test-install-7.xml", config.toFile(target));
+		assertInstallationFile("/test-install-7.xml", config.toFile(installerJar, tempFolder.newFile()));
 	}
 
 	@Test
@@ -106,7 +61,7 @@ public class DevstudioConfigTest {
 		File installerJar = prepareDevstudioInstaller8(tempFolder.newFile("installer.jar"),
 				"8.1.0.GA-v20150327-1349-B467");
 		DevstudioConfig config = devstudioConfig(installerJar);
-		assertInstallationFile("/test-install-8.xml", config.toFile(target));
+		assertInstallationFile("/test-install-8.xml", config.toFile(installerJar, tempFolder.newFile()));
 	}
 
 	@Test
@@ -114,7 +69,7 @@ public class DevstudioConfigTest {
 		File installerJar = prepareDevstudioInstaller9(tempFolder.newFile("installer.jar"),
 				"9.1.0.GA-v20160414-0124-B497");
 		DevstudioConfig config = devstudioConfig(installerJar);
-		assertInstallationFile("/test-install-9.xml", config.toFile(target));
+		assertInstallationFile("/test-install-9.xml", config.toFile(installerJar, tempFolder.newFile()));
 	}
 
 	@Test
@@ -123,7 +78,7 @@ public class DevstudioConfigTest {
 				"9.1.0.GA-v20160414-0124-B497");
 		DevstudioConfig config = devstudioConfig(installerJar);
 		config.addFeature("com.jboss.devstudio.integration-stack.fuse.feature.feature.group");
-		assertInstallationFile("/test-install-9-iu.xml", config.toFile(target));
+		assertInstallationFile("/test-install-9-iu.xml", config.toFile(installerJar, tempFolder.newFile()));
 	}
 
 	@Test
@@ -133,18 +88,11 @@ public class DevstudioConfigTest {
 		DevstudioConfig config = devstudioConfig(installerJar);
 		config.addFeature("com.jboss.devstudio.integration-stack.fuse.feature.feature.group");
 		config.addRuntime("devstudio-is/runtime/jboss-fuse-karaf-6.3.0.redhat-187.zip");
-		assertInstallationFile("/test-install-10-fuse-iu.xml", config.toFile(target));
-	}
-
-	private static DevstudioConfig devstudioConfig(String installerName) {
-		DevstudioConfig config = DevstudioConfig.createFromInstallerName(installerName);
-		config.setTarget("INSTALL_PATH");
-		config.setJre("JRE_LOCATION");
-		return config;
+		assertInstallationFile("/test-install-10-fuse-iu.xml", config.toFile(installerJar, tempFolder.newFile()));
 	}
 
 	private static DevstudioConfig devstudioConfig(File installerJar) throws IOException {
-		DevstudioConfig config = DevstudioConfig.createFromInstallerFile(installerJar);
+		DevstudioConfig config = new DevstudioConfig();
 		config.setTarget("INSTALL_PATH");
 		config.setJre("JRE_LOCATION");
 		return config;

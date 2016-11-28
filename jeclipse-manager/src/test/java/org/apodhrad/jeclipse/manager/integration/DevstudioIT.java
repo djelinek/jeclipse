@@ -2,13 +2,12 @@ package org.apodhrad.jeclipse.manager.integration;
 
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.apodhrad.jdownload.manager.hash.NullHash;
 import org.apodhrad.jeclipse.manager.Devstudio;
+import org.apodhrad.jeclipse.manager.DevstudioConfig;
 import org.junit.BeforeClass;
-import org.junit.Test;
 
 public class DevstudioIT {
 
@@ -23,7 +22,9 @@ public class DevstudioIT {
 
 //	@Test
 	public void jbdsInstallTest() throws IOException {
-		Devstudio.installJBDS(new File(TARGET), JBDS_URL, new NullHash());
+		DevstudioConfig config = new DevstudioConfig();
+		config.setTarget(TARGET);
+		Devstudio.installJBDS(JBDS_URL, new NullHash(), config);
 	}
 
 	static public String systemProperty(String key) {
