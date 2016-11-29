@@ -51,5 +51,7 @@ public class DevstudioInstall {
 		jarBuilder.build(launcherFile);
 		File platformFile = new File(plugins, "org.eclipse.platform_123.jar");
 		new JarBuilder().build(platformFile);
+		File coreFile = new File(plugins, "com.jboss.devstudio.core_10.1.0.GA-v20160902-1725-B43");
+		new JarBuilder().build(coreFile);
 	}
 }
