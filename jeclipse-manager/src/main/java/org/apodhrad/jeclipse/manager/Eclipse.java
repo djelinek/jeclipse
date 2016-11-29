@@ -403,72 +403,25 @@ public class Eclipse {
 		throw new RuntimeException("Cannot find .ini file at '" + eclipseDir.getAbsolutePath() + "'");
 	}
 
-	public static Eclipse installEclipse(File target) throws IOException {
-		return installEclipse(target, ECLIPSE_DEFAULT_VERSION);
+	public static Eclipse installEclipse(EclipseConfig config) throws IOException {
+		return installEclipse(config, ECLIPSE_DEFAULT_MIRROR_ID);
 	}
 
-	public static Eclipse installEclipse(File target, String eclipseVersion) throws IOException {
-		return installEclipse(target, eclipseVersion, ECLIPSE_DEFAULT_MIRROR_ID);
-	}
-
-	public static Eclipse installEclipse(File target, String eclipseVersion, int eclipseMirror) throws IOException {
-		return installEclipse(target, eclipseVersion, eclipseMirror, null);
-	}
-
-	public static Eclipse installEclipse(File target, String eclipseVersion, Hash hash) throws IOException {
-		return installEclipse(target, eclipseVersion, ECLIPSE_DEFAULT_MIRROR_ID, hash);
-	}
-
-	public static Eclipse installEclipse(File target, String eclipseVersion, int eclipseMirror, Hash hash)
-			throws IOException {
-		EclipseConfig config = getEclipseConfig(eclipseVersion, OSUtils.getName(), OSUtils.getArch());
-		if (hash == null) {
-			String md5sum = config.getMd5();
-			hash = md5sum == null ? new NullHash() : new MD5Hash(md5sum);
-		}
-
-		JDownloadManager manager = new JDownloadManager();
-		manager.download(config.getUrl(eclipseMirror), target, true, hash);
-		String eclipseFolder = "eclipse";
-		if (OSUtils.isMac() && new File(target, "Eclipse.app").exists()) {
-			eclipseFolder = "Eclipse.app";
-		}
-		return new Eclipse(new File(target, eclipseFolder));
-	}
-
-	private static Eclipse installEclipse(File target, EclipseConfig config) throws IOException {
-		return installEclipse(target, config, ECLIPSE_DEFAULT_MIRROR_ID);
-	}
-
-	public static Eclipse installEclipse(File target, EclipseConfig config, int mirrorId) throws IOException {
+	public static Eclipse installEclipse(EclipseConfig config, int mirrorId) throws IOException {
 		Hash hash = new NullHash();
 		if (config.getMd5() != null) {
 			hash = new MD5Hash(config.getMd5());
 		}
 
 		JDownloadManager manager = new JDownloadManager();
-		manager.download(config.getUrl(mirrorId), target, true, hash);
+		manager.download(config.getUrl(mirrorId), config.getTarget(), true, hash);
 		String eclipseFolder = "eclipse";
-		if (OSUtils.isMac() && new File(target, "Eclipse.app").exists()) {
+		if (OSUtils.isMac() && new File(config.getTarget(), "Eclipse.app").exists()) {
 			eclipseFolder = "Eclipse.app";
 		}
-		return new Eclipse(new File(target, eclipseFolder));
+		return new Eclipse(new File(config.getTarget(), eclipseFolder));
 	}
 
-	public static EclipseConfig getEclipseConfig(String eclipseVersion, String os, String arch)
-			throws JsonParseException, JsonMappingException, IOException {
-		InputStream configInputStream = Eclipse.class.getResourceAsStream("/" + eclipseVersion + ".json");
-		EclipseConfig config = null;
-		if (configInputStream != null) {
-			config = EclipseConfig.load(configInputStream, os, arch);
-		} else {
-			config = new EclipseConfig();
-			config.setOs(os);
-			config.setArch(arch);
-			config.setPath(EclipseUtils.getPathFromVersion(eclipseVersion, os, arch));
-		}
-		return config;
-	}
 
 	public void mirrorRepository(String source, File destination) throws IOException {
 		if (destination.exists()) {

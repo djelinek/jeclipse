@@ -14,6 +14,7 @@ import org.apache.commons.io.FileUtils;
 import org.apodhrad.jdownload.manager.JDownloadManager;
 import org.apodhrad.jeclipse.manager.Bundle;
 import org.apodhrad.jeclipse.manager.Eclipse;
+import org.apodhrad.jeclipse.manager.EclipseConfig;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,7 +45,7 @@ public class EclipseIT {
 		assertTrue("'" + targetFile.getAbsolutePath() + "' must exists", targetFile.exists());
 
 		FileUtils.deleteQuietly(new File(targetFile, "eclipse"));
-		Eclipse eclipse = Eclipse.installEclipse(targetFile, ECLIPSE_VERSION);
+		Eclipse eclipse = Eclipse.installEclipse(EclipseConfig.init(ECLIPSE_VERSION).setTarget(targetFile));
 		assertNotNull(eclipse);
 		assertEquals(ECLIPSE_LAUNCHER, eclipse.getLauncher().getName());
 
@@ -142,7 +143,6 @@ public class EclipseIT {
 		assertTrue(new File(new File(mirror, "features"), "org.jboss.reddeer.rcp.feature_" + REDDEER_VERSION + ".jar")
 				.exists());
 	}
-
 
 	private static void assertContainsBundle(List<Bundle> bundles, String expectedName, String expectedVersion) {
 		Bundle bundle = new Bundle(expectedName, expectedVersion);

@@ -1,9 +1,13 @@
 package org.apodhrad.jeclipse.manager;
 
+import static org.apache.commons.lang.Validate.notNull;
+
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.apodhrad.jeclipse.manager.util.EclipseUtils;
+import org.apodhrad.jeclipse.manager.util.OSUtils;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -16,11 +20,35 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class EclipseConfig {
 
+	private File target;
+
 	private String version;
 	private String os;
 	private String arch;
 	private String path;
 	private String md5;
+
+	public EclipseConfig() {
+		this(getDefaultTarget());
+	}
+
+	public EclipseConfig(File target) {
+		this.target = target;
+	}
+
+	public File getTarget() {
+		return target;
+	}
+
+	public EclipseConfig setTarget(File target) {
+		notNull(target);
+		this.target = target;
+		return this;
+	}
+
+	public static File getDefaultTarget() {
+		return OSUtils.getUserHome();
+	}
 
 	public String getVersion() {
 		return version;
@@ -109,6 +137,26 @@ public class EclipseConfig {
 		}
 
 		throw new EclipseException("Cannot find a config for OS '" + os + "' with arch '" + arch + "'");
+	}
+	
+	public static EclipseConfig init(String eclipseVersion)
+			throws JsonParseException, JsonMappingException, IOException {
+		return init(eclipseVersion, OSUtils.getName(), OSUtils.getArch());
+	}
+
+	public static EclipseConfig init(String eclipseVersion, String os, String arch)
+			throws JsonParseException, JsonMappingException, IOException {
+		InputStream configInputStream = Eclipse.class.getResourceAsStream("/" + eclipseVersion + ".json");
+		EclipseConfig config = null;
+		if (configInputStream != null) {
+			config = EclipseConfig.load(configInputStream, os, arch);
+		} else {
+			config = new EclipseConfig();
+			config.setOs(os);
+			config.setArch(arch);
+			config.setPath(EclipseUtils.getPathFromVersion(eclipseVersion, os, arch));
+		}
+		return config;
 	}
 
 	@Override

@@ -69,7 +69,7 @@ public class EclipseInstallationIT {
 
 	@Test
 	public void testInstallingEclipse() throws Exception {
-		Eclipse eclipse = Eclipse.installEclipse(target.getRoot(), eclipseVersion);
+		Eclipse eclipse = Eclipse.installEclipse(EclipseConfig.init(eclipseVersion).setTarget(target.getRoot()));
 		assertEclipseVersion(eclipse, eclipseVersion, platform);
 	}
 

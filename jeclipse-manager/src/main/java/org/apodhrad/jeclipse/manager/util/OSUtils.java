@@ -56,6 +56,10 @@ public class OSUtils {
 		return jreLocations.get(0);
 	}
 
+	public static File getUserHome() {
+		return new File(System.getProperty("user.home"));
+	}
+
 	public static File getUserHome(String dir) {
 		return new File(System.getProperty("user.home"), dir);
 	}
