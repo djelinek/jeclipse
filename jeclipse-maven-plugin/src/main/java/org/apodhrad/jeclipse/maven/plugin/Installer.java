@@ -1,5 +1,6 @@
 package org.apodhrad.jeclipse.maven.plugin;
 
+import static org.apodhrad.jeclipse.manager.Devstudio.installJBDS;
 import static org.apodhrad.jeclipse.manager.Eclipse.installEclipse;
 
 import java.io.File;
@@ -24,7 +25,6 @@ import org.apodhrad.jdownload.manager.hash.NullHash;
 import org.apodhrad.jdownload.manager.hash.SHA1Hash;
 import org.apodhrad.jdownload.manager.hash.SHA256Hash;
 import org.apodhrad.jdownload.manager.hash.URLHash;
-import org.apodhrad.jeclipse.manager.Devstudio;
 import org.apodhrad.jeclipse.manager.DevstudioConfig;
 import org.apodhrad.jeclipse.manager.Eclipse;
 import org.apodhrad.jeclipse.manager.EclipseConfig;
@@ -104,55 +104,7 @@ public class Installer extends AbstractMojo {
 	private String timeout;
 
 	public void execute() throws MojoExecutionException {
-		setSystemProperties();
-
-		Eclipse eclipse = null;
-
-		DevstudioConfig devstudioConfig = getDevstudioConfig();
-		try {
-			if (devstudioConfig == null) {
-				eclipse = Devstudio.installJBDS(jbdsInstaller.toString(), getDevstudioHash(), devstudioConfig);
-			} else {
-				eclipse = installEclipse(getEclipseConfig());
-			}
-		} catch (Exception ioe) {
-			throw new MojoExecutionException("An exception occured during installing Eclipse IDE", ioe);
-		}
-
-		// Install features
-		for (Object obj : remoteRepositories) {
-			if (obj instanceof MavenArtifactRepository) {
-				MavenArtifactRepository repo = (MavenArtifactRepository) obj;
-				if (repo.getLayout().getId().equals("update-site")) {
-					getLog().info("Added update site " + repo.getId() + " at " + repo.getUrl());
-					eclipse.addUpdateSite(repo.getUrl());
-				}
-			}
-		}
-		if (features != null && !features.isEmpty()) {
-			eclipse.installFeatures(features);
-		}
-
-		if (programArgs != null) {
-			getLog().info("Setting program arguments:");
-			for (String programArg : programArgs) {
-				getLog().info("\t" + programArg);
-			}
-			eclipse.addProgramArgument(programArgs);
-		}
-
-		if (vmArgs != null) {
-			getLog().info("Setting VM arguments:");
-			for (String vmArg : vmArgs) {
-				getLog().info("\t" + vmArg);
-			}
-			eclipse.addVMArgument(vmArgs);
-		}
-
-		getLog().info("Finished");
-	}
-
-	protected void setSystemProperties() {
+		/* Set system properties */
 		if (nocache) {
 			System.setProperty(JDownloadManager.NOCACHE_PROPERTY, "true");
 		}
@@ -169,6 +121,60 @@ public class Installer extends AbstractMojo {
 		} else {
 			getLog().info("Download manager won't use any cache folder.");
 		}
+
+		/* Install Eclipse or Devstudio */
+		Eclipse eclipse = install(eclipseVersion, jbdsInstaller.toString(), jbdsInstallerMD5, jbdsInstallerSHA1,
+				jbdsInstallerSHA256);
+
+		/* Add update sites */
+		for (Object obj : remoteRepositories) {
+			if (obj instanceof MavenArtifactRepository) {
+				MavenArtifactRepository repo = (MavenArtifactRepository) obj;
+				if (repo.getLayout().getId().equals("update-site")) {
+					getLog().info("Added update site " + repo.getId() + " at " + repo.getUrl());
+					eclipse.addUpdateSite(repo.getUrl());
+				}
+			}
+		}
+
+		/* Install features */
+		if (features != null && !features.isEmpty()) {
+			eclipse.installFeatures(features);
+		}
+
+		/* Set program arguments */
+		if (programArgs != null) {
+			getLog().info("Setting program arguments:");
+			for (String programArg : programArgs) {
+				getLog().info("\t" + programArg);
+			}
+			eclipse.addProgramArgument(programArgs);
+		}
+
+		/* Set VM arguments */
+		if (vmArgs != null) {
+			getLog().info("Setting VM arguments:");
+			for (String vmArg : vmArgs) {
+				getLog().info("\t" + vmArg);
+			}
+			eclipse.addVMArgument(vmArgs);
+		}
+
+		getLog().info("Finished");
+	}
+
+	protected Eclipse install(String eclipseVersion, String devstudioUrl, String... hashes)
+			throws MojoExecutionException {
+		try {
+			if (isDefined(devstudioUrl)) {
+				return installJBDS(jbdsInstaller.toString(), getDevstudioHash(), getDevstudioConfig());
+			} else if (isDefined(eclipseVersion)) {
+				return installEclipse(getEclipseConfig());
+			}
+		} catch (Exception e) {
+			throw new MojoExecutionException("An exception occured during installing Devstudio / Eclipse", e);
+		}
+		throw new IllegalArgumentException("You have to specify devstudio.url or eclipse.version");
 	}
 
 	protected EclipseConfig getEclipseConfig() throws JsonParseException, JsonMappingException, IOException {
@@ -179,19 +185,16 @@ public class Installer extends AbstractMojo {
 	}
 
 	protected DevstudioConfig getDevstudioConfig() {
-		if (isDefined(jbdsInstaller)) {
-			if (ius == null) {
-				ius = new String[0];
-			}
-			DevstudioConfig config = new DevstudioConfig();
-			config.setTarget(new File(target, "jbdevstudio").getAbsolutePath());
-			config.setJre(jreLocation);
-			for (String iu : ius) {
-				config.addFeature(iu);
-			}
-			return config;
+		if (ius == null) {
+			ius = new String[0];
 		}
-		return null;
+		DevstudioConfig config = new DevstudioConfig();
+		config.setTarget(new File(target, "jbdevstudio").getAbsolutePath());
+		config.setJre(jreLocation);
+		for (String iu : ius) {
+			config.addFeature(iu);
+		}
+		return config;
 	}
 
 	public Hash getDevstudioHash() {

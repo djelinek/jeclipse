@@ -1,4 +1,4 @@
-package org.apodhrad.jeclipse.maven.plugin;
+package org.apodhrad.jeclipse.maven.plugin.integration;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,6 +12,8 @@ import org.apache.maven.shared.invoker.DefaultInvoker;
 import org.apache.maven.shared.invoker.InvocationRequest;
 import org.apache.maven.shared.invoker.InvocationResult;
 import org.apache.maven.shared.invoker.Invoker;
+import org.apodhrad.jeclipse.maven.plugin.BetterAbstractMojoTestCase;
+import org.apodhrad.jeclipse.maven.plugin.Installer;
 import org.junit.Test;
 
 public class InstallerIT extends BetterAbstractMojoTestCase {

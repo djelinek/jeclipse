@@ -1,0 +1,30 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.apodhrad.jeclipse.maven.plugin.test</groupId>
+	<artifactId>junit-test</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apodhrad.jeclipse</groupId>
+				<artifactId>jeclipse-maven-plugin</artifactId>
+				<version>1.2.3</version>
+				<configuration>
+					<jbds.installer>http://example.com/devstudio.jar</jbds.installer>
+					<jbds.installer.sha256>a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e</jbds.installer.sha256>
+				</configuration>
+				<executions>
+					<execution>
+						<id>install-jbds</id>
+						<goals>
+							<goal>install</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
