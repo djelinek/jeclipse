@@ -99,6 +99,9 @@ public class Installer extends AbstractMojo {
 	@Parameter
 	private String timeout;
 
+	@Parameter(defaultValue = "true")
+	private boolean followReferences;
+
 	public void execute() throws MojoExecutionException {
 		if (nocache) {
 			System.setProperty(JDownloadManager.NOCACHE_PROPERTY, "true");
@@ -169,7 +172,7 @@ public class Installer extends AbstractMojo {
 			}
 		}
 		if (features != null && !features.isEmpty()) {
-			eclipse.installFeatures(features);
+			eclipse.installFeatures(followReferences, features);
 		}
 
 		if (programArgs != null) {
