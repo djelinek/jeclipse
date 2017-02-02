@@ -52,16 +52,16 @@ public class Installer extends AbstractMojo {
 
 	@Parameter(alias = "jbds.installer")
 	private URL jbdsInstaller;
-	
+
 	@Parameter(alias = "jbds.installer.md5")
 	private String jbdsInstallerMD5;
-	
+
 	@Parameter(alias = "jbds.installer.sha1")
 	private String jbdsInstallerSHA1;
 
 	@Parameter(alias = "jbds.installer.sha256")
 	private String jbdsInstallerSHA256;
-	
+
 	@Parameter(alias = "eclipse.version")
 	private String eclipseVersion;
 
@@ -71,7 +71,10 @@ public class Installer extends AbstractMojo {
 
 	@Parameter
 	private String[] ius;
-	
+
+	@Parameter
+	private String[] runtimes;
+
 	@Parameter
 	private Set<String> features;
 
@@ -92,7 +95,7 @@ public class Installer extends AbstractMojo {
 
 	@Parameter(defaultValue = "false")
 	private boolean nocache;
-	
+
 	@Parameter
 	private String timeout;
 
@@ -138,8 +141,12 @@ public class Installer extends AbstractMojo {
 			if (ius == null) {
 				ius = new String[0];
 			}
+			if (runtimes == null) {
+				runtimes = new String[0];
+			}
 			try {
-				eclipse = JBDS.installJBDS(new File(target), jbdsInstaller.toString(), hash, jreLocation, ius);
+				eclipse = JBDS.installJBDS(new File(target), jbdsInstaller.toString(), hash, jreLocation, runtimes,
+						ius);
 			} catch (IOException ioe) {
 				throw new MojoExecutionException("I/O exception occured during installing Eclipse IDE", ioe);
 			}
@@ -183,7 +190,7 @@ public class Installer extends AbstractMojo {
 
 		getLog().info("Finished");
 	}
-	
+
 	private static boolean isDefined(Object parameter) {
 		return parameter != null && parameter.toString().length() > 0;
 	}

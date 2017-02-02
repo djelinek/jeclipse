@@ -34,7 +34,8 @@ public class JBDSTest {
 	public void testCreatingInstallationFileForJBDS7() throws Exception {
 		File target = tempFolder.newFolder();
 		File installerFile = tempFolder.newFile(JBDS_7_1_1_GA);
-		String installationFile = JBDS.createInstallationFile(target, installerFile, null);
+		String installationFile = JBDS.createInstallationFile(target, installerFile, null, new String[] {},
+				new String[] {});
 
 		assertInstallationFile("/test-install-7.xml", installationFile);
 	}
@@ -43,7 +44,8 @@ public class JBDSTest {
 	public void testCreatingInstallationFileForJBDS8() throws Exception {
 		File target = tempFolder.newFolder();
 		File installerFile = tempFolder.newFile(JBDS_8_1_0_GA);
-		String installationFile = JBDS.createInstallationFile(target, installerFile, null);
+		String installationFile = JBDS.createInstallationFile(target, installerFile, null, new String[] {},
+				new String[] {});
 
 		assertInstallationFile("/test-install-8.xml", installationFile);
 	}
@@ -52,7 +54,8 @@ public class JBDSTest {
 	public void testCreatingInstallationFileForJBDS9() throws Exception {
 		File target = tempFolder.newFolder();
 		File installerFile = tempFolder.newFile(JBDS_9_1_0_GA);
-		String installationFile = JBDS.createInstallationFile(target, installerFile, null);
+		String installationFile = JBDS.createInstallationFile(target, installerFile, null, new String[] {},
+				new String[] {});
 
 		assertInstallationFile("/test-install-9.xml", installationFile);
 	}
@@ -61,8 +64,8 @@ public class JBDSTest {
 	public void testCreatingInstallationFileForJBDS9WithIU() throws Exception {
 		File target = tempFolder.newFolder();
 		File installerFile = tempFolder.newFile(JBDS_9_1_0_GA);
-		String installationFile = JBDS.createInstallationFile(target, installerFile, null,
-				"com.jboss.devstudio.integration-stack.fuse.feature.feature.group");
+		String installationFile = JBDS.createInstallationFile(target, installerFile, null, new String[] {},
+				new String[] { "com.jboss.devstudio.integration-stack.fuse.feature.feature.group" });
 
 		assertInstallationFile("/test-install-9-iu.xml", installationFile);
 	}
@@ -71,7 +74,8 @@ public class JBDSTest {
 	public void testCreatingInstallationFileForJBDS10() throws Exception {
 		File target = tempFolder.newFolder();
 		File installerFile = tempFolder.newFile(JBDS_10_1_0_GA);
-		String installationFile = JBDS.createInstallationFile(target, installerFile, null);
+		String installationFile = JBDS.createInstallationFile(target, installerFile, null, new String[] {},
+				new String[] {});
 
 		assertInstallationFile("/test-install-10.xml", installationFile);
 	}
@@ -90,17 +94,16 @@ public class JBDSTest {
 		assertInstallationFile("/test-install-10-eap.xml", installationFile);
 	}
 
-
 	@Test
 	public void testCreatingInstallationFileForJBDS10WithIU() throws Exception {
 		File target = tempFolder.newFolder();
 		File installerFile = tempFolder.newFile(JBDSIS_10_0_0_CR1);
-		String installationFile = JBDS.createInstallationFile(target, installerFile, null,
-				"com.jboss.devstudio.integration-stack.fuse.feature.feature.group");
+		String installationFile = JBDS.createInstallationFile(target, installerFile, null, new String[] {},
+				new String[] { "com.jboss.devstudio.integration-stack.fuse.feature.feature.group" });
 
 		assertInstallationFile("/test-install-10-iu.xml", installationFile);
 	}
-	
+
 	@Test
 	public void testCreatingInstallationFileForJBDSIS10WithFuse() throws Exception {
 		File target = tempFolder.newFolder();

@@ -25,7 +25,8 @@ public class JBDSISIT {
 
 	@Test
 	public void jbdsInstallTest() throws IOException {
-		JBDS jbdsis = JBDS.installJBDS(new File(TARGET), JBDS_URL, new NullHash(), null, FUSE_FEATURE);
+		JBDS jbdsis = JBDS.installJBDS(new File(TARGET), JBDS_URL, new NullHash(), null, new String[] {},
+				new String[] { FUSE_FEATURE });
 
 		for (Bundle feature : jbdsis.getFeatures()) {
 			if (feature.getName().contains("fusesource")) {

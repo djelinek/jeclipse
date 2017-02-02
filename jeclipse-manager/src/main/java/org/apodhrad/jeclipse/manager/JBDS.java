@@ -35,30 +35,30 @@ public class JBDS extends Eclipse {
 	}
 
 	public static JBDS installJBDS(File target, String url) throws IOException {
-		return installJBDS(target, url, new NullHash(), null);
+		return installJBDS(target, url, new NullHash(), null, new String[] {}, new String[] {});
 	}
 
 	public static JBDS installJBDS(File target, String url, String jreLocation) throws IOException {
-		return installJBDS(target, url, new NullHash(), jreLocation);
+		return installJBDS(target, url, new NullHash(), jreLocation, new String[] {}, new String[] {});
 	}
 
 	public static JBDS installJBDS(File target, String url, Hash hash) throws IOException {
-		return installJBDS(target, url, hash, null);
+		return installJBDS(target, url, hash, null, new String[] {}, new String[] {});
 	}
 
-	public static JBDS installJBDS(File target, String url, Hash hash, String jreLocation, String... ius)
+	public static JBDS installJBDS(File target, String url, Hash hash, String jreLocation, String[] runtimes, String[] ius)
 			throws IOException {
 		JDownloadManager manager = new JDownloadManager();
 		File installerJarFile = manager.download(url, target, hash);
-		return installJBDS(target, installerJarFile, jreLocation, ius);
+		return installJBDS(target, installerJarFile, jreLocation, runtimes, ius);
 	}
 
-	public static JBDS installJBDS(File target, File installerJarFile, String jreLocation, String... ius)
+	public static JBDS installJBDS(File target, File installerJarFile, String jreLocation, String[] runtimes, String[] ius)
 			throws IOException {
 		// Install JBDS
 		String installationFile = null;
 		try {
-			installationFile = createInstallationFile(target, installerJarFile, jreLocation, ius);
+			installationFile = createInstallationFile(target, installerJarFile, jreLocation, runtimes, ius);
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
 			throw new RuntimeException("Exception occured during creating installation file");
@@ -77,7 +77,7 @@ public class JBDS extends Eclipse {
 		return new JBDS(new File(target, "jbdevstudio"));
 	}
 
-	public static String createInstallationFile(File target, File installerJarFile, String jreLocation, String... ius)
+	public static String createInstallationFile(File target, File installerJarFile, String jreLocation, String[] runtimes, String[] ius)
 			throws IOException {
 		JBDSConfig config = new JBDSConfig();
 		config.setTarget(target);
@@ -85,6 +85,9 @@ public class JBDS extends Eclipse {
 		config.setJreLocation(jreLocation);
 		for (String iu : ius) {
 			config.addInstallableUnit(iu);
+		}
+		for (String runtime: runtimes) {
+			config.addRuntime(runtime);
 		}
 		return createInstallationFile(config);
 	}
