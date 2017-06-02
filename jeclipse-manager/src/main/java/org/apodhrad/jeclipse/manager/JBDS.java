@@ -116,9 +116,9 @@ public class JBDS extends Eclipse {
 
 		String jbdsVersion = getJBDSVersion(config.getInstallerJarFile());
 		StringJoiner productList = new StringJoiner(",");
-		productList.add(jbdsVersion.startsWith("10") ? "devstudio" : "jbds");
+		productList.add(jbdsVersion.startsWith("10") || jbdsVersion.startsWith("11") ? "devstudio" : "jbds");
 		if (!config.getInstallabelUnits().isEmpty()) {
-			productList.add(jbdsVersion.startsWith("10") ? "devstudio-is" : "jbdsis");
+			productList.add(jbdsVersion.startsWith("10") || jbdsVersion.startsWith("11") ? "devstudio-is" : "jbdsis");
 		}
 
 		String dest = new File(config.getTarget(), "jbdevstudio").getAbsolutePath();
@@ -141,6 +141,16 @@ public class JBDS extends Eclipse {
 			if (config.getInstallerJarFile().getName().contains("eap")) {
 				group = "jbosseap";
 				sourceFile = "/install-10-runtime.xml";
+			}
+		}
+		if (jbdsVersion != null && jbdsVersion.startsWith("11")) {
+			sourceFile = "/install-11.xml";
+			if (runtimeList.length() > 0) {
+				sourceFile = "/install-11-runtime.xml";
+			}
+			if (config.getInstallerJarFile().getName().contains("eap")) {
+				group = "jbosseap";
+				sourceFile = "/install-11-runtime.xml";
 			}
 		}
 		URL url = JBDS.class.getResource(sourceFile);
