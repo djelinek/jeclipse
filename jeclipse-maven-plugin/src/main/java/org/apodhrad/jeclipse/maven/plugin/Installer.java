@@ -101,6 +101,9 @@ public class Installer extends AbstractMojo {
 
 	@Parameter(defaultValue = "true")
 	private boolean followReferences;
+	
+	@Parameter(defaultValue = "false")
+	private boolean keepInstaller;
 
 	public void execute() throws MojoExecutionException {
 		if (nocache) {
@@ -152,6 +155,13 @@ public class Installer extends AbstractMojo {
 						ius);
 			} catch (IOException ioe) {
 				throw new MojoExecutionException("I/O exception occured during installing Eclipse IDE", ioe);
+			}
+			if (!keepInstaller && eclipse instanceof JBDS) {
+				File installerJarFile = ((JBDS) eclipse).getInstallerJarFile();
+				if (installerJarFile != null && installerJarFile.exists()) {
+					getLog().info("Delete installer " + installerJarFile.getAbsolutePath());
+					installerJarFile.delete();
+				}
 			}
 		} else {
 			try {

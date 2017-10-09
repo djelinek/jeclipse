@@ -25,6 +25,8 @@ import org.slf4j.LoggerFactory;
 public class JBDS extends Eclipse {
 
 	private static Logger log = LoggerFactory.getLogger(JBDS.class);
+	
+	private File installerJarFile;
 
 	public JBDS(String path) {
 		super(path);
@@ -32,6 +34,14 @@ public class JBDS extends Eclipse {
 
 	public JBDS(File file) {
 		super(file);
+	}
+
+	public File getInstallerJarFile() {
+		return installerJarFile;
+	}
+
+	protected void setInstallerJarFile(File installerJarFile) {
+		this.installerJarFile = installerJarFile;
 	}
 
 	public static JBDS installJBDS(File target, String url) throws IOException {
@@ -74,7 +84,9 @@ public class JBDS extends Eclipse {
 		jarRunner.setTimeout(getJEclipseTimeout());
 		jarRunner.run();
 
-		return new JBDS(new File(target, "jbdevstudio"));
+		JBDS jbds = new JBDS(new File(target, "jbdevstudio"));
+		jbds.setInstallerJarFile(installerJarFile);
+		return jbds;
 	}
 
 	public static String createInstallationFile(File target, File installerJarFile, String jreLocation, String[] runtimes, String[] ius)
