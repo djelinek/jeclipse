@@ -71,10 +71,11 @@ public class Eclipse {
 		List<File> launchers = null;
 		if (file.isDirectory()) {
 			launchers = new FileSearch().find(file, new FileNameStartsWith(LAUNCHER_PREFIX));
-			if (launchers.isEmpty()) {
-				throw new EclipseException("Cannot find any eclipse structure in '" + file.getAbsolutePath() + "'");
+			for (File launcher: launchers) {
+				if (isEclipseStructure(launcher)) {
+					file = launcher;
+				}
 			}
-			file = launchers.get(0);
 		}
 		if (!isEclipseStructure(file)) {
 			throw new EclipseException("Cannot find any eclipse structure in '" + file.getAbsolutePath() + "'");
