@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.apodhrad.jeclipse</groupId>
     <artifactId>jeclipse-parent</artifactId>
-    <version>1.0.8-SNAPSHOT</version>
+    <version>1.0.8</version>
   </parent>
   <artifactId>jeclipse-manager</artifactId>
   <packaging>jar</packaging>
