@@ -128,9 +128,9 @@ public class JBDS extends Eclipse {
 
 		String jbdsVersion = getJBDSVersion(config.getInstallerJarFile());
 		StringJoiner productList = new StringJoiner(",");
-		productList.add(jbdsVersion.startsWith("10") || jbdsVersion.startsWith("11") ? "devstudio" : "jbds");
+		productList.add(startsWithOneOf(jbdsVersion, "10", "11", "12") ? "devstudio" : "jbds");
 		if (!config.getInstallabelUnits().isEmpty()) {
-			productList.add(jbdsVersion.startsWith("10") || jbdsVersion.startsWith("11") ? "devstudio-is" : "jbdsis");
+			productList.add(startsWithOneOf(jbdsVersion, "10", "11", "12") ? "devstudio-is" : "jbdsis");
 		}
 
 		String dest = new File(config.getTarget(), "jbdevstudio").getAbsolutePath();
@@ -155,7 +155,7 @@ public class JBDS extends Eclipse {
 				sourceFile = "/install-10-runtime.xml";
 			}
 		}
-		if (jbdsVersion != null && jbdsVersion.startsWith("11")) {
+		if (jbdsVersion != null && startsWithOneOf(jbdsVersion, "11", "12")) {
 			sourceFile = "/install-11.xml";
 			if (runtimeList.length() > 0) {
 				sourceFile = "/install-11-runtime.xml";
@@ -187,6 +187,15 @@ public class JBDS extends Eclipse {
 
 		new File(tempFile).delete();
 		return targetFile;
+	}
+
+	private static boolean startsWithOneOf(String text, String... prefixes) {
+		for (String prefix: prefixes) {
+			if (text.startsWith(prefix)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public static String getJBDSVersion(File installer) {
