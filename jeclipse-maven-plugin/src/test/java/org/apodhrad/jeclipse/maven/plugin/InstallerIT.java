@@ -1,5 +1,7 @@
 package org.apodhrad.jeclipse.maven.plugin;
 
+import static org.junit.Assume.assumeTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -12,7 +14,6 @@ import org.apache.maven.shared.invoker.DefaultInvoker;
 import org.apache.maven.shared.invoker.InvocationRequest;
 import org.apache.maven.shared.invoker.InvocationResult;
 import org.apache.maven.shared.invoker.Invoker;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class InstallerIT extends BetterAbstractMojoTestCase {
@@ -71,8 +72,9 @@ public class InstallerIT extends BetterAbstractMojoTestCase {
 	}
 	
 
-//	@Test
+	@Test
 	public void testinstallJBDS2Test() throws Exception {
+		assumeSystemProperty("jeclipse.test.jbds.url");
 		File pom = getTestFile("src/test/resources/install-jbds-test/pom.xml");
 		assertNotNull(pom);
 		assertTrue(pom.exists());
@@ -84,6 +86,7 @@ public class InstallerIT extends BetterAbstractMojoTestCase {
 	
 	@Test
 	public void testinstallJBDSISTest() throws Exception {
+		assumeSystemProperty("jeclipse.test.jbdsis.url");
 		File pom = getTestFile("src/test/resources/install-jbdsis-test/pom.xml");
 		assertNotNull(pom);
 		assertTrue(pom.exists());
@@ -112,8 +115,10 @@ public class InstallerIT extends BetterAbstractMojoTestCase {
 		assertEquals("Build failed (exit code " + exitCode + ")", 0, exitCode);
 	}
 
-//	@Test
+	@Test
 	public void installJBDSTest() throws Exception {
+		assumeSystemProperty("jeclipse.test.jbds.url");
+
 		File pomFile = prepareMavenProject("install-jbds");
 
 		InvocationRequest request = new DefaultInvocationRequest();
@@ -136,6 +141,12 @@ public class InstallerIT extends BetterAbstractMojoTestCase {
 	static public String systemProperty(String key) {
 		String value = System.getProperty(key);
 		assertTrue("The system property '" + key + "' must be defined!", value != null && value.length() > 0);
+		return value;
+	}
+
+	private static String assumeSystemProperty(String key) {
+		String value = System.getProperty(key);
+		assumeTrue("The system property '" + key + "' must be defined!", value != null && value.length() > 0);
 		return value;
 	}
 

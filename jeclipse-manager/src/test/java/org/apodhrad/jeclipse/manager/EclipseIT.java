@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apodhrad.jdownload.manager.JDownloadManager;
+import org.apodhrad.jdownload.manager.hash.MD5Hash;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,11 +24,12 @@ import org.junit.Test;
  */
 public class EclipseIT {
 
-	public static final String ECLIPSE_VERSION = "jee-mars-2";
-	public static final String ECLIPSE_LAUNCHER = "org.eclipse.equinox.launcher_1.3.100.v20150511-1540.jar";
-	public static final String REDDEER_VERSION = "1.0.1.Final";
-	public static final String REDDEER = "http://download.jboss.org/jbosstools/updates/stable/mars/core/reddeer/1.0.1/";
-	public static final String REDDEER_ZIP = "https://github.com/jboss-reddeer/reddeer/releases/download/v1.0.1/org.jboss.reddeer.site-1.0.1.Final.zip";
+	public static final String ECLIPSE_VERSION = "jee-oxygen-3a";
+	public static final String ECLIPSE_LAUNCHER = "org.eclipse.equinox.launcher_1.4.0.v20161219-1356.jar";
+	public static final String REDDEER_VERSION = "2.0.1.Final";
+	public static final String REDDEER = "https://download.eclipse.org/reddeer/releases/2.0.1/";
+	public static final String REDDEER_ZIP = "http://mirrors.xmission.com/eclipse/reddeer/releases/2.0.1/repository.zip";
+	public static final String REDDEER_ZIP_MD5 = "a710ad4c9cd65742a02ab549a6fc24a2";
 
 	private static String targetPath;
 	private static File targetFile;
@@ -117,8 +119,8 @@ public class EclipseIT {
 		Eclipse eclipse = new Eclipse(eclipsePath);
 		eclipse.addUpdateSite(REDDEER);
 		List<Bundle> features = eclipse.listFeatures();
-		assertContainsBundle(features, "org.jboss.reddeer.rcp.feature", REDDEER_VERSION);
-		assertContainsBundle(features, "org.jboss.reddeer.rcp.feature.source", REDDEER_VERSION);
+		assertContainsBundle(features, "org.eclipse.reddeer.swt.feature", REDDEER_VERSION);
+		assertContainsBundle(features, "org.eclipse.reddeer.swt.feature.source", REDDEER_VERSION);
 	}
 
 	@Test
@@ -126,13 +128,13 @@ public class EclipseIT {
 		boolean found = false;
 		Eclipse eclipse = new Eclipse(eclipsePath);
 		eclipse.addUpdateSite(REDDEER);
-		eclipse.installFeatures("org.jboss.reddeer.rcp.feature.feature.group");
+		eclipse.installFeatures("org.eclipse.reddeer.swt.feature.feature.group");
 		Bundle[] features = eclipse.getFeatures();
 		for (Bundle feature : features) {
-			if (feature.getName().equals("org.jboss.reddeer.rcp.feature")
+			if (feature.getName().equals("org.eclipse.reddeer.swt.feature")
 					&& feature.getVersion().equals(REDDEER_VERSION)) {
-				assertEquals("org.jboss.reddeer.rcp.feature_" + REDDEER_VERSION, feature.getFullName());
-				assertEquals("org.jboss.reddeer.rcp.feature_" + REDDEER_VERSION, feature.toString());
+				assertEquals("org.eclipse.reddeer.swt.feature_" + REDDEER_VERSION, feature.getFullName());
+				assertEquals("org.eclipse.reddeer.swt.feature_" + REDDEER_VERSION, feature.toString());
 				found = true;
 				break;
 			}
@@ -143,8 +145,8 @@ public class EclipseIT {
 		Bundle[] plugins = eclipse.getPlugins();
 		for (Bundle plugin : plugins) {
 			if (plugin.getName().equals("org.jboss.reddeer.swt") && plugin.getVersion().equals(REDDEER_VERSION)) {
-				assertEquals("org.jboss.reddeer.swt_" + REDDEER_VERSION, plugin.getFullName());
-				assertEquals("org.jboss.reddeer.swt_" + REDDEER_VERSION, plugin.toString());
+				assertEquals("org.eclipse.reddeer.swt_" + REDDEER_VERSION, plugin.getFullName());
+				assertEquals("org.eclipse.reddeer.swt_" + REDDEER_VERSION, plugin.toString());
 				found = true;
 				break;
 			}
@@ -156,18 +158,16 @@ public class EclipseIT {
 
 	@Test
 	public void installAllFeaturesTest() throws Exception {
-		File zipFile = new JDownloadManager().download(REDDEER_ZIP, targetFile);
+		File zipFile = new JDownloadManager().download(REDDEER_ZIP, targetFile, new MD5Hash("a710ad4c9cd65742a02ab549a6fc24a2"));
 
 		Eclipse eclipse = new Eclipse(eclipsePath);
-		eclipse.addUpdateSite("http://download.eclipse.org/releases/mars/");
+		eclipse.addUpdateSite("http://download.eclipse.org/releases/oxygen/");
 		eclipse.installAllFeaturesFromUpdateSite("jar:file:" + zipFile.getAbsolutePath() + "!/");
 		Bundle[] features = eclipse.getFeatures();
-		assertContainsBundle(features, "org.jboss.reddeer.rcp.feature", REDDEER_VERSION);
-		assertContainsBundle(features, "org.jboss.reddeer.rcp.feature.source", REDDEER_VERSION);
-		assertContainsBundle(features, "org.jboss.reddeer.swt.feature", REDDEER_VERSION);
-		assertContainsBundle(features, "org.jboss.reddeer.swt.feature.source", REDDEER_VERSION);
-		assertContainsBundle(features, "org.jboss.reddeer.graphiti.feature", REDDEER_VERSION);
-		assertContainsBundle(features, "org.jboss.reddeer.graphiti.feature.source", REDDEER_VERSION);
+		assertContainsBundle(features, "org.eclipse.reddeer.swt.feature", REDDEER_VERSION);
+		assertContainsBundle(features, "org.eclipse.reddeer.swt.feature.source", REDDEER_VERSION);
+		assertContainsBundle(features, "org.eclipse.reddeer.graphiti.feature", REDDEER_VERSION);
+		assertContainsBundle(features, "org.eclipse.reddeer.graphiti.feature.source", REDDEER_VERSION);
 	}
 
 	@Test
@@ -175,16 +175,14 @@ public class EclipseIT {
 		File zipFile = new JDownloadManager().download(REDDEER_ZIP, targetFile);
 
 		Eclipse eclipse = new Eclipse(eclipsePath);
-		eclipse.addUpdateSite("http://download.eclipse.org/releases/mars/");
-		eclipse.ignoreFeature("org.jboss.reddeer.graphiti.*");
+		eclipse.addUpdateSite("http://download.eclipse.org/releases/oxygen/");
+		eclipse.ignoreFeature("org.eclipse.reddeer.graphiti.*");
 		eclipse.installAllFeaturesFromUpdateSite("jar:file:" + zipFile.getAbsolutePath() + "!/");
 		Bundle[] features = eclipse.getFeatures();
-		assertContainsBundle(features, "org.jboss.reddeer.rcp.feature", REDDEER_VERSION);
-		assertContainsBundle(features, "org.jboss.reddeer.rcp.feature.source", REDDEER_VERSION);
-		assertContainsBundle(features, "org.jboss.reddeer.swt.feature", REDDEER_VERSION);
-		assertContainsBundle(features, "org.jboss.reddeer.swt.feature.source", REDDEER_VERSION);
-		assertNotContainsBundle(features, "org.jboss.reddeer.graphiti.feature", REDDEER_VERSION);
-		assertNotContainsBundle(features, "org.jboss.reddeer.graphiti.feature.source", REDDEER_VERSION);
+		assertContainsBundle(features, "org.eclipse.reddeer.swt.feature", REDDEER_VERSION);
+		assertContainsBundle(features, "org.eclipse.reddeer.swt.feature.source", REDDEER_VERSION);
+		assertNotContainsBundle(features, "org.eclipse.reddeer.graphiti.feature", REDDEER_VERSION);
+		assertNotContainsBundle(features, "org.eclipse.reddeer.graphiti.feature.source", REDDEER_VERSION);
 	}
 
 	@Test
@@ -198,7 +196,7 @@ public class EclipseIT {
 		assertTrue(new File(mirror, "content.jar").exists());
 		assertTrue(new File(mirror, "plugins").exists());
 		assertTrue(new File(mirror, "features").exists());
-		assertTrue(new File(new File(mirror, "features"), "org.jboss.reddeer.rcp.feature_" + REDDEER_VERSION + ".jar")
+		assertTrue(new File(new File(mirror, "features"), "org.eclipse.reddeer.swt.feature_" + REDDEER_VERSION + ".jar")
 				.exists());
 	}
 
@@ -269,7 +267,7 @@ public class EclipseIT {
 
 	private static void assertContainsBundle(List<Bundle> bundles, String expectedName, String expectedVersion) {
 		Bundle bundle = new Bundle(expectedName, expectedVersion);
-		assertTrue("The list " + bundles + " doesn't contain bundle" + bundle, bundles.contains(bundle));
+		assertTrue("The list " + bundles + " doesn't contain bundle " + bundle, bundles.contains(bundle));
 	}
 
 	private static void assertContainsBundle(Bundle[] bundles, String expectedName, String expectedVersion) {
