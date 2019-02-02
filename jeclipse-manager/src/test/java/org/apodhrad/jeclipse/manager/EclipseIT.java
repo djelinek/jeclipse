@@ -13,6 +13,7 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apodhrad.jdownload.manager.JDownloadManager;
 import org.apodhrad.jdownload.manager.hash.MD5Hash;
+import org.apodhrad.jeclipse.manager.util.OS;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Before;
@@ -50,6 +51,9 @@ public class EclipseIT {
 		assertEquals(ECLIPSE_LAUNCHER, eclipse.getLauncher().getName());
 
 		eclipseFile = new File(targetFile, "eclipse");
+		if (OS.isMac()) {
+			eclipseFile = new File(targetFile, "Eclipse.app");
+		}
 		assertTrue("'" + eclipseFile.getAbsolutePath() + "' must exists", eclipseFile.exists());
 		eclipsePath = eclipseFile.getAbsolutePath();
 	}
