@@ -50,7 +50,7 @@ public class EclipseIT {
 		assertEquals(ECLIPSE_LAUNCHER, eclipse.getLauncher().getName());
 
 		eclipseFile = new File(targetFile, "eclipse");
-		assertTrue("'" + targetFile.getAbsolutePath() + "' must exists", eclipseFile.exists());
+		assertTrue("'" + eclipseFile.getAbsolutePath() + "' must exists", eclipseFile.exists());
 		eclipsePath = eclipseFile.getAbsolutePath();
 	}
 
