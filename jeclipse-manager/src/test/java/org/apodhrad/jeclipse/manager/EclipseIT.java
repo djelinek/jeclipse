@@ -14,6 +14,7 @@ import org.apache.commons.io.FileUtils;
 import org.apodhrad.jdownload.manager.JDownloadManager;
 import org.apodhrad.jdownload.manager.hash.MD5Hash;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -158,7 +159,8 @@ public class EclipseIT {
 
 	@Test
 	public void installAllFeaturesTest() throws Exception {
-		File zipFile = new JDownloadManager().download(REDDEER_ZIP, targetFile, new MD5Hash("a710ad4c9cd65742a02ab549a6fc24a2"));
+		File zipFile = new JDownloadManager().download(REDDEER_ZIP, targetFile,
+				new MD5Hash("a710ad4c9cd65742a02ab549a6fc24a2"));
 
 		Eclipse eclipse = new Eclipse(eclipsePath);
 		eclipse.addUpdateSite("http://download.eclipse.org/releases/oxygen/");
@@ -187,6 +189,8 @@ public class EclipseIT {
 
 	@Test
 	public void mirrorRepositoryTest() throws Exception {
+		Assume.assumeTrue(System.getProperty("jeclipse.alltests", "false").equalsIgnoreCase("true"));
+
 		File mirror = new File(targetFile, "reddeer-mirror");
 
 		Eclipse eclipse = new Eclipse(eclipsePath);
