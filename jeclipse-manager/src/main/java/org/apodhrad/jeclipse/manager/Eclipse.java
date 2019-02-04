@@ -71,7 +71,7 @@ public class Eclipse {
 		List<File> launchers = null;
 		if (file.isDirectory()) {
 			launchers = new FileSearch().find(file, new FileNameStartsWith(LAUNCHER_PREFIX));
-			for (File launcher: launchers) {
+			for (File launcher : launchers) {
 				if (isEclipseStructure(launcher)) {
 					file = launcher;
 				}
@@ -392,7 +392,7 @@ public class Eclipse {
 
 		JDownloadManager manager = new JDownloadManager();
 		String eclipseFolder = "eclipse";
-		if (OS.isMac()) {
+		if (isDMGSupported(eclipseVersion)) {
 			manager.download(getEclipseUrl(eclipseVersion, eclipseMirror), target, hash);
 			unpackDMG(new File(target, getEclipseInstaller(eclipseVersion)), target);
 			eclipseFolder = "Eclipse.app";
@@ -402,18 +402,34 @@ public class Eclipse {
 		return new Eclipse(new File(target, eclipseFolder));
 	}
 
+	protected static boolean isDMGSupported(String eclipseVersion) {
+		if (OS.isMac()) {
+			if (eclipseVersion.contains("luna")) {
+				return false;
+			}
+			if (eclipseVersion.contains("mars")) {
+				return false;
+			}
+			if (eclipseVersion.contains("neon")) {
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
+
 	private static void unpackDMG(File file, File target) {
 		try {
-		Process process = Runtime.getRuntime().exec("hdiutil attach " + file);
-		process.waitFor();
-		process = Runtime.getRuntime().exec("cp -R /Volumes/Eclipse/Eclipse.app " + target);
-		process.waitFor();
-		process = Runtime.getRuntime().exec("hdiutil detach /Volumes/Eclipse");
-		process.waitFor();
+			Process process = Runtime.getRuntime().exec("hdiutil attach " + file);
+			process.waitFor();
+			process = Runtime.getRuntime().exec("cp -R /Volumes/Eclipse/Eclipse.app " + target);
+			process.waitFor();
+			process = Runtime.getRuntime().exec("hdiutil detach /Volumes/Eclipse");
+			process.waitFor();
 		} catch (Exception e) {
 			log.error("Installation failed!", e);
 		}
-		
+
 	}
 
 	private static String getEclipseUrl(String eclipseVersion, String eclipseMirror) {
