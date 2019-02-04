@@ -51,7 +51,7 @@ public class EclipseInstallerIT extends BetterAbstractMojoTestCase {
 
 		String eclipseHome = "target/eclipse";
 		if (OS.isMac() && isDmg) {
-			eclipseHome = "target/Ecpipse.app";
+			eclipseHome = "target/Eclipse.app";
 		}
 		Eclipse eclipse = new Eclipse(new File(pom.getParentFile(), eclipseHome));
 		assertContainsBundle(eclipse.getPlugins(), "org.eclipse.equinox.launcher", expectedLauncherVersion);
