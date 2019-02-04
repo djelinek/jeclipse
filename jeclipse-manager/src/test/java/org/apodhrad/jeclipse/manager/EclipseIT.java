@@ -92,7 +92,11 @@ public class EclipseIT {
 
 	@Test
 	public void eclipseInstanceWithLauncherFileTest() throws Exception {
-		File launcherFile = new File(eclipseFile, "plugins/" + ECLIPSE_LAUNCHER);
+		String folder = "";
+		if (OS.isMac()) {
+			folder = "Contents/Eclipse/";
+		}
+		File launcherFile = new File(eclipseFile, folder + "plugins/" + ECLIPSE_LAUNCHER);
 		Eclipse eclipse = new Eclipse(launcherFile);
 		File launcher = eclipse.getLauncher();
 		assertTrue("'" + launcher.getAbsolutePath() + "' is not a launcher",
