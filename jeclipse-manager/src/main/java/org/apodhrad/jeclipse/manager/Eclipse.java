@@ -452,7 +452,10 @@ public class Eclipse {
 			archive = "zip";
 		} else if (os_property.contains("mac")) {
 			platform = "macosx-cocoa";
-			archive = "dmg";
+			archive = "tar.gz";
+			if (isDMGSupported(eclipseVersion)) {
+				archive = "dmg";
+			}
 		}
 
 		if (platform == null) {
