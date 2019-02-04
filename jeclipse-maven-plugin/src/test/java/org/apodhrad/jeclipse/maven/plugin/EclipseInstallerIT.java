@@ -28,25 +28,29 @@ public class EclipseInstallerIT extends BetterAbstractMojoTestCase {
 
 	@Test
 	public void testInstallEclipseJEEOxygen3aTest() throws Exception {
-		testInstallEclipse("jee-oxygen-3a", "1.4.0.v20161219-1356");
+		testInstallEclipse("jee-oxygen-3a", "1.4.0.v20161219-1356", true);
 	}
 
 	@Test
 	public void testInstallEclipseJEEPhotonRTest() throws Exception {
-		testInstallEclipse("jee-photon-R", "1.5.0.v20180512-1130");
+		testInstallEclipse("jee-photon-R", "1.5.0.v20180512-1130", true);
 	}
 
 	private void testInstallEclipse(String eclipseVersion, String expectedLauncherVersion) throws Exception {
-		File pom = getTestFile("src/test/resources/install-eclipse-jee-" + eclipseVersion + "-test/pom.xml");
+		testInstallEclipse(eclipseVersion, expectedLauncherVersion, false);
+	}
+	
+	private void testInstallEclipse(String eclipseVersion, String expectedLauncherVersion, boolean isDmg) throws Exception {
+		File pom = getTestFile("src/test/resources/install-eclipse-" + eclipseVersion + "-test/pom.xml");
 		assertNotNull(pom);
-		assertTrue(pom.exists());
+		assertTrue(pom.getAbsolutePath() + " doesn't exist", pom.exists());
 
 		Installer installer = (Installer) lookupConfiguredMojo("install", pom);
 		assertNotNull(installer);
 		installer.execute();
 
 		String eclipseHome = "target/eclipse";
-		if (OS.isMac()) {
+		if (OS.isMac() && isDmg) {
 			eclipseHome = "target/Ecpipse.app";
 		}
 		Eclipse eclipse = new Eclipse(new File(pom.getParentFile(), eclipseHome));
