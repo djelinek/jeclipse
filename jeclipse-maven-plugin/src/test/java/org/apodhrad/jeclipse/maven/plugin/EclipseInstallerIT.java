@@ -28,19 +28,15 @@ public class EclipseInstallerIT extends BetterAbstractMojoTestCase {
 
 	@Test
 	public void testInstallEclipseJEEOxygen3aTest() throws Exception {
-		testInstallEclipse("jee-oxygen-3a", "1.4.0.v20161219-1356", true);
+		testInstallEclipse("jee-oxygen-3a", "1.4.0.v20161219-1356");
 	}
 
 	@Test
 	public void testInstallEclipseJEEPhotonRTest() throws Exception {
-		testInstallEclipse("jee-photon-R", "1.5.0.v20180512-1130", true);
+		testInstallEclipse("jee-photon-R", "1.5.0.v20180512-1130");
 	}
 
 	private void testInstallEclipse(String eclipseVersion, String expectedLauncherVersion) throws Exception {
-		testInstallEclipse(eclipseVersion, expectedLauncherVersion, false);
-	}
-	
-	private void testInstallEclipse(String eclipseVersion, String expectedLauncherVersion, boolean isDmg) throws Exception {
 		File pom = getTestFile("src/test/resources/install-eclipse-" + eclipseVersion + "-test/pom.xml");
 		assertNotNull(pom);
 		assertTrue(pom.getAbsolutePath() + " doesn't exist", pom.exists());
@@ -50,7 +46,8 @@ public class EclipseInstallerIT extends BetterAbstractMojoTestCase {
 		installer.execute();
 
 		String eclipseHome = "target/eclipse";
-		if (OS.isMac() && isDmg) {
+		// Even tar.gz files are unpacked as Eclipse.app except Luna
+		if (OS.isMac() && !eclipseVersion.contains("luna")) {
 			eclipseHome = "target/Eclipse.app";
 		}
 		Eclipse eclipse = new Eclipse(new File(pom.getParentFile(), eclipseHome));
