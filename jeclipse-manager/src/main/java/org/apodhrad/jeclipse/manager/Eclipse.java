@@ -419,6 +419,10 @@ public class Eclipse {
 	}
 
 	private static void unpackDMG(File file, File target) {
+		if (!OS.isMac()) {
+			throw new IllegalStateException("The DMG file '" + file.getAbsolutePath()
+					+ "' can be unpacked only on macosx but it is " + OS.getName());
+		}
 		try {
 			Process process = Runtime.getRuntime().exec("hdiutil attach " + file);
 			process.waitFor();
