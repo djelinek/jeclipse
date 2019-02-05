@@ -391,18 +391,16 @@ public class Eclipse {
 		}
 
 		JDownloadManager manager = new JDownloadManager();
-		String eclipseFolder = "eclipse";
 		if (isDMGSupported(eclipseVersion)) {
 			manager.download(getEclipseUrl(eclipseVersion, eclipseMirror), target, hash);
 			unpackDMG(new File(target, getEclipseInstaller(eclipseVersion)), target);
-			eclipseFolder = "Eclipse.app";
 		} else {
 			manager.download(getEclipseUrl(eclipseVersion, eclipseMirror), target, true, hash);
 		}
-		return new Eclipse(new File(target, eclipseFolder));
+		return new Eclipse(new File(target, getEclipseFolder(eclipseVersion)));
 	}
 
-	protected static boolean isDMGSupported(String eclipseVersion) {
+	public static boolean isDMGSupported(String eclipseVersion) {
 		if (OS.isMac()) {
 			if (eclipseVersion.contains("luna")) {
 				return false;
@@ -416,6 +414,14 @@ public class Eclipse {
 			return true;
 		}
 		return false;
+	}
+
+	public static String getEclipseFolder(String eclipseVersion) {
+		// On macosx dmg and tar.gz files are unpacked into Eclipse.app except Luna
+		if (OS.isMac() && !eclipseVersion.contains("luna")) {
+			return "Eclipse.app";
+		}
+		return "eclipse";
 	}
 
 	private static void unpackDMG(File file, File target) {

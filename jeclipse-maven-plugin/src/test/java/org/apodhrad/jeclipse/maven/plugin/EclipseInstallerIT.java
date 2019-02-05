@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.apodhrad.jeclipse.manager.Bundle;
 import org.apodhrad.jeclipse.manager.Eclipse;
-import org.apodhrad.jeclipse.manager.util.OS;
 import org.junit.Test;
 
 public class EclipseInstallerIT extends BetterAbstractMojoTestCase {
@@ -45,11 +44,7 @@ public class EclipseInstallerIT extends BetterAbstractMojoTestCase {
 		assertNotNull(installer);
 		installer.execute();
 
-		String eclipseHome = "target/eclipse";
-		// Even tar.gz files are unpacked as Eclipse.app except Luna
-		if (OS.isMac() && !eclipseVersion.contains("luna")) {
-			eclipseHome = "target/Eclipse.app";
-		}
+		String eclipseHome = "target/" + Eclipse.getEclipseFolder(eclipseVersion);
 		Eclipse eclipse = new Eclipse(new File(pom.getParentFile(), eclipseHome));
 		assertContainsBundle(eclipse.getPlugins(), "org.eclipse.equinox.launcher", expectedLauncherVersion);
 	}
