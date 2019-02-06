@@ -4,7 +4,7 @@
   <groupId>org.apodhrad.jeclipse</groupId>
   <artifactId>jeclipse-parent</artifactId>
   <packaging>pom</packaging>
-  <version>1.0.9</version>
+  <version>1.0.10-SNAPSHOT</version>
   <name>.: JEclipse Parent :.</name>
   <url>https://github.com/apodhrad/jeclipse</url>
 
