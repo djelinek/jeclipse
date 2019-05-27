@@ -442,8 +442,13 @@ public class Eclipse {
 
 	}
 
-	private static String getEclipseUrl(String eclipseVersion, String eclipseMirror) {
+	public static String getEclipseUrl(String eclipseVersion, String eclipseMirror) {
 		String[] version = eclipseVersion.split("-");
+		// after photon the version format consists of year and month, e.g. 2019-03
+		if (version.length > 3 && (version[1] + version[2]).matches("\\d{6}")) {
+			version[1] = version[1] + "-" + version[2];
+			version[2] = version[3];
+		}
 		return eclipseMirror + "/" + version[1] + "/" + version[2] + "/" + getEclipseInstaller(eclipseVersion);
 	}
 
