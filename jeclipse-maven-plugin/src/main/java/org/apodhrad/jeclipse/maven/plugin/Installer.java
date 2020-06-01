@@ -165,7 +165,7 @@ public class Installer extends AbstractMojo {
 			}
 		} else {
 			try {
-				eclipse = installEclipse(new File(target), eclipseVersion);
+				eclipse = installEclipse(new File(target), eclipseVersion, eclipseMirror);
 			} catch (IOException ioe) {
 				throw new MojoExecutionException("I/O exception occured during installing Eclipse IDE", ioe);
 			}
