@@ -10,8 +10,8 @@
 
   <repositories>
     <repository>
-      <id>bintray-apodhrad</id>
-      <url>https://dl.bintray.com/apodhrad/maven/</url>
+      <id>fusetools-qe-repo</id>
+      <url>http://nexus.fuse-qe.eng.rdu2.redhat.com/repository/fusetools-qe-repo/</url>
       <snapshots>
 	<enabled>true</enabled>
       </snapshots>
@@ -23,9 +23,9 @@
   
   <distributionManagement>
     <repository>
-      <id>bintray-apodhrad</id>
+      <id>fusetools-qe-repo</id>
       <name>jeclipse-manager</name>
-      <url>https://api.bintray.com/maven/apodhrad/maven/jeclipse</url>
+      <url>http://nexus.fuse-qe.eng.rdu2.redhat.com/repository/fusetools-qe-repo/</url>
     </repository>
   </distributionManagement>
   
